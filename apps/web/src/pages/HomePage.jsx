@@ -20,7 +20,7 @@ const HomePage = () => {
     "@type": "Person",
     "name": "Ismail Bellakhel",
     "jobTitle": "Technical Growth & Analytics Professional",
-    "email": "ismailbellakhel@povmedia.se",
+    "email": "ismail.bellakhel@gmail.com",
     "url": `https://ismailbellakhel.com/${language}`,
     "sameAs": [
       "https://www.linkedin.com/in/ismailbellakhel/",

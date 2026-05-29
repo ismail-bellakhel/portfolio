@@ -11,8 +11,8 @@ const ContactSection = () => {
     {
       icon: Mail,
       label: t.contact.email,
-      value: 'ismailbellakhel@povmedia.se',
-      href: 'mailto:ismailbellakhel@povmedia.se',
+      value: 'ismail.bellakhel@gmail.com',
+      href: 'mailto:ismail.bellakhel@gmail.com',
       color: 'text-blue-600'
     },
     {

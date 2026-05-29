@@ -68,9 +68,11 @@ const HeroSection = () => {
               transition={{ duration: 0.8, delay: 0.3, ease: [0.4, 0, 0.2, 1] }}
               className="flex flex-col sm:flex-row gap-4 pt-4"
             >
-              <Button size="lg" className="rounded-xl gap-2 group glass-glow h-14 px-8 text-base">
-                <Download className="h-5 w-5 transition-transform duration-300 group-hover:-translate-y-1" />
-                {t.hero.downloadCV}
+              <Button size="lg" className="rounded-xl gap-2 group glass-glow h-14 px-8 text-base" asChild>
+                <a href="/ismail-bellakhel-cv.pdf" download="Ismail-Bellakhel-CV.pdf">
+                  <Download className="h-5 w-5 transition-transform duration-300 group-hover:-translate-y-1" />
+                  {t.hero.downloadCV}
+                </a>
               </Button>
               <Button
                 size="lg"
