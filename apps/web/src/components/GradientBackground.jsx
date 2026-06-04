@@ -1,71 +1,43 @@
 import React from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { useTheme } from '@/contexts/ThemeContext.jsx';
 
-// Fixed parallax gradient orbs — sit behind all content (z-0)
-// Gives the dark-mode site a living ambient glow that shifts with scroll
+// Aurora Borealis background — dark mode only
+// Technique: multiple oversized repeating-linear-gradient layers animated via
+// GPU-accelerated transform (translate + scaleY + rotate), not background-position.
+// Each layer = one aurora curtain; different colors, speeds, and phase offsets.
 const GradientBackground = () => {
-  const { scrollYProgress } = useScroll();
-
-  const orb1Y = useTransform(scrollYProgress, [0, 1], [0, -280]);
-  const orb2Y = useTransform(scrollYProgress, [0, 1], [0,  320]);
-  const orb3Y = useTransform(scrollYProgress, [0, 1], [0,  140]);
+  const { isDark } = useTheme();
+  if (!isDark) return null;
 
   return (
     <div
-      className="fixed inset-0 pointer-events-none overflow-hidden"
-      style={{ zIndex: 0 }}
+      className="aurora-root"
+      style={{ position: 'fixed', inset: 0, zIndex: 0, overflow: 'hidden', pointerEvents: 'none' }}
       aria-hidden="true"
     >
-      {/* Top-left — deep blue */}
-      <motion.div
-        style={{
-          y: orb1Y,
-          position: 'absolute',
-          top: '-18%',
-          left: '-8%',
-          width: '62vw',
-          height: '62vw',
-          borderRadius: '50%',
-          background: 'radial-gradient(circle, hsla(220, 80%, 58%, 1) 0%, transparent 68%)',
-          filter: 'blur(72px)',
-          opacity: 0.09,
-          willChange: 'transform',
-        }}
-      />
+      {/* Night sky base */}
+      <div style={{ position: 'absolute', inset: 0, background: 'hsl(228, 44%, 4%)' }} />
 
-      {/* Bottom-right — violet */}
-      <motion.div
-        style={{
-          y: orb2Y,
-          position: 'absolute',
-          bottom: '-18%',
-          right: '-8%',
-          width: '58vw',
-          height: '58vw',
-          borderRadius: '50%',
-          background: 'radial-gradient(circle, hsla(262, 72%, 58%, 1) 0%, transparent 68%)',
-          filter: 'blur(68px)',
-          opacity: 0.075,
-          willChange: 'transform',
-        }}
-      />
+      {/* Layer 1 — green / teal   (slowest, most prominent) */}
+      <div className="aurora-l1" />
 
-      {/* Mid — teal accent */}
-      <motion.div
-        style={{
-          y: orb3Y,
-          position: 'absolute',
-          top: '38%',
-          left: '22%',
-          width: '48vw',
-          height: '48vw',
-          borderRadius: '50%',
-          background: 'radial-gradient(circle, hsla(195, 68%, 52%, 1) 0%, transparent 65%)',
-          filter: 'blur(80px)',
-          opacity: 0.05,
-          willChange: 'transform',
-        }}
-      />
+      {/* Layer 2 — blue / indigo */}
+      <div className="aurora-l2" />
+
+      {/* Layer 3 — violet / purple */}
+      <div className="aurora-l3" />
+
+      {/* Layer 4 — cyan shimmer   (fastest, adds brightness) */}
+      <div className="aurora-l4" />
+
+      {/* Layer 5 — pink / magenta accent (rare aurora colour, high altitude) */}
+      <div className="aurora-l5" />
+
+      {/* Bottom fade — keeps the lower page dark so text is readable */}
+      <div style={{
+        position: 'absolute', inset: 0,
+        background: 'linear-gradient(to bottom, transparent 25%, hsl(228,44%,4%) 78%)',
+      }} />
     </div>
   );
 };

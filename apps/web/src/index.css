@@ -112,13 +112,163 @@
     text-wrap: pretty;
   }
 
-  /* Dark mode — richer ambient gradient, gradient orbs are layered on top via GradientBackground */
+  /* Dark mode — plain dark sky; aurora is handled by GradientBackground component */
   .dark body {
-    background-image:
-      radial-gradient(ellipse 75% 55% at 8% 12%, hsla(222, 78%, 56%, 0.12) 0, transparent 52%),
-      radial-gradient(ellipse 60% 50% at 92% 88%, hsla(264, 72%, 56%, 0.10) 0, transparent 52%),
-      radial-gradient(ellipse 55% 50% at 50% 50%, hsla(198, 65%, 50%, 0.05) 0, transparent 58%);
-    background-attachment: fixed;
+    background-image: none;
+  }
+}
+
+/* ── Aurora Borealis background layers ───────────────────────────────────────
+   All layers share:
+   • position: absolute, overflow clipped by .aurora-root
+   • width: 260%, left: -80%  → oversized so translate won't show empty edges
+   • repeating-linear-gradient → seamless, no hard stops
+   • filter: blur()            → soft aurora glow
+   • will-change: transform    → GPU composite layer
+   • animation: aurora-lN      → transform only (translate + scaleY + rotate)
+   Reduced-motion: animations disabled, layers are static at mid-keyframe pose.
+──────────────────────────────────────────────────────────────────────────── */
+.aurora-l1, .aurora-l2, .aurora-l3, .aurora-l4, .aurora-l5 {
+  position: absolute;
+  width: 260%;
+  left: -80%;
+  will-change: transform;
+}
+
+/* ── Layer 1: green / teal — dominant aurora band ── */
+.aurora-l1 {
+  top: -18%;
+  height: 90%;
+  background: repeating-linear-gradient(
+    108deg,
+    transparent            0%,  transparent            3.5%,
+    hsla(158, 88%, 42%, 0.52)  6.5%,
+    hsla(168, 90%, 46%, 0.58) 10%,
+    hsla(180, 88%, 48%, 0.45) 13%,
+    transparent           16%,  transparent            22%,
+    hsla(155, 84%, 40%, 0.42) 25%,
+    hsla(165, 88%, 44%, 0.48) 28.5%,
+    transparent           32%,  transparent            38%,
+    hsla(172, 86%, 46%, 0.38) 41.5%,
+    hsla(162, 90%, 44%, 0.44) 44.5%,
+    transparent           48%
+  );
+  filter: blur(58px);
+  animation: aurora-1 22s ease-in-out infinite;
+}
+
+/* ── Layer 2: blue / indigo ── */
+.aurora-l2 {
+  top: -12%;
+  height: 78%;
+  background: repeating-linear-gradient(
+    105deg,
+    transparent            0%,  transparent            4%,
+    hsla(218, 82%, 55%, 0.42)  8%,
+    hsla(232, 78%, 52%, 0.48) 12%,
+    hsla(248, 76%, 56%, 0.38) 15.5%,
+    transparent           19%,  transparent            26%,
+    hsla(224, 80%, 54%, 0.36) 30%,
+    hsla(238, 76%, 52%, 0.40) 33.5%,
+    transparent           37%
+  );
+  filter: blur(50px);
+  animation: aurora-2 30s ease-in-out infinite;
+}
+
+/* ── Layer 3: violet / purple ── */
+.aurora-l3 {
+  top: -10%;
+  height: 72%;
+  background: repeating-linear-gradient(
+    102deg,
+    transparent            0%,  transparent            5.5%,
+    hsla(270, 72%, 55%, 0.42)  9%,
+    hsla(282, 70%, 52%, 0.36) 13%,
+    hsla(294, 66%, 50%, 0.30) 16.5%,
+    transparent           20%,  transparent            28%,
+    hsla(274, 68%, 52%, 0.34) 32%,
+    hsla(286, 65%, 50%, 0.28) 35.5%,
+    transparent           39%
+  );
+  filter: blur(62px);
+  animation: aurora-3 19s ease-in-out infinite;
+}
+
+/* ── Layer 4: cyan — bright shimmer / fast ── */
+.aurora-l4 {
+  top: -20%;
+  height: 65%;
+  background: repeating-linear-gradient(
+    110deg,
+    transparent            0%,  transparent            7%,
+    hsla(186, 92%, 52%, 0.34) 11%,
+    hsla(195, 90%, 56%, 0.28) 14.5%,
+    transparent           18%,  transparent            26%,
+    hsla(184, 88%, 50%, 0.30) 30%,
+    transparent           34%
+  );
+  filter: blur(68px);
+  animation: aurora-4 16s ease-in-out infinite;
+}
+
+/* ── Layer 5: pink / magenta — rare high-altitude aurora ── */
+.aurora-l5 {
+  top: -22%;
+  height: 58%;
+  background: repeating-linear-gradient(
+    112deg,
+    transparent            0%,  transparent            9%,
+    hsla(310, 68%, 55%, 0.28) 13%,
+    hsla(325, 65%, 52%, 0.22) 16.5%,
+    transparent           20%,  transparent            29%,
+    hsla(308, 66%, 52%, 0.24) 33%,
+    transparent           37%
+  );
+  filter: blur(72px);
+  animation: aurora-5 25s ease-in-out infinite;
+}
+
+/* ── Keyframes — translate + scaleY + rotate → simulates curtain wave ── */
+@keyframes aurora-1 {
+  0%   { transform: translateX(  0%) translateY( 0%) scaleY(1.00) rotate(-1.0deg); }
+  20%  { transform: translateX( -4%) translateY(-2%) scaleY(1.13) rotate( 0.4deg); }
+  40%  { transform: translateX( -2%) translateY( 3%) scaleY(0.94) rotate( 1.6deg); }
+  60%  { transform: translateX( -6%) translateY(-1%) scaleY(1.09) rotate(-0.6deg); }
+  80%  { transform: translateX( -3%) translateY( 2%) scaleY(1.04) rotate( 0.9deg); }
+  100% { transform: translateX(  0%) translateY( 0%) scaleY(1.00) rotate(-1.0deg); }
+}
+@keyframes aurora-2 {
+  0%   { transform: translateX( -3%) translateY( 2%) scaleY(0.97) rotate( 0.8deg); }
+  25%  { transform: translateX(  2%) translateY(-3%) scaleY(1.11) rotate(-1.3deg); }
+  50%  { transform: translateX( -5%) translateY( 1%) scaleY(0.92) rotate( 1.1deg); }
+  75%  { transform: translateX(  1%) translateY(-2%) scaleY(1.07) rotate(-0.5deg); }
+  100% { transform: translateX( -3%) translateY( 2%) scaleY(0.97) rotate( 0.8deg); }
+}
+@keyframes aurora-3 {
+  0%   { transform: translateX(  2%) translateY(-1%) scaleY(1.05) rotate( 1.3deg); }
+  33%  { transform: translateX( -4%) translateY( 3%) scaleY(0.95) rotate(-0.9deg); }
+  66%  { transform: translateX(  3%) translateY(-2%) scaleY(1.10) rotate( 0.6deg); }
+  100% { transform: translateX(  2%) translateY(-1%) scaleY(1.05) rotate( 1.3deg); }
+}
+@keyframes aurora-4 {
+  0%   { transform: translateX( -5%) translateY( 1%) scaleY(0.96) rotate(-1.1deg); }
+  25%  { transform: translateX(  3%) translateY(-3%) scaleY(1.13) rotate( 0.7deg); }
+  50%  { transform: translateX( -1%) translateY( 2%) scaleY(0.91) rotate( 1.5deg); }
+  75%  { transform: translateX(  4%) translateY(-1%) scaleY(1.08) rotate(-0.8deg); }
+  100% { transform: translateX( -5%) translateY( 1%) scaleY(0.96) rotate(-1.1deg); }
+}
+@keyframes aurora-5 {
+  0%   { transform: translateX(  4%) translateY(-2%) scaleY(1.02) rotate( 0.6deg); }
+  30%  { transform: translateX( -3%) translateY( 2%) scaleY(1.10) rotate(-1.4deg); }
+  60%  { transform: translateX(  2%) translateY(-1%) scaleY(0.94) rotate( 1.0deg); }
+  100% { transform: translateX(  4%) translateY(-2%) scaleY(1.02) rotate( 0.6deg); }
+}
+
+/* Respect prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  .aurora-l1, .aurora-l2, .aurora-l3, .aurora-l4, .aurora-l5 {
+    animation: none;
   }
 }
 
