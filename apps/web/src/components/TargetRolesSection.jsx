@@ -1,11 +1,36 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext.jsx';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useInView } from 'framer-motion';
+
+// Spotlight sequence: tours every interactive zone so the user understands the diagram
+const INTRO_SEQUENCE = [
+  'marketing', 'marketingAnalytics', 'analytics',
+  'analyticsCustomer', 'customer', 'marketingCustomer', 'all',
+];
 
 const TargetRolesSection = () => {
   const { t } = useLanguage();
   const [activeArea, setActiveArea] = useState('all');
   const svgRef = useRef(null);
+  const sectionRef = useRef(null);
+  const hasAnimatedRef = useRef(false);
+  const isInView = useInView(sectionRef, { once: true, amount: 0.4 });
+
+  // Entry animation: spotlight each area once to hint at interactivity
+  useEffect(() => {
+    if (!isInView || hasAnimatedRef.current) return;
+    hasAnimatedRef.current = true;
+
+    let i = 0;
+    const step = () => {
+      if (i >= INTRO_SEQUENCE.length) return;
+      setActiveArea(INTRO_SEQUENCE[i++]);
+      setTimeout(step, 380);
+    };
+    // Small delay so the section has finished entering
+    const t0 = setTimeout(step, 350);
+    return () => clearTimeout(t0);
+  }, [isInView]);
 
   // Mouse move handler for mathematical Venn hover detection
   const handleMouseMove = (e) => {
@@ -60,7 +85,7 @@ const TargetRolesSection = () => {
   };
 
   return (
-    <section id="roles" className="py-24 relative z-10 overflow-hidden">
+    <section id="roles" ref={sectionRef} className="py-24 relative z-10 overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

@@ -14,6 +14,10 @@ const SECTORS = [
   'customerServiceMgmt', 'retail', 'fitness', 'frenchTelecom',
 ];
 
+const N = SECTORS.length; // 13 real cards
+const LOOP_TAIL = 3;      // phantom copies of first 3 cards appended at the end
+const EXTENDED = [...SECTORS, ...SECTORS.slice(0, LOOP_TAIL)];
+
 const SECTOR_ICONS = {
   newsMedia: Newspaper,
   saas: Zap,
@@ -32,7 +36,6 @@ const SECTOR_ICONS = {
 
 const CARD_GAP = 20;
 
-// Separate component so hooks are called at the top-level of each card
 const SectorCard = ({ sectorKey, index, dragX, cardW, cardStep, offset, t }) => {
   const Icon = SECTOR_ICONS[sectorKey];
 
@@ -55,11 +58,9 @@ const SectorCard = ({ sectorKey, index, dragX, cardW, cardStep, offset, t }) => 
       className="py-6"
     >
       <div className="liquid-glass-sector h-full min-h-[260px] p-8 rounded-[26px] relative overflow-hidden flex flex-col">
-        {/* Icon badge */}
         <div className="mb-5 w-11 h-11 rounded-2xl flex items-center justify-center liquid-glass-sector-icon flex-shrink-0">
           <Icon className="w-5 h-5 text-foreground/65" />
         </div>
-
         <h3 className="text-[17px] font-bold mb-3 tracking-tight text-foreground/92 relative z-10 leading-snug">
           {t.sectors[sectorKey].title}
         </h3>
@@ -73,8 +74,8 @@ const SectorCard = ({ sectorKey, index, dragX, cardW, cardStep, offset, t }) => 
 
 const SectorExperienceSection = () => {
   const { t } = useLanguage();
-  const [current, setCurrent] = useState(0);
-  const currentRef = useRef(0);
+  const [current, setCurrent] = useState(0); // always a real index (0..N-1)
+  const currentRef = useRef(0);              // tracks extended index during phantom advance
   const containerRef = useRef(null);
   const [containerW, setContainerW] = useState(1000);
   const dragX = useMotionValue(0);
@@ -94,6 +95,7 @@ const SectorExperienceSection = () => {
       const cs = cw + CARD_GAP;
       const off = (w - cw) / 2;
       setContainerW(w);
+      // currentRef here is always a real index after any snap, so position is correct
       dragX.set(off - currentRef.current * cs);
     };
 
@@ -103,8 +105,9 @@ const SectorExperienceSection = () => {
     return () => ro.disconnect();
   }, [dragX]);
 
+  // Manual navigation — always real indices
   const goTo = useCallback((index) => {
-    const clamped = Math.max(0, Math.min(index, SECTORS.length - 1));
+    const clamped = Math.max(0, Math.min(index, N - 1));
     currentRef.current = clamped;
     setCurrent(clamped);
     animate(dragX, offset - clamped * cardStep, {
@@ -114,37 +117,50 @@ const SectorExperienceSection = () => {
     });
   }, [dragX, offset, cardStep]);
 
-  // Auto-advance with wrap-around (tween on wrap so it doesn't spring across the full track)
+  // Auto-advance: walks through EXTENDED (including phantoms), then snaps back seamlessly
   const advance = useCallback(() => {
-    const next = (currentRef.current + 1) % SECTORS.length;
-    currentRef.current = next;
-    setCurrent(next);
-    animate(dragX, offset - next * cardStep, {
-      type: next === 0 ? 'tween' : 'spring',
-      duration: next === 0 ? 0.55 : undefined,
-      ease: next === 0 ? [0.4, 0, 0.2, 1] : undefined,
-      stiffness: next !== 0 ? 280 : undefined,
-      damping: next !== 0 ? 32 : undefined,
+    const extNext = currentRef.current + 1 >= N + LOOP_TAIL
+      ? 1                              // safety: shouldn't happen, but reset
+      : currentRef.current + 1;
+    const realNext = extNext >= N ? extNext - N : extNext;
+
+    // Update display dot / counter immediately to the real target
+    setCurrent(realNext);
+    // Track extended index so the next advance goes to the right position
+    currentRef.current = extNext;
+
+    animate(dragX, offset - extNext * cardStep, {
+      type: 'spring',
+      stiffness: 280,
+      damping: 32,
+      onComplete: () => {
+        if (extNext >= N) {
+          // Seamless invisible snap: phantom card visually identical to real card
+          dragX.set(offset - realNext * cardStep);
+          currentRef.current = realNext;
+        }
+      },
     });
   }, [dragX, offset, cardStep]);
 
-  // Keep a stable ref so the interval always calls the freshest advance closure
   const advanceRef = useRef(advance);
   useEffect(() => { advanceRef.current = advance; }, [advance]);
 
-  // Auto-play — paused while hovered or dragging
+  // Auto-play every 2 seconds, paused while hovered or dragging
   useEffect(() => {
     const id = setInterval(() => {
       if (!isHoveredRef.current && !isDraggingRef.current) advanceRef.current();
-    }, 3000);
+    }, 2000);
     return () => clearInterval(id);
   }, []);
 
   const handleDragEnd = useCallback((_, info) => {
     isDraggingRef.current = false;
-    if (info.offset.x < -50 || info.velocity.x < -500) goTo(currentRef.current + 1);
-    else if (info.offset.x > 50 || info.velocity.x > 500) goTo(currentRef.current - 1);
-    else goTo(currentRef.current);
+    // After drag, currentRef may be an extended index — normalise to real
+    const realCurrent = currentRef.current % N;
+    if (info.offset.x < -50 || info.velocity.x < -500) goTo(realCurrent + 1);
+    else if (info.offset.x > 50 || info.velocity.x > 500) goTo(realCurrent - 1);
+    else goTo(realCurrent);
   }, [goTo]);
 
   return (
@@ -154,7 +170,6 @@ const SectorExperienceSection = () => {
       onMouseEnter={() => { isHoveredRef.current = true; }}
       onMouseLeave={() => { isHoveredRef.current = false; }}
     >
-      {/* SVG filter for light distortion — progressive enhancement on Chromium */}
       <svg style={{ display: 'none' }} aria-hidden="true">
         <defs>
           <filter id="glass-refraction" x="-5%" y="-5%" width="110%" height="110%">
@@ -164,7 +179,6 @@ const SectorExperienceSection = () => {
         </defs>
       </svg>
 
-      {/* Section heading */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -182,7 +196,7 @@ const SectorExperienceSection = () => {
         </motion.div>
       </div>
 
-      {/* Carousel — full-width with edge fade mask */}
+      {/* Carousel — edge-fade mask, no overflow clip so shadows stay visible */}
       <div
         ref={containerRef}
         className="relative w-full select-none"
@@ -196,7 +210,7 @@ const SectorExperienceSection = () => {
         <motion.div
           drag="x"
           dragConstraints={{
-            left: offset - (SECTORS.length - 1) * cardStep,
+            left: offset - (N - 1) * cardStep,
             right: offset,
           }}
           dragTransition={{ bounceStiffness: 320, bounceDamping: 40 }}
@@ -205,9 +219,9 @@ const SectorExperienceSection = () => {
           style={{ x: dragX }}
           className="flex gap-5 cursor-grab active:cursor-grabbing"
         >
-          {SECTORS.map((key, i) => (
+          {EXTENDED.map((key, i) => (
             <SectorCard
-              key={key}
+              key={`${key}-${i}`}
               sectorKey={key}
               index={i}
               dragX={dragX}
@@ -232,7 +246,6 @@ const SectorExperienceSection = () => {
             <ChevronLeft className="w-4 h-4" />
           </button>
 
-          {/* Dot indicators */}
           <div className="flex items-center gap-[7px]">
             {SECTORS.map((_, i) => (
               <button
@@ -250,7 +263,7 @@ const SectorExperienceSection = () => {
 
           <button
             onClick={() => goTo(current + 1)}
-            disabled={current === SECTORS.length - 1}
+            disabled={current === N - 1}
             className="liquid-glass-nav-btn disabled:opacity-25 disabled:cursor-not-allowed"
             aria-label="Next sector"
           >
@@ -258,9 +271,8 @@ const SectorExperienceSection = () => {
           </button>
         </div>
 
-        {/* Counter */}
         <p className="text-center text-xs text-muted-foreground/50 mt-3 tabular-nums">
-          {current + 1} / {SECTORS.length}
+          {current + 1} / {N}
         </p>
       </div>
     </section>
