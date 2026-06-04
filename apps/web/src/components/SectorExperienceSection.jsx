@@ -164,12 +164,7 @@ const SectorExperienceSection = () => {
   }, [goTo]);
 
   return (
-    <section
-      id="sectors"
-      className="py-24 relative z-10"
-      onMouseEnter={() => { isHoveredRef.current = true; }}
-      onMouseLeave={() => { isHoveredRef.current = false; }}
-    >
+    <section id="sectors" className="py-24 relative z-10">
       <svg style={{ display: 'none' }} aria-hidden="true">
         <defs>
           <filter id="glass-refraction" x="-5%" y="-5%" width="110%" height="110%">
@@ -200,6 +195,8 @@ const SectorExperienceSection = () => {
       <div
         ref={containerRef}
         className="relative w-full select-none"
+        onMouseEnter={() => { isHoveredRef.current = true; }}
+        onMouseLeave={() => { isHoveredRef.current = false; }}
         style={{
           maskImage: 'linear-gradient(to right, transparent 0%, black 7%, black 93%, transparent 100%)',
           WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 7%, black 93%, transparent 100%)',
