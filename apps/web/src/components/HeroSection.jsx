@@ -93,9 +93,9 @@ const HeroSection = () => {
             transition={{ duration: 1.2, delay: 0.2, ease: [0.4, 0, 0.2, 1] }}
             className="lg:col-span-6 relative flex justify-center lg:justify-end"
           >
-            <motion.div 
+            <motion.div
               style={{ y: yImage }}
-              className="relative w-full max-w-md lg:max-w-lg aspect-[4/5] rounded-3xl overflow-hidden shadow-[0_32px_64px_rgba(0,0,0,0.15)] group"
+              className="relative w-full max-w-md lg:max-w-lg aspect-[4/5] rounded-3xl overflow-hidden shadow-[0_32px_64px_rgba(0,0,0,0.15)] group glass-frame"
             >
               <motion.img
                 src="/images/ismail-bellakhel-seo-award.jpg"

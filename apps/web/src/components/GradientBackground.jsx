@@ -7,7 +7,20 @@ import { useTheme } from '@/contexts/ThemeContext.jsx';
 // Each layer = one aurora curtain; different colors, speeds, and phase offsets.
 const GradientBackground = () => {
   const { isDark } = useTheme();
-  if (!isDark) return null;
+
+  // Light mode — soft pastel aurora over white background
+  if (!isDark) {
+    return (
+      <div
+        style={{ position: 'fixed', inset: 0, zIndex: 0, overflow: 'hidden', pointerEvents: 'none' }}
+        aria-hidden="true"
+      >
+        <div className="aurora-light-l1" />
+        <div className="aurora-light-l2" />
+        <div className="aurora-light-l3" />
+      </div>
+    );
+  }
 
   return (
     <div

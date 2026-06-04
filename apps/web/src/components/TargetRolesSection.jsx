@@ -189,7 +189,7 @@ const TargetRolesSection = () => {
                       animate={{ opacity: 1, x: 0 }}
                       exit={{ opacity: 0, x: -16, filter: 'blur(3px)' }}
                       transition={{ duration: 0.32, delay: idx * 0.07, ease: [0.4, 0, 0.2, 1] }}
-                      className="p-5 rounded-[16px] bg-black/5 dark:bg-white/5 border border-black/5 dark:border-white/5 hover:bg-black/10 dark:hover:bg-white/10 transition-colors"
+                      className="glass-pill p-5 rounded-[16px] transition-all duration-300 hover:-translate-y-0.5"
                     >
                       <h4 className="text-lg font-bold text-foreground mb-2">{role.title}</h4>
                       <p className="text-muted-foreground text-sm leading-relaxed font-medium">{role.description}</p>

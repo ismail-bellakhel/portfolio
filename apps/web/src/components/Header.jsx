@@ -69,17 +69,17 @@ const Header = () => {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 cubic-bezier(0.4, 0, 0.2, 1) ${
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 overflow-x-clip ${
         isScrolled ? 'py-2' : 'py-4'
       }`}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className={`flex items-center justify-between transition-all duration-500 rounded-2xl ${
-          isScrolled ? 'glass-panel px-6 py-3' : 'px-2 py-2'
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+        <div className={`flex items-center justify-between transition-all duration-500 rounded-2xl min-w-0 ${
+          isScrolled ? 'glass-panel px-4 sm:px-6 py-3' : 'px-2 py-2'
         }`}>
           <button
             onClick={() => scrollToSection('home')}
-            className="text-lg font-bold text-foreground hover:opacity-70 transition-opacity duration-300 tracking-tight"
+            className="text-sm sm:text-lg font-bold text-foreground hover:opacity-70 transition-opacity duration-300 tracking-tight flex-shrink-0 min-w-0"
           >
             Ismail<span className="text-muted-foreground font-medium">Bellakhel</span>
           </button>
@@ -107,12 +107,12 @@ const Header = () => {
             ))}
           </nav>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
             {/* Theme toggle — cycles auto → dark → light → auto */}
             <motion.button
               onClick={() => setMode(NEXT_MODE[mode])}
               title={`Theme: ${MODE_LABEL[mode]} — click to change`}
-              className="liquid-glass-nav-btn w-9 h-9"
+              className="liquid-glass-nav-btn"
               whileHover={{ scale: 1.08 }}
               whileTap={{ scale: 0.92 }}
               aria-label={`Current theme: ${MODE_LABEL[mode]}`}

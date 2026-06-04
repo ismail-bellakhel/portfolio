@@ -191,13 +191,14 @@ const SectorExperienceSection = () => {
         </motion.div>
       </div>
 
-      {/* Carousel — edge-fade mask, no overflow clip so shadows stay visible */}
+      {/* Carousel — overflow-x clip prevents page horizontal scroll */}
       <div
         ref={containerRef}
         className="relative w-full select-none"
         onMouseEnter={() => { isHoveredRef.current = true; }}
         onMouseLeave={() => { isHoveredRef.current = false; }}
         style={{
+          overflowX: 'clip',
           maskImage: 'linear-gradient(to right, transparent 0%, black 7%, black 93%, transparent 100%)',
           WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 7%, black 93%, transparent 100%)',
           perspective: '1100px',

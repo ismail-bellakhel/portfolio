@@ -88,7 +88,7 @@ const TechnicalStackSection = () => {
                       return (
                         <div
                           key={techIndex}
-                          className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-primary/5 border border-primary/10 text-foreground font-medium hover:bg-primary/10 hover:-translate-y-0.5 transition-all duration-300"
+                          className="glass-pill inline-flex items-center gap-2 px-4 py-2 rounded-xl text-foreground font-medium hover:-translate-y-0.5 transition-all duration-300"
                         >
                           <IconComponent className="w-4 h-4 text-primary" />
                           <span className="text-sm tracking-wide">{tech.name || 'Technology'}</span>

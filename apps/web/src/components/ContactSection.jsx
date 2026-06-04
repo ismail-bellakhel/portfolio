@@ -1,7 +1,6 @@
 import React from 'react';
 import { useLanguage } from '@/contexts/LanguageContext.jsx';
 import { motion } from 'framer-motion';
-import { Card, CardContent } from '@/components/ui/card';
 import { Mail, Linkedin, Github } from 'lucide-react';
 
 const ContactSection = () => {
@@ -32,7 +31,7 @@ const ContactSection = () => {
   ];
 
   return (
-    <section id="contact" className="py-20 md:py-24 bg-muted/30">
+    <section id="contact" className="py-20 md:py-24">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -66,15 +65,13 @@ const ContactSection = () => {
                   rel={method.href.startsWith('http') ? 'noopener noreferrer' : undefined}
                   className="block h-full"
                 >
-                  <Card className="h-full hover:shadow-lg transition-all duration-300 hover:-translate-y-1 bg-card">
-                    <CardContent className="p-6 text-center">
-                      <div className={`inline-flex items-center justify-center p-3 rounded-xl bg-muted mb-4 ${method.color}`}>
-                        <Icon className="h-6 w-6" />
-                      </div>
-                      <h3 className="font-semibold mb-2 text-card-foreground">{method.label}</h3>
-                      <p className="text-sm text-card-foreground/70 break-words">{method.value}</p>
-                    </CardContent>
-                  </Card>
+                  <div className="glass-panel-interactive h-full p-6 rounded-[20px] text-center flex flex-col items-center">
+                    <div className={`glass-pill inline-flex items-center justify-center p-3 rounded-xl mb-4 ${method.color}`}>
+                      <Icon className="h-6 w-6" />
+                    </div>
+                    <h3 className="font-semibold mb-2 text-foreground">{method.label}</h3>
+                    <p className="text-sm text-muted-foreground break-words">{method.value}</p>
+                  </div>
                 </a>
               </motion.div>
             );

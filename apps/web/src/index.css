@@ -87,8 +87,9 @@
   
   html {
     scroll-behavior: smooth;
+    overflow-x: clip; /* belt-and-suspenders: prevents any wide child from scrolling horizontally */
   }
-  
+
   body {
     background-color: hsl(var(--background));
     color: hsl(var(--foreground));
@@ -116,6 +117,133 @@
   .dark body {
     background-image: none;
   }
+}
+
+/* ── Glass pill — for small tag/badge elements ──────────────────────────────*/
+.glass-pill {
+  position: relative;
+  background: rgba(255, 255, 255, 0.055);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.42),
+    inset 1px 0 0 rgba(185, 212, 255, 0.16),
+    inset -1px 0 0 rgba(255, 188, 208, 0.13),
+    0 2px 8px rgba(0, 0, 0, 0.04);
+}
+.glass-pill::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.52) 0%,
+    rgba(185, 212, 255, 0.28) 35%,
+    rgba(255, 195, 218, 0.20) 65%,
+    rgba(255, 255, 255, 0.44) 100%
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  z-index: 1;
+}
+.dark .glass-pill {
+  background: rgba(255, 255, 255, 0.032);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.10),
+    inset 1px 0 0 rgba(108, 158, 255, 0.09),
+    inset -1px 0 0 rgba(255, 128, 165, 0.07),
+    0 2px 8px rgba(0, 0, 0, 0.14);
+}
+.dark .glass-pill::before {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.14) 0%,
+    rgba(128, 172, 255, 0.10) 35%,
+    rgba(255, 152, 192, 0.08) 65%,
+    rgba(255, 255, 255, 0.12) 100%
+  );
+}
+
+/* ── Glass frame — prismatic border overlay for image containers ─────────────*/
+.glass-frame {
+  position: relative;
+}
+.glass-frame::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1.5px;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.72) 0%,
+    rgba(178, 215, 255, 0.45) 18%,
+    rgba(255, 198, 228, 0.32) 38%,
+    rgba(192, 255, 210, 0.26) 58%,
+    rgba(208, 188, 255, 0.40) 78%,
+    rgba(255, 255, 255, 0.62) 100%
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  z-index: 10;
+}
+.dark .glass-frame::after {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.26) 0%,
+    rgba(128, 182, 255, 0.16) 18%,
+    rgba(255, 152, 202, 0.12) 38%,
+    rgba(148, 255, 175, 0.09) 58%,
+    rgba(162, 142, 255, 0.14) 78%,
+    rgba(255, 255, 255, 0.22) 100%
+  );
+}
+
+/* ── Light mode aurora layers ────────────────────────────────────────────────*/
+.aurora-light-l1, .aurora-light-l2, .aurora-light-l3 {
+  position: absolute;
+  width: 260%;
+  left: -80%;
+  will-change: transform;
+}
+.aurora-light-l1 {
+  top: -18%; height: 90%;
+  background: repeating-linear-gradient(
+    108deg,
+    transparent 0%, transparent 3.5%,
+    hsla(160, 58%, 56%, 0.17) 6.5%, hsla(170, 62%, 60%, 0.19) 10%,
+    hsla(183, 58%, 62%, 0.14) 13%, transparent 16%, transparent 22%,
+    hsla(155, 55%, 54%, 0.13) 25%, hsla(165, 60%, 58%, 0.15) 28.5%,
+    transparent 32%, transparent 38%
+  );
+  filter: blur(72px);
+  animation: aurora-1 22s ease-in-out infinite;
+}
+.aurora-light-l2 {
+  top: -12%; height: 78%;
+  background: repeating-linear-gradient(
+    105deg,
+    transparent 0%, transparent 4%,
+    hsla(255, 50%, 66%, 0.13) 8%, hsla(270, 52%, 63%, 0.16) 12%,
+    hsla(285, 48%, 66%, 0.11) 15.5%, transparent 19%, transparent 26%
+  );
+  filter: blur(82px);
+  animation: aurora-2 30s ease-in-out infinite;
+}
+.aurora-light-l3 {
+  top: -10%; height: 65%;
+  background: repeating-linear-gradient(
+    102deg,
+    transparent 0%, transparent 5.5%,
+    hsla(330, 50%, 65%, 0.10) 9%, hsla(345, 48%, 63%, 0.09) 13%,
+    transparent 16.5%, transparent 24%
+  );
+  filter: blur(88px);
+  animation: aurora-3 19s ease-in-out infinite;
 }
 
 /* ── Aurora Borealis background layers ───────────────────────────────────────
