@@ -78,6 +78,8 @@ const SectorExperienceSection = () => {
   const containerRef = useRef(null);
   const [containerW, setContainerW] = useState(1000);
   const dragX = useMotionValue(0);
+  const isHoveredRef = useRef(false);
+  const isDraggingRef = useRef(false);
 
   const cardW = Math.min(360, Math.max(260, containerW * 0.74));
   const cardStep = cardW + CARD_GAP;
@@ -112,14 +114,46 @@ const SectorExperienceSection = () => {
     });
   }, [dragX, offset, cardStep]);
 
+  // Auto-advance with wrap-around (tween on wrap so it doesn't spring across the full track)
+  const advance = useCallback(() => {
+    const next = (currentRef.current + 1) % SECTORS.length;
+    currentRef.current = next;
+    setCurrent(next);
+    animate(dragX, offset - next * cardStep, {
+      type: next === 0 ? 'tween' : 'spring',
+      duration: next === 0 ? 0.55 : undefined,
+      ease: next === 0 ? [0.4, 0, 0.2, 1] : undefined,
+      stiffness: next !== 0 ? 280 : undefined,
+      damping: next !== 0 ? 32 : undefined,
+    });
+  }, [dragX, offset, cardStep]);
+
+  // Keep a stable ref so the interval always calls the freshest advance closure
+  const advanceRef = useRef(advance);
+  useEffect(() => { advanceRef.current = advance; }, [advance]);
+
+  // Auto-play — paused while hovered or dragging
+  useEffect(() => {
+    const id = setInterval(() => {
+      if (!isHoveredRef.current && !isDraggingRef.current) advanceRef.current();
+    }, 3000);
+    return () => clearInterval(id);
+  }, []);
+
   const handleDragEnd = useCallback((_, info) => {
+    isDraggingRef.current = false;
     if (info.offset.x < -50 || info.velocity.x < -500) goTo(currentRef.current + 1);
     else if (info.offset.x > 50 || info.velocity.x > 500) goTo(currentRef.current - 1);
     else goTo(currentRef.current);
   }, [goTo]);
 
   return (
-    <section id="sectors" className="py-24 relative z-10">
+    <section
+      id="sectors"
+      className="py-24 relative z-10"
+      onMouseEnter={() => { isHoveredRef.current = true; }}
+      onMouseLeave={() => { isHoveredRef.current = false; }}
+    >
       {/* SVG filter for light distortion — progressive enhancement on Chromium */}
       <svg style={{ display: 'none' }} aria-hidden="true">
         <defs>
@@ -166,6 +200,7 @@ const SectorExperienceSection = () => {
             right: offset,
           }}
           dragTransition={{ bounceStiffness: 320, bounceDamping: 40 }}
+          onDragStart={() => { isDraggingRef.current = true; }}
           onDragEnd={handleDragEnd}
           style={{ x: dragX }}
           className="flex gap-5 cursor-grab active:cursor-grabbing"
