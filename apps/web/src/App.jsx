@@ -1,12 +1,14 @@
 import React from 'react';
 import { Route, Routes, BrowserRouter as Router, Navigate } from 'react-router-dom';
 import { LanguageProvider } from './contexts/LanguageContext.jsx';
+import { ThemeProvider } from './contexts/ThemeContext.jsx';
 import ScrollToTop from './components/ScrollToTop.jsx';
 import HomePage from './pages/HomePage.jsx';
 
 function App() {
   return (
     <Router>
+      <ThemeProvider>
       <LanguageProvider>
         <ScrollToTop />
         <Routes>
@@ -18,6 +20,7 @@ function App() {
           <Route path="*" element={<Navigate to="/en" replace />} />
         </Routes>
       </LanguageProvider>
+      </ThemeProvider>
     </Router>
   );
 }

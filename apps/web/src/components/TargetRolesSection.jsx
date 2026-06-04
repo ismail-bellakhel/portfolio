@@ -164,23 +164,31 @@ const TargetRolesSection = () => {
             </div>
           </div>
 
-          {/* Roles Display */}
+          {/* Roles Display — mobile: order-1 (appears first); desktop: order-2 (right column) */}
           <div className="lg:col-span-5 order-1 lg:order-2">
-            <div className="glass-panel p-8 rounded-[24px] min-h-[350px] flex flex-col">
-              <h3 className="text-sm font-bold uppercase tracking-widest text-primary mb-6 flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+            <motion.div
+              layout
+              transition={{ layout: { type: 'spring', stiffness: 340, damping: 36 } }}
+              className="glass-panel p-8 rounded-[24px] overflow-hidden"
+            >
+              <motion.h3
+                layout="position"
+                className="text-sm font-bold uppercase tracking-widest text-primary mb-6 flex items-center gap-2"
+              >
+                <span className="w-2 h-2 rounded-full bg-primary animate-pulse flex-shrink-0" />
                 {activeCategoryName}
-              </h3>
-              
-              <div className="space-y-4 flex-1">
-                <AnimatePresence mode="popLayout">
+              </motion.h3>
+
+              <motion.div layout="position" className="space-y-4">
+                <AnimatePresence mode="popLayout" initial={false}>
                   {activeRoles.map((role, idx) => (
                     <motion.div
                       key={`${activeArea}-${idx}`}
-                      initial={{ opacity: 0, x: 20 }}
+                      layout
+                      initial={{ opacity: 0, x: 24 }}
                       animate={{ opacity: 1, x: 0 }}
-                      exit={{ opacity: 0, x: -20, filter: "blur(4px)" }}
-                      transition={{ duration: 0.4, delay: idx * 0.1, ease: [0.4, 0, 0.2, 1] }}
+                      exit={{ opacity: 0, x: -16, filter: 'blur(3px)' }}
+                      transition={{ duration: 0.32, delay: idx * 0.07, ease: [0.4, 0, 0.2, 1] }}
                       className="p-5 rounded-[16px] bg-black/5 dark:bg-white/5 border border-black/5 dark:border-white/5 hover:bg-black/10 dark:hover:bg-white/10 transition-colors"
                     >
                       <h4 className="text-lg font-bold text-foreground mb-2">{role.title}</h4>
@@ -188,8 +196,8 @@ const TargetRolesSection = () => {
                     </motion.div>
                   ))}
                 </AnimatePresence>
-              </div>
-            </div>
+              </motion.div>
+            </motion.div>
           </div>
 
         </div>

@@ -1,12 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext.jsx';
+import { useTheme } from '@/contexts/ThemeContext.jsx';
 import LanguageSwitch from '@/components/LanguageSwitch.jsx';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, Sun, Moon, SunMoon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { motion, AnimatePresence } from 'framer-motion';
 
+// Cycles: auto → dark → light → auto
+const NEXT_MODE = { auto: 'dark', dark: 'light', light: 'auto' };
+const MODE_ICON = { light: Sun, dark: Moon, auto: SunMoon };
+const MODE_LABEL = { light: 'Light', dark: 'Dark', auto: 'Auto' };
+
 const Header = () => {
   const { t } = useLanguage();
+  const { mode, setMode } = useTheme();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('home');
@@ -101,6 +108,28 @@ const Header = () => {
           </nav>
 
           <div className="flex items-center gap-2">
+            {/* Theme toggle — cycles auto → dark → light → auto */}
+            <motion.button
+              onClick={() => setMode(NEXT_MODE[mode])}
+              title={`Theme: ${MODE_LABEL[mode]} — click to change`}
+              className="liquid-glass-nav-btn w-9 h-9"
+              whileHover={{ scale: 1.08 }}
+              whileTap={{ scale: 0.92 }}
+              aria-label={`Current theme: ${MODE_LABEL[mode]}`}
+            >
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.span
+                  key={mode}
+                  initial={{ opacity: 0, rotate: -30, scale: 0.7 }}
+                  animate={{ opacity: 1, rotate: 0, scale: 1 }}
+                  exit={{ opacity: 0, rotate: 30, scale: 0.7 }}
+                  transition={{ duration: 0.2 }}
+                  className="flex items-center justify-center"
+                >
+                  {React.createElement(MODE_ICON[mode], { className: 'w-4 h-4' })}
+                </motion.span>
+              </AnimatePresence>
+            </motion.button>
             <LanguageSwitch />
             <Button
               variant="ghost"
