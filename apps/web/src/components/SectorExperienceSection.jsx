@@ -47,17 +47,15 @@ const SectorCard = ({ sectorKey, index, dragX, cardW, cardStep, offset, t }) => 
     const a = Math.min(Math.abs(d), 3);
     return 1 - a * 0.08;
   });
-  const opacity = useTransform(signedDist, d => {
-    const a = Math.min(Math.abs(d), 3);
-    return Math.max(0.28, 1 - a * 0.24);
-  });
   const zIndex = useTransform(signedDist, d => Math.round(20 - Math.min(Math.abs(d), 3) * 5));
-  // rotateY removed — it creates a 3D rendering context that makes backdrop-filter
-  // render as solid black in Chrome on all descendant elements. Use scale only.
+  // opacity removed from outer wrapper — any opacity < 1 on a parent creates a new GPU
+  // compositing layer; backdrop-filter on the child then blurs that layer's transparent
+  // background (= black) instead of the real page content.
+  // Edge fade is handled by the CSS mask on the container.
 
   return (
     <motion.div
-      style={{ scale, opacity, zIndex, width: cardW, flexShrink: 0 }}
+      style={{ scale, zIndex, width: cardW, flexShrink: 0 }}
       className="py-6"
     >
       <div className="liquid-glass-sector h-full min-h-[260px] p-8 rounded-[26px] relative overflow-hidden flex flex-col">

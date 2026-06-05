@@ -597,6 +597,17 @@
     box-shadow: var(--glass-shadow-hover), var(--glass-glow);
   }
 
+  /* Pills nested inside a glass panel must NOT have their own backdrop-filter —
+     double-blurring a transparent layer gives black. Use a simple tint instead. */
+  .glass-panel .glass-pill {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: rgba(255, 255, 255, 0.09);
+  }
+  .dark .glass-panel .glass-pill {
+    background: rgba(255, 255, 255, 0.08);
+  }
+
   /* ─── SEO Award Card — Liquid Gold Glass ─────────────────────────── */
   .case-card-award {
     background: rgba(245, 232, 172, 0.30);

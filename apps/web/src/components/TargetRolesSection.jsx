@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext.jsx';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Mouse } from 'lucide-react';
@@ -9,8 +9,12 @@ const TargetRolesSection = () => {
   const [hasInteracted, setHasInteracted] = useState(false);
   const svgRef = useRef(null);
   const sectionRef = useRef(null);
-  // track whether last interaction was touch (so mouse-leave doesn't reset on mobile)
   const isTouchRef = useRef(false);
+  // Debounce area changes so rapid mouse sweeps don't trigger cascading animations
+  const debounceRef = useRef(null);
+  const activeAreaRef = useRef('all');
+
+  useEffect(() => () => clearTimeout(debounceRef.current), []);
 
   const detectArea = (x, y) => {
     const inCircle = (c) => Math.pow(x - c.x, 2) + Math.pow(y - c.y, 2) <= Math.pow(c.r, 2);
@@ -33,8 +37,23 @@ const TargetRolesSection = () => {
     const x = ((clientX - rect.left) / rect.width) * 100;
     const y = ((clientY - rect.top) / rect.height) * 100;
     const area = detectArea(x, y);
-    if (!hasInteracted) setHasInteracted(true);
-    if (area !== activeArea) setActiveArea(area);
+
+    if (!hasInteracted) {
+      // First interaction: respond immediately so the panel appears without delay
+      setHasInteracted(true);
+      activeAreaRef.current = area;
+      setActiveArea(area);
+      return;
+    }
+
+    // Subsequent moves: debounce 160ms so rapid sweeps don't cascade animations
+    clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => {
+      if (area !== activeAreaRef.current) {
+        activeAreaRef.current = area;
+        setActiveArea(area);
+      }
+    }, 160);
   };
 
   const handleMouseMove = (e) => {
@@ -199,11 +218,12 @@ const TargetRolesSection = () => {
                   /* Roles panel */
                   <motion.div
                     key="roles-panel"
+                    layout
                     initial={{ opacity: 0, y: 14 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0 }}
-                    transition={{ duration: 0.35, ease: [0.4, 0, 0.2, 1] }}
-                    className="glass-panel p-6 sm:p-8 rounded-[24px] overflow-hidden"
+                    transition={{ duration: 0.35, ease: [0.4, 0, 0.2, 1], layout: { type: 'spring', stiffness: 260, damping: 30 } }}
+                    className="glass-panel p-6 sm:p-8 rounded-[24px]"
                   >
                     <h3 className="text-sm font-bold uppercase tracking-widest text-primary mb-6 flex items-center gap-2">
                       <span className="w-2 h-2 rounded-full bg-primary animate-pulse flex-shrink-0" />
