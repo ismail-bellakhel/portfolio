@@ -717,15 +717,17 @@
   /* backdrop-filter is skipped on these cards — they live inside a
      3D rotateY carousel which makes Chrome render it black.
      Instead: semi-transparent tint + prismatic border + specular = glass. */
+  /* Sector cards: NO backdrop-filter. The framer-motion drag container adds
+     will-change:transform which creates a GPU compositing layer for the
+     whole carousel. Any backdrop-filter inside that layer blurs the layer's
+     own transparent bg (= black). Use a visible semi-transparent tint instead
+     so the aurora shows through as a "clear glass" effect. */
   .liquid-glass-sector {
     position: relative;
-    background: rgba(255, 255, 255, 0.06);
-    will-change: backdrop-filter;
-    backdrop-filter: blur(18px) saturate(1.55) brightness(1.02);
-    -webkit-backdrop-filter: blur(18px) saturate(1.55) brightness(1.02);
+    background: rgba(255, 255, 255, 0.10);
     box-shadow:
       0 4px 24px rgba(0, 0, 0, 0.18),
-      inset 0 0 20px -5px rgba(255, 255, 255, 0.25);
+      inset 0 0 20px -5px rgba(255, 255, 255, 0.28);
     transition: box-shadow 0.4s ease, transform 0.4s ease;
   }
 
@@ -754,12 +756,10 @@
   /* ::after removed — the white inner gradient was showing as an unwanted shadow */
 
   .dark .liquid-glass-sector {
-    background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(20px) saturate(1.40) brightness(0.94);
-    -webkit-backdrop-filter: blur(20px) saturate(1.40) brightness(0.94);
+    background: rgba(255, 255, 255, 0.10);
     box-shadow:
       0 4px 24px rgba(0, 0, 0, 0.38),
-      inset 0 0 20px -5px rgba(255, 255, 255, 0.16);
+      inset 0 0 20px -5px rgba(255, 255, 255, 0.22);
   }
 
   .dark .liquid-glass-sector::before {
@@ -883,17 +883,13 @@
   background: rgba(255, 255, 255, 0.05);
 }
 
-/* Sector cards — rotateY removed so lens filter now works */
-.lg-lens-on .liquid-glass-sector {
-  backdrop-filter:         url(#lg-lens) blur(13px) saturate(1.55) brightness(1.02);
-  -webkit-backdrop-filter: url(#lg-lens) blur(13px) saturate(1.55) brightness(1.02);
-  background: rgba(255, 255, 255, 0.06);
-}
+/* Sector cards: composited drag parent prevents backdrop-filter — override to none */
+.lg-lens-on .liquid-glass-sector,
 .lg-lens-on .dark .liquid-glass-sector,
 .dark.lg-lens-on .liquid-glass-sector {
-  backdrop-filter:         url(#lg-lens) blur(16px) saturate(1.35) brightness(0.93);
-  -webkit-backdrop-filter: url(#lg-lens) blur(16px) saturate(1.35) brightness(0.93);
-  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  background: rgba(255, 255, 255, 0.10);
 }
 
 .lg-lens-on .case-card-award {
