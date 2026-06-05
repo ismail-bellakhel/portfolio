@@ -235,9 +235,9 @@ const TargetRolesSection = () => {
                         {activeRoles.map((role, idx) => (
                           <motion.div
                             key={`${activeArea}-${role.title}`}
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -6 }}
+                            initial={{ y: 10 }}
+                            animate={{ y: 0 }}
+                            exit={{ y: -6 }}
                             transition={{ duration: 0.28, delay: idx * 0.06, ease: [0.4, 0, 0.2, 1] }}
                             className="glass-pill p-5 rounded-[16px]"
                           >

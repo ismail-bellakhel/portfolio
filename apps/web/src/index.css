@@ -884,6 +884,17 @@
   -webkit-backdrop-filter: url(#lg-lens) blur(10px) saturate(1.26) brightness(0.93);
   background: rgba(255, 255, 255, 0.05);
 }
+/* Pills INSIDE a glass-panel must never be independently blurred/dark.
+   Higher specificity (html prefix) beats the .dark.lg-lens-on rule above. */
+html .glass-panel .glass-pill,
+html.dark .glass-panel .glass-pill,
+html.lg-lens-on .glass-panel .glass-pill,
+html.dark.lg-lens-on .glass-panel .glass-pill {
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  will-change: auto;
+  background: rgba(255, 255, 255, 0.12);
+}
 
 /* Sector cards: composited drag parent prevents backdrop-filter — override to none */
 .lg-lens-on .liquid-glass-sector,
