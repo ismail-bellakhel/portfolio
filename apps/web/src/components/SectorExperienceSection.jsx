@@ -51,12 +51,13 @@ const SectorCard = ({ sectorKey, index, dragX, cardW, cardStep, offset, t }) => 
     const a = Math.min(Math.abs(d), 3);
     return Math.max(0.28, 1 - a * 0.24);
   });
-  const rotateY = useTransform(signedDist, [-2.5, -1, 0, 1, 2.5], [26, 9, 0, -9, -26]);
   const zIndex = useTransform(signedDist, d => Math.round(20 - Math.min(Math.abs(d), 3) * 5));
+  // rotateY removed — it creates a 3D rendering context that makes backdrop-filter
+  // render as solid black in Chrome on all descendant elements. Use scale only.
 
   return (
     <motion.div
-      style={{ scale, opacity, rotateY, zIndex, width: cardW, flexShrink: 0 }}
+      style={{ scale, opacity, zIndex, width: cardW, flexShrink: 0 }}
       className="py-6"
     >
       <div className="liquid-glass-sector h-full min-h-[260px] p-8 rounded-[26px] relative overflow-hidden flex flex-col">
@@ -221,8 +222,6 @@ const SectorExperienceSection = () => {
           overflowX: 'clip',
           maskImage: 'linear-gradient(to right, transparent 0%, black 7%, black 93%, transparent 100%)',
           WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 7%, black 93%, transparent 100%)',
-          perspective: '1100px',
-          perspectiveOrigin: '50% 50%',
         }}
       >
         <motion.div
