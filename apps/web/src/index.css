@@ -75,7 +75,8 @@
     --ring: 210 40% 98%;
 
     /* Liquid Glass Tokens Dark — backdrop-filter blur */
-    --glass-bg: rgba(8, 12, 26, 0.52);
+    /* bg is visible dark-navy so it never flashes black before compositor runs */
+    --glass-bg: rgba(20, 30, 65, 0.62);
     --glass-blur: blur(22px) saturate(1.40) brightness(0.94);
     --glass-border: rgba(255, 255, 255, 0.0);
     --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.32);
@@ -187,6 +188,7 @@
     inset -1.5px 0 0 rgba(255,185,155,0.32);
 }
 .dark .header-nav[data-scrolled="true"] {
+  background-color: rgba(20, 30, 65, 0.62);
   box-shadow:
     var(--glass-shadow),
     inset 0 1.5px 0 rgba(255,255,255,0.16),
@@ -227,7 +229,7 @@
   z-index: 1;
 }
 .dark .glass-pill {
-  background: rgba(8, 12, 26, 0.48);
+  background: rgba(22, 32, 68, 0.62);
   backdrop-filter: blur(12px) saturate(1.35);
   -webkit-backdrop-filter: blur(12px) saturate(1.35);
   box-shadow:
@@ -739,7 +741,7 @@
   /* ::after removed — the white inner gradient was showing as an unwanted shadow */
 
   .dark .liquid-glass-sector {
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(22, 32, 68, 0.52);
     backdrop-filter: blur(20px) saturate(1.40) brightness(0.94);
     -webkit-backdrop-filter: blur(20px) saturate(1.40) brightness(0.94);
     box-shadow:
@@ -808,13 +810,19 @@
   }
 
   .dark .liquid-glass-nav-btn {
-    background: rgba(255, 255, 255, 0.028);
-    border-color: rgba(255, 255, 255, 0.08);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.10), 0 3px 8px rgba(0, 0, 0, 0.18);
+    background: rgba(22, 32, 68, 0.62);
+    border: none;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.14),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.20),
+      0 3px 8px rgba(0, 0, 0, 0.28);
   }
 
   .dark .liquid-glass-nav-btn:hover:not(:disabled) {
-    background: rgba(255, 255, 255, 0.065);
+    background: rgba(28, 40, 82, 0.72);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.18),
+      0 5px 14px rgba(0, 0, 0, 0.35);
   }
 
   /* Utility for text gradient */
@@ -846,7 +854,7 @@
 .dark.lg-lens-on .glass-panel-interactive {
   backdrop-filter:         url(#lg-lens) blur(15px) saturate(1.32) brightness(0.93);
   -webkit-backdrop-filter: url(#lg-lens) blur(15px) saturate(1.32) brightness(0.93);
-  background-color: rgba(6, 10, 22, 0.42);
+  background-color: rgba(20, 30, 65, 0.62);
 }
 
 .lg-lens-on .glass-pill {
@@ -858,15 +866,20 @@
 .dark.lg-lens-on .glass-pill {
   backdrop-filter:         url(#lg-lens) blur(10px) saturate(1.26) brightness(0.93);
   -webkit-backdrop-filter: url(#lg-lens) blur(10px) saturate(1.26) brightness(0.93);
-  background: rgba(6, 10, 22, 0.44);
+  background: rgba(22, 32, 68, 0.62);
 }
 
-/* sector cards: no backdrop-filter regardless of lens support (3D transform context) */
-.lg-lens-on .liquid-glass-sector,
+/* Sector cards — rotateY removed so lens filter now works */
+.lg-lens-on .liquid-glass-sector {
+  backdrop-filter:         url(#lg-lens) blur(13px) saturate(1.55) brightness(1.02);
+  -webkit-backdrop-filter: url(#lg-lens) blur(13px) saturate(1.55) brightness(1.02);
+  background: rgba(255, 255, 255, 0.07);
+}
 .lg-lens-on .dark .liquid-glass-sector,
 .dark.lg-lens-on .liquid-glass-sector {
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
+  backdrop-filter:         url(#lg-lens) blur(16px) saturate(1.35) brightness(0.93);
+  -webkit-backdrop-filter: url(#lg-lens) blur(16px) saturate(1.35) brightness(0.93);
+  background: rgba(22, 32, 68, 0.52);
 }
 
 .lg-lens-on .case-card-award {
@@ -878,7 +891,7 @@
 .dark.lg-lens-on .case-card-award {
   backdrop-filter:         url(#lg-lens) blur(14px) saturate(1.32) brightness(0.90);
   -webkit-backdrop-filter: url(#lg-lens) blur(14px) saturate(1.32) brightness(0.90);
-  background: rgba(28, 22, 6, 0.46);
+  background: rgba(38, 28, 8, 0.62);
 }
 
 .lg-lens-on .liquid-glass-nav-btn {
@@ -890,7 +903,7 @@
 .dark.lg-lens-on .liquid-glass-nav-btn {
   backdrop-filter:         url(#lg-lens) blur(10px) saturate(1.25) brightness(0.92);
   -webkit-backdrop-filter: url(#lg-lens) blur(10px) saturate(1.25) brightness(0.92);
-  background: rgba(6, 10, 22, 0.44);
+  background: rgba(22, 32, 68, 0.62);
 }
 
 /* Header nav: slightly lower scale distortion since it spans the full width */
@@ -908,5 +921,5 @@
 .dark.lg-lens-on .header-nav[data-scrolled="true"] {
   backdrop-filter:         url(#lg-lens) blur(18px) saturate(1.35) brightness(0.93);
   -webkit-backdrop-filter: url(#lg-lens) blur(18px) saturate(1.35) brightness(0.93);
-  background-color: rgba(6, 10, 22, 0.46);
+  background-color: rgba(20, 30, 65, 0.62);
 }
