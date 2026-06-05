@@ -104,15 +104,12 @@ function genSpecularMap(size = 256) {
 // ─────────────────────────────────────────────────────────────────────────────
 export default function GlassFilter() {
   useEffect(() => {
-    // ── Feature detect ──────────────────────────────────────────────────────
+    // ── Feature detect (do NOT add class yet — SVG must exist first) ─────────
     const probe = document.createElement('div');
     probe.style.backdropFilter = 'url(#probe)';
     const lensSupported = probe.style.backdropFilter.includes('url');
-    if (lensSupported) {
-      document.documentElement.classList.add('lg-lens-on');
-    }
 
-    // ── Generate maps ────────────────────────────────────────────────────────
+    // ── Generate maps (synchronous — canvas API) ─────────────────────────────
     const dispUrl = genDisplacementMap(256);
     const specUrl = genSpecularMap(256);
 
@@ -124,7 +121,6 @@ export default function GlassFilter() {
     svg.setAttribute('aria-hidden', 'true');
     svg.style.cssText = 'position:absolute;top:0;left:0;overflow:hidden;pointer-events:none;z-index:-9999;';
 
-    // objectBoundingBox so scale/coords are proportional to each element
     svg.innerHTML = `
       <defs>
         <filter id="lg-lens"
@@ -132,21 +128,14 @@ export default function GlassFilter() {
           color-interpolation-filters="sRGB"
           filterUnits="objectBoundingBox"
           primitiveUnits="objectBoundingBox">
-
-          <!-- Step 1: Lens-shaped displacement of the backdrop content -->
           <feImage href="${dispUrl}"
             x="0" y="0" width="1" height="1"
             preserveAspectRatio="none" result="dispMap"/>
           <feDisplacementMap in="SourceGraphic" in2="dispMap"
-            scale="0.10"
-            xChannelSelector="R" yChannelSelector="G"
+            scale="0.10" xChannelSelector="R" yChannelSelector="G"
             result="displaced"/>
-
-          <!-- Step 2: Saturate the refracted content for a richer glass look -->
           <feColorMatrix in="displaced" type="saturate"
             values="1.30" result="saturated"/>
-
-          <!-- Step 3: Overlay specular highlights (screen blend = only brightens) -->
           <feImage href="${specUrl}"
             x="0" y="0" width="1" height="1"
             preserveAspectRatio="none" result="specLayer"/>
@@ -155,10 +144,18 @@ export default function GlassFilter() {
       </defs>
     `;
 
+    // ── Inject SVG first, THEN add class ─────────────────────────────────────
+    // Critical: if class is added before the SVG exists, Chrome sees
+    // `backdrop-filter: url(#lg-lens)` referencing nothing → renders black
+    // for one paint cycle before the filter is available.
     document.body.appendChild(svg);
+    if (lensSupported) {
+      document.documentElement.classList.add('lg-lens-on');
+    }
+
     return () => {
-      if (svg.parentNode) svg.parentNode.removeChild(svg);
       document.documentElement.classList.remove('lg-lens-on');
+      if (svg.parentNode) svg.parentNode.removeChild(svg);
     };
   }, []);
 

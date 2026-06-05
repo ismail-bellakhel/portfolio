@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useRef, useEffect, useLayoutEffect, useCallback } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext.jsx';
 import { motion, useMotionValue, useTransform, animate } from 'framer-motion';
 import {
@@ -79,16 +79,29 @@ const SectorExperienceSection = () => {
   const [current, setCurrent] = useState(0); // always a real index (0..N-1)
   const currentRef = useRef(0);              // tracks extended index during phantom advance
   const containerRef = useRef(null);
-  const [containerW, setContainerW] = useState(1000);
+  const [containerW, setContainerW] = useState(0);
+  // initialise to 0; useLayoutEffect will set the real offset before first paint
   const dragX = useMotionValue(0);
   const isHoveredRef = useRef(false);
   const isDraggingRef = useRef(false);
 
-  const cardW = Math.min(360, Math.max(260, containerW * 0.74));
+  // containerW=0 until useLayoutEffect fires; render nothing until measured
+  const cardW = containerW > 0 ? Math.min(360, Math.max(260, containerW * 0.74)) : 300;
   const cardStep = cardW + CARD_GAP;
-  const offset = (containerW - cardW) / 2;
+  const offset = containerW > 0 ? (containerW - cardW) / 2 : 0;
 
-  // Measure container and snap to active card on resize
+  // Set correct initial position BEFORE first paint (no flash of wrong layout)
+  useLayoutEffect(() => {
+    if (!containerRef.current) return;
+    const w = containerRef.current.offsetWidth;
+    const cw = Math.min(360, Math.max(260, w * 0.74));
+    const cs = cw + CARD_GAP;
+    const off = (w - cw) / 2;
+    setContainerW(w);
+    dragX.set(off - currentRef.current * cs);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Measure container and re-center on resize
   useEffect(() => {
     const update = () => {
       if (!containerRef.current) return;
@@ -97,11 +110,8 @@ const SectorExperienceSection = () => {
       const cs = cw + CARD_GAP;
       const off = (w - cw) / 2;
       setContainerW(w);
-      // currentRef here is always a real index after any snap, so position is correct
       dragX.set(off - currentRef.current * cs);
     };
-
-    update();
     const ro = new ResizeObserver(update);
     if (containerRef.current) ro.observe(containerRef.current);
     return () => ro.disconnect();

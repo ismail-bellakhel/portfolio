@@ -705,14 +705,14 @@
   .liquid-glass-sector {
     position: relative;
     background: rgba(255, 255, 255, 0.06);
+    /* Outer depth shadow + soft inner radial glow (no directional line) */
     box-shadow:
-      0 20px 48px -8px rgba(0, 0, 0, 0.28),
-      inset 0 1.5px 0 rgba(255, 255, 255, 0.55),
-      inset 0 -1px 0 rgba(0, 0, 0, 0.12);
+      0 4px 24px rgba(0, 0, 0, 0.18),
+      inset 0 0 20px -5px rgba(255, 255, 255, 0.30);
     transition: box-shadow 0.4s ease, transform 0.4s ease;
   }
 
-  /* Vivid prismatic border */
+  /* Prismatic border — primary glass visual (no backdrop, so border does the work) */
   .liquid-glass-sector::before {
     content: '';
     position: absolute;
@@ -721,12 +721,11 @@
     padding: 1px;
     background: linear-gradient(
       135deg,
-      rgba(255, 255, 255, 0.92) 0%,
-      rgba(255, 212, 148, 0.58) 18%,
-      rgba(255, 168, 138, 0.42) 36%,
-      rgba(195, 245, 205, 0.34) 55%,
-      rgba(212, 188, 255, 0.44) 74%,
-      rgba(255, 255, 255, 0.84) 100%
+      rgba(255, 255, 255, 0.55) 0%,
+      rgba(160, 210, 255, 0.30) 25%,
+      rgba(255, 160, 200, 0.22) 50%,
+      rgba(160, 255, 200, 0.18) 75%,
+      rgba(255, 255, 255, 0.45) 100%
     );
     -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
     -webkit-mask-composite: xor;
@@ -757,9 +756,8 @@
   .dark .liquid-glass-sector {
     background: rgba(255, 255, 255, 0.05);
     box-shadow:
-      0 20px 48px -8px rgba(0, 0, 0, 0.45),
-      inset 0 1.5px 0 rgba(255, 255, 255, 0.18),
-      inset 0 -1px 0 rgba(0, 0, 0, 0.25);
+      0 4px 24px rgba(0, 0, 0, 0.38),
+      inset 0 0 20px -5px rgba(255, 255, 255, 0.20);
   }
 
   .dark .liquid-glass-sector::before {
