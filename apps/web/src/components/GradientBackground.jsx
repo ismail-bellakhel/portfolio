@@ -1,27 +1,10 @@
 import React from 'react';
-import { useTheme } from '@/contexts/ThemeContext.jsx';
 
 // Aurora Borealis background — dark mode only
 // Technique: multiple oversized repeating-linear-gradient layers animated via
 // GPU-accelerated transform (translate + scaleY + rotate), not background-position.
 // Each layer = one aurora curtain; different colors, speeds, and phase offsets.
 const GradientBackground = () => {
-  const { isDark } = useTheme();
-
-  // Light mode — soft pastel aurora over white background
-  if (!isDark) {
-    return (
-      <div
-        style={{ position: 'fixed', inset: 0, zIndex: 0, overflow: 'hidden', pointerEvents: 'none' }}
-        aria-hidden="true"
-      >
-        <div className="aurora-light-l1" />
-        <div className="aurora-light-l2" />
-        <div className="aurora-light-l3" />
-      </div>
-    );
-  }
-
   return (
     <div
       className="aurora-root"
