@@ -215,30 +215,49 @@ const TargetRolesSection = () => {
 
                 ) : (
 
-                  /* Roles panel */
+                  /* Roles panel — FLIP layout animation:
+                     - container has `layout` → height animates via FLIP when items change
+                     - items have `layout` → positions animate via FLIP when list reorders
+                     - mode="popLayout" → exiting items removed from flow immediately
+                       so the container collapses while they animate out
+                     - key=role.title (no prefix) → framer-motion can track which items
+                       are shared between zones and animate them in-place */
                   <motion.div
                     key="roles-panel"
                     layout
-                    initial={{ opacity: 0, y: 14 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.35, ease: [0.4, 0, 0.2, 1], layout: { type: 'spring', stiffness: 260, damping: 30 } }}
+                    initial={{ y: 14, filter: 'blur(6px)' }}
+                    animate={{ y: 0,  filter: 'blur(0px)' }}
+                    exit={{ y: -8,  filter: 'blur(6px)' }}
+                    transition={{
+                      duration: 0.35,
+                      ease: [0.4, 0, 0.2, 1],
+                      layout: { type: 'tween', duration: 0.4, ease: [0.4, 0, 0.2, 1] },
+                    }}
                     className="glass-panel p-6 sm:p-8 rounded-[24px]"
                   >
-                    <h3 className="text-sm font-bold uppercase tracking-widest text-primary mb-6 flex items-center gap-2">
+                    <motion.h3
+                      layout="position"
+                      className="text-sm font-bold uppercase tracking-widest text-primary mb-6 flex items-center gap-2"
+                    >
                       <span className="w-2 h-2 rounded-full bg-primary animate-pulse flex-shrink-0" />
                       {activeCategoryName}
-                    </h3>
+                    </motion.h3>
 
-                    <div className="space-y-4">
+                    <motion.div layout className="space-y-3">
                       <AnimatePresence mode="popLayout" initial={false}>
                         {activeRoles.map((role, idx) => (
                           <motion.div
-                            key={`${activeArea}-${role.title}`}
-                            initial={{ y: 10 }}
-                            animate={{ y: 0 }}
-                            exit={{ y: -6 }}
-                            transition={{ duration: 0.28, delay: idx * 0.06, ease: [0.4, 0, 0.2, 1] }}
+                            key={role.title}
+                            layout
+                            initial={{ y: 8,  filter: 'blur(4px)' }}
+                            animate={{ y: 0,  filter: 'blur(0px)' }}
+                            exit={{    y: -8, filter: 'blur(4px)' }}
+                            transition={{
+                              duration: 0.22,
+                              delay: idx * 0.05,
+                              ease: [0.4, 0, 0.2, 1],
+                              layout: { type: 'tween', duration: 0.3, ease: [0.4, 0, 0.2, 1] },
+                            }}
                             className="glass-pill p-5 rounded-[16px]"
                           >
                             <h4 className="text-base font-bold text-foreground mb-1.5">{role.title}</h4>
@@ -246,7 +265,7 @@ const TargetRolesSection = () => {
                           </motion.div>
                         ))}
                       </AnimatePresence>
-                    </div>
+                    </motion.div>
                   </motion.div>
 
                 )}
