@@ -75,8 +75,7 @@
     --ring: 210 40% 98%;
 
     /* Liquid Glass Tokens Dark — backdrop-filter blur */
-    /* bg is visible dark-navy so it never flashes black before compositor runs */
-    --glass-bg: rgba(20, 30, 65, 0.62);
+    --glass-bg: rgba(255, 255, 255, 0.06);
     --glass-blur: blur(22px) saturate(1.40) brightness(0.94);
     --glass-border: rgba(255, 255, 255, 0.0);
     --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.32);
@@ -188,7 +187,7 @@
     inset -1.5px 0 0 rgba(255,185,155,0.32);
 }
 .dark .header-nav[data-scrolled="true"] {
-  background-color: rgba(20, 30, 65, 0.62);
+  background-color: rgba(255, 255, 255, 0.06);
   box-shadow:
     var(--glass-shadow),
     inset 0 1.5px 0 rgba(255,255,255,0.16),
@@ -201,6 +200,7 @@
 .glass-pill {
   position: relative;
   background: rgba(255, 250, 244, 0.48);
+  will-change: backdrop-filter;
   backdrop-filter: blur(12px) saturate(1.50);
   -webkit-backdrop-filter: blur(12px) saturate(1.50);
   box-shadow:
@@ -229,7 +229,7 @@
   z-index: 1;
 }
 .dark .glass-pill {
-  background: rgba(22, 32, 68, 0.62);
+  background: rgba(255, 255, 255, 0.05);
   backdrop-filter: blur(12px) saturate(1.35);
   -webkit-backdrop-filter: blur(12px) saturate(1.35);
   box-shadow:
@@ -507,6 +507,7 @@
   .glass-panel {
     position: relative;
     background-color: var(--glass-bg);
+    will-change: backdrop-filter;
     backdrop-filter: var(--glass-blur);
     -webkit-backdrop-filter: var(--glass-blur);
     border-radius: var(--radius);
@@ -543,6 +544,7 @@
 
   .dark .glass-panel {
     background-color: var(--glass-bg);
+    will-change: backdrop-filter;
     backdrop-filter: var(--glass-blur);
     -webkit-backdrop-filter: var(--glass-blur);
     box-shadow:
@@ -669,7 +671,7 @@
     color: hsl(46, 52%, 40%);
   }
   .dark .case-card-award {
-    background: rgba(30, 24, 8, 0.52);
+    background: rgba(255, 255, 255, 0.06);
     backdrop-filter: blur(18px) saturate(1.42) brightness(0.92);
     -webkit-backdrop-filter: blur(18px) saturate(1.42) brightness(0.92);
     box-shadow:
@@ -707,7 +709,7 @@
   .liquid-glass-sector {
     position: relative;
     background: rgba(255, 255, 255, 0.06);
-    /* rotateY was removed from the carousel so backdrop-filter now works */
+    will-change: backdrop-filter;
     backdrop-filter: blur(18px) saturate(1.55) brightness(1.02);
     -webkit-backdrop-filter: blur(18px) saturate(1.55) brightness(1.02);
     box-shadow:
@@ -741,7 +743,7 @@
   /* ::after removed — the white inner gradient was showing as an unwanted shadow */
 
   .dark .liquid-glass-sector {
-    background: rgba(22, 32, 68, 0.52);
+    background: rgba(255, 255, 255, 0.05);
     backdrop-filter: blur(20px) saturate(1.40) brightness(0.94);
     -webkit-backdrop-filter: blur(20px) saturate(1.40) brightness(0.94);
     box-shadow:
@@ -784,6 +786,7 @@
     align-items: center;
     justify-content: center;
     background: rgba(255, 250, 244, 0.42);
+    will-change: backdrop-filter;
     backdrop-filter: blur(12px) saturate(1.45);
     -webkit-backdrop-filter: blur(12px) saturate(1.45);
     border: 1px solid rgba(255, 255, 255, 0.0);
@@ -810,7 +813,7 @@
   }
 
   .dark .liquid-glass-nav-btn {
-    background: rgba(22, 32, 68, 0.62);
+    background: rgba(255, 255, 255, 0.07);
     border: none;
     box-shadow:
       inset 0 1px 0 rgba(255, 255, 255, 0.14),
@@ -819,7 +822,7 @@
   }
 
   .dark .liquid-glass-nav-btn:hover:not(:disabled) {
-    background: rgba(28, 40, 82, 0.72);
+    background: rgba(255, 255, 255, 0.12);
     box-shadow:
       inset 0 1px 0 rgba(255, 255, 255, 0.18),
       0 5px 14px rgba(0, 0, 0, 0.35);
@@ -854,7 +857,7 @@
 .dark.lg-lens-on .glass-panel-interactive {
   backdrop-filter:         url(#lg-lens) blur(15px) saturate(1.32) brightness(0.93);
   -webkit-backdrop-filter: url(#lg-lens) blur(15px) saturate(1.32) brightness(0.93);
-  background-color: rgba(20, 30, 65, 0.62);
+  background-color: rgba(255, 255, 255, 0.06);
 }
 
 .lg-lens-on .glass-pill {
@@ -866,20 +869,20 @@
 .dark.lg-lens-on .glass-pill {
   backdrop-filter:         url(#lg-lens) blur(10px) saturate(1.26) brightness(0.93);
   -webkit-backdrop-filter: url(#lg-lens) blur(10px) saturate(1.26) brightness(0.93);
-  background: rgba(22, 32, 68, 0.62);
+  background: rgba(255, 255, 255, 0.05);
 }
 
 /* Sector cards — rotateY removed so lens filter now works */
 .lg-lens-on .liquid-glass-sector {
   backdrop-filter:         url(#lg-lens) blur(13px) saturate(1.55) brightness(1.02);
   -webkit-backdrop-filter: url(#lg-lens) blur(13px) saturate(1.55) brightness(1.02);
-  background: rgba(255, 255, 255, 0.07);
+  background: rgba(255, 255, 255, 0.06);
 }
 .lg-lens-on .dark .liquid-glass-sector,
 .dark.lg-lens-on .liquid-glass-sector {
   backdrop-filter:         url(#lg-lens) blur(16px) saturate(1.35) brightness(0.93);
   -webkit-backdrop-filter: url(#lg-lens) blur(16px) saturate(1.35) brightness(0.93);
-  background: rgba(22, 32, 68, 0.52);
+  background: rgba(255, 255, 255, 0.05);
 }
 
 .lg-lens-on .case-card-award {
@@ -891,7 +894,7 @@
 .dark.lg-lens-on .case-card-award {
   backdrop-filter:         url(#lg-lens) blur(14px) saturate(1.32) brightness(0.90);
   -webkit-backdrop-filter: url(#lg-lens) blur(14px) saturate(1.32) brightness(0.90);
-  background: rgba(38, 28, 8, 0.62);
+  background: rgba(255, 255, 255, 0.06);
 }
 
 .lg-lens-on .liquid-glass-nav-btn {
@@ -903,7 +906,7 @@
 .dark.lg-lens-on .liquid-glass-nav-btn {
   backdrop-filter:         url(#lg-lens) blur(10px) saturate(1.25) brightness(0.92);
   -webkit-backdrop-filter: url(#lg-lens) blur(10px) saturate(1.25) brightness(0.92);
-  background: rgba(22, 32, 68, 0.62);
+  background: rgba(255, 255, 255, 0.07);
 }
 
 /* Header nav: slightly lower scale distortion since it spans the full width */
@@ -921,5 +924,5 @@
 .dark.lg-lens-on .header-nav[data-scrolled="true"] {
   backdrop-filter:         url(#lg-lens) blur(18px) saturate(1.35) brightness(0.93);
   -webkit-backdrop-filter: url(#lg-lens) blur(18px) saturate(1.35) brightness(0.93);
-  background-color: rgba(20, 30, 65, 0.62);
+  background-color: rgba(255, 255, 255, 0.06);
 }
