@@ -89,23 +89,18 @@ const TargetRolesSection = () => {
           </p>
         </motion.div>
 
-        {/* Layout: single-column centered diagram → two-column on first interaction */}
-        <motion.div layout transition={{ duration: 0.55, ease: [0.4, 0, 0.2, 1] }} className="relative">
-          <motion.div layout className={`flex gap-8 lg:gap-10 ${
-            hasInteracted
-              ? 'flex-col lg:flex-row items-start'
-              : 'flex-col items-center'
-          }`}>
+        {/* Layout: single-column centered → side-by-side after first interaction */}
+        <div className={`flex gap-8 lg:gap-10 ${
+          hasInteracted
+            ? 'flex-col lg:flex-row items-start'
+            : 'flex-col items-center'
+        }`}>
 
             {/* ── Venn Diagram ──────────────────────────────────────────── */}
-            <motion.div
-              layout
-              transition={{ type: 'spring', stiffness: 180, damping: 26 }}
-              className={hasInteracted
-                ? 'w-full lg:w-7/12 flex justify-center order-2 lg:order-1'
-                : 'w-full flex justify-center'
-              }
-            >
+            <div className={hasInteracted
+              ? 'w-full lg:w-7/12 flex justify-center order-2 lg:order-1'
+              : 'w-full flex justify-center'
+            }>
               <div
                 className={`relative aspect-square w-full transition-[max-width] duration-700 ease-[cubic-bezier(0.4,0,0.2,1)] ${
                   hasInteracted ? 'max-w-[440px]' : 'max-w-[440px] sm:max-w-[480px]'
@@ -162,7 +157,7 @@ const TargetRolesSection = () => {
                   <text x="50" y="80" textAnchor="middle" className="text-[4px] font-bold fill-foreground mix-blend-overlay pointer-events-none select-none">{t.roles.categories.customer}</text>
                 </svg>
               </div>
-            </motion.div>
+            </div>
 
             {/* ── Invitation (before first interaction) ──────────────────── */}
             <AnimatePresence mode="wait">
@@ -253,8 +248,7 @@ const TargetRolesSection = () => {
               )}
             </AnimatePresence>
 
-          </motion.div>
-        </motion.div>
+        </div>
       </div>
     </section>
   );

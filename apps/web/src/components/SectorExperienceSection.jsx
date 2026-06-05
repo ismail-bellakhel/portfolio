@@ -15,8 +15,10 @@ const SECTORS = [
 ];
 
 const N = SECTORS.length; // 13 real cards
-const LOOP_TAIL = 3;      // phantom copies of first 3 cards appended at the end
-const EXTENDED = [...SECTORS, ...SECTORS.slice(0, LOOP_TAIL)];
+// Doubled array: phantom copies of every card so the seamless snap happens
+// only after frenchTelecom (index N-1) is well off-screen (signedDist > 4).
+// Snap triggers at extNext >= N + 4, then resets to realNext = (N+4) % N.
+const EXTENDED = [...SECTORS, ...SECTORS];
 
 const SECTOR_ICONS = {
   newsMedia: Newspaper,
@@ -117,16 +119,22 @@ const SectorExperienceSection = () => {
     });
   }, [dragX, offset, cardStep]);
 
-  // Auto-advance: walks through EXTENDED (including phantoms), then snaps back seamlessly
+  // Auto-advance: walks through EXTENDED, snaps back only after frenchTelecom
+  // (index N-1) has left the visible area (signedDist > 4 from centre).
+  // That happens once extNext > N + 3, i.e. extNext >= N + 4.
   const advance = useCallback(() => {
-    const extNext = currentRef.current + 1 >= N + LOOP_TAIL
-      ? 1                              // safety: shouldn't happen, but reset
-      : currentRef.current + 1;
-    const realNext = extNext >= N ? extNext - N : extNext;
+    // Safety: never go past the end of the doubled array
+    if (currentRef.current >= 2 * N - 1) {
+      dragX.set(offset - 0 * cardStep);
+      currentRef.current = 0;
+      setCurrent(0);
+      return;
+    }
 
-    // Update display dot / counter immediately to the real target
+    const extNext  = currentRef.current + 1;
+    const realNext = extNext % N;
+
     setCurrent(realNext);
-    // Track extended index so the next advance goes to the right position
     currentRef.current = extNext;
 
     animate(dragX, offset - extNext * cardStep, {
@@ -134,8 +142,10 @@ const SectorExperienceSection = () => {
       stiffness: 280,
       damping: 32,
       onComplete: () => {
-        if (extNext >= N) {
-          // Seamless invisible snap: phantom card visually identical to real card
+        // Snap once frenchTelecom is off-screen:
+        // frenchTelecom is at index N-1; it exits the ±3 visible band
+        // when the centre is at extNext >= (N-1) + 4 = N + 3
+        if (extNext >= N + 4) {
           dragX.set(offset - realNext * cardStep);
           currentRef.current = realNext;
         }
