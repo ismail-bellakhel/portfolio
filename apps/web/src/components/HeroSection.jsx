@@ -4,33 +4,17 @@ import { motion, useScroll, useTransform } from 'framer-motion';
 import { Download, ArrowRight, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
-// Apple Intelligence sweep — glass-panel inset shadows preserved in every frame
-// so the glass styling isn't overridden when Framer Motion takes over box-shadow.
-const GLASS_INSETS =
-  'inset 0 1.5px 0 rgba(255,255,255,0.85), ' +
-  'inset 1.5px 0 0 rgba(255,215,165,0.45), ' +
-  'inset -1.5px 0 0 rgba(255,190,158,0.35), ' +
-  'inset 0 -1px 0 rgba(0,0,0,0.05)';
-
-const AI_GLOW = [
-  [188, 130, 243],  // purple
-  [141, 159, 255],  // blue
-  [245, 185, 234],  // pink
-  [255, 103, 120],  // red
-  [255, 186, 113],  // orange
-  [188, 130, 243],  // purple — closes the loop for seamless repeat
-].map(([r, g, b]) => [
-  `0 0 0 1.5px rgba(${r},${g},${b},0.85)`,        // thin ring
-  `0 0 14px 4px rgba(${r},${g},${b},0.42)`,        // medium glow
-  `0 0 32px 10px rgba(${r},${g},${b},0.14)`,       // wide soft halo
-  GLASS_INSETS,
-].join(', '));
+// AI glow + scroll-fade run on desktop only — both cause excessive GPU work
+// on mobile (box-shadow forces repaint; opacity changes compositing layers).
+const isTouchDevice =
+  typeof window !== 'undefined' &&
+  window.matchMedia('(hover: none) and (pointer: coarse)').matches;
 
 const HeroSection = () => {
   const { t } = useLanguage();
   const { scrollY } = useScroll();
-  
-  const yImage = useTransform(scrollY, [0, 1000], [0, 150]);
+
+  const yImage     = useTransform(scrollY, [0, 1000], [0, 150]);
   const opacityText = useTransform(scrollY, [0, 400], [1, 0]);
 
   const scrollToSection = (sectionId) => {
@@ -51,19 +35,15 @@ const HeroSection = () => {
           
           {/* Text Content */}
           <motion.div
-            style={{ opacity: opacityText }}
+            style={isTouchDevice ? undefined : { opacity: opacityText }}
             className="space-y-8 lg:col-span-6"
           >
             <div className="space-y-6">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0, boxShadow: AI_GLOW }}
-                transition={{
-                  opacity:   { duration: 0.8, ease: [0.4, 0, 0.2, 1] },
-                  y:         { duration: 0.8, ease: [0.4, 0, 0.2, 1] },
-                  boxShadow: { duration: 4, repeat: Infinity, ease: 'linear' },
-                }}
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-panel text-sm font-medium text-muted-foreground"
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, ease: [0.4, 0, 0.2, 1] }}
+                className="hero-name-pill inline-flex items-center gap-2 px-4 py-2 rounded-full glass-panel text-sm font-medium text-muted-foreground"
               >
                 <Sparkles className="h-4 w-4 text-primary" />
                 <span>{t.hero.greeting}</span>

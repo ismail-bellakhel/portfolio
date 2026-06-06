@@ -94,6 +94,10 @@ export default function GlassFilter() {
 
     if (!lensSupported) return;
 
+    // feDisplacementMap + feBlend is far too expensive on mobile GPUs —
+    // causes scroll stutter on every glass element. Skip on touch devices.
+    if (window.matchMedia('(hover: none) and (pointer: coarse)').matches) return;
+
     const dispUrl = genDisplacementMap(256);
     const specUrl = genSpecularMap(256);
 
