@@ -24,19 +24,6 @@ const AI_GLOW = [
   GLASS_INSETS,
 ].join(', '));
 
-// Same palette, shifted by 2 colours so the button and the name pill
-// are never the same hue at the same time.
-const AI_GLOW_BTN = [
-  [245, 185, 234],  // pink
-  [255, 103, 120],  // red
-  [255, 186, 113],  // orange
-  [188, 130, 243],  // purple
-  [141, 159, 255],  // blue
-  [245, 185, 234],  // pink — closes loop
-].map(([r, g, b]) =>
-  `0 0 0 1.5px rgba(${r},${g},${b},0.85), 0 0 14px 4px rgba(${r},${g},${b},0.42), 0 0 32px 10px rgba(${r},${g},${b},0.14)`
-);
-
 const NAME_VARIANTS = [
   { text: 'Ismail Bellakhel',   lang: 'en' },
   { text: 'إسماعيل بلكحل',      lang: 'ar', dir: 'rtl' },
@@ -208,18 +195,12 @@ const HeroSection = () => {
               transition={{ duration: 0.8, delay: 0.3, ease: [0.4, 0, 0.2, 1] }}
               className="flex flex-col sm:flex-row gap-4 pt-4"
             >
-              <motion.div
-                animate={{ boxShadow: AI_GLOW_BTN }}
-                transition={{ boxShadow: { duration: 4, repeat: Infinity, ease: 'linear' } }}
-                style={{ borderRadius: '0.75rem', display: 'inline-flex' }}
-              >
-                <Button size="lg" className="rounded-xl gap-2 group h-14 px-8 text-base" asChild>
-                  <a href="/ismail-bellakhel-cv.pdf" download="Ismail-Bellakhel-CV.pdf">
-                    <Download className="h-5 w-5 transition-transform duration-300 group-hover:-translate-y-1" />
-                    {t.hero.downloadCV}
-                  </a>
-                </Button>
-              </motion.div>
+              <Button size="lg" className="rounded-xl gap-2 group glass-glow h-14 px-8 text-base" asChild>
+                <a href="/ismail-bellakhel-cv.pdf" download="Ismail-Bellakhel-CV.pdf">
+                  <Download className="h-5 w-5 transition-transform duration-300 group-hover:-translate-y-1" />
+                  {t.hero.downloadCV}
+                </a>
+              </Button>
               <Button
                 size="lg"
                 variant="outline"
