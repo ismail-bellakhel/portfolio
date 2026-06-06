@@ -10,7 +10,6 @@ const TargetRolesSection = () => {
   const svgRef = useRef(null);
   const sectionRef = useRef(null);
   const isTouchRef = useRef(false);
-  // Debounce area changes so rapid mouse sweeps don't trigger cascading animations
   const debounceRef = useRef(null);
   const activeAreaRef = useRef('all');
 
@@ -38,22 +37,12 @@ const TargetRolesSection = () => {
     const y = ((clientY - rect.top) / rect.height) * 100;
     const area = detectArea(x, y);
 
-    if (!hasInteracted) {
-      // First interaction: respond immediately so the panel appears without delay
-      setHasInteracted(true);
-      activeAreaRef.current = area;
-      setActiveArea(area);
-      return;
-    }
-
-    // Subsequent moves: debounce 160ms so rapid sweeps don't cascade animations
     clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(() => {
-      if (area !== activeAreaRef.current) {
-        activeAreaRef.current = area;
-        setActiveArea(area);
-      }
-    }, 160);
+      activeAreaRef.current = area;
+      setHasInteracted(true);
+      setActiveArea(area);
+    }, 1000);
   };
 
   const handleMouseMove = (e) => {
@@ -62,10 +51,10 @@ const TargetRolesSection = () => {
   };
 
   const handleMouseLeave = () => {
+    clearTimeout(debounceRef.current);
     if (!isTouchRef.current) setActiveArea('all');
   };
 
-  // Touch: tap/drag to select area — persists until another area is tapped
   const handleTouchStart = (e) => {
     isTouchRef.current = true;
     const t0 = e.touches[0];
@@ -73,7 +62,7 @@ const TargetRolesSection = () => {
   };
 
   const handleTouchMove = (e) => {
-    e.preventDefault(); // stop page scroll while interacting with diagram
+    e.preventDefault();
     const t0 = e.touches[0];
     if (t0) applyCoords(t0.clientX, t0.clientY);
   };
@@ -108,169 +97,152 @@ const TargetRolesSection = () => {
           </p>
         </motion.div>
 
-        {/* Fixed two-column layout: diagram left, content right.
-            No layout animation — flex direction never changes.
-            Right column switches invitation ↔ roles via AnimatePresence. */}
         <div className="flex flex-col lg:flex-row gap-8 lg:gap-10 lg:items-start items-center">
 
-            {/* ── Venn Diagram ──────────────────────────────────────────── */}
-            <div className="w-full lg:w-7/12 flex justify-center">
-              <div
-                className="relative aspect-square w-full max-w-[440px] sm:max-w-[480px]"
-                onMouseMove={handleMouseMove}
-                onMouseLeave={handleMouseLeave}
-                onTouchStart={handleTouchStart}
-                onTouchMove={handleTouchMove}
+          {/* ── Venn Diagram — smaller on mobile so both columns fit ── */}
+          <div className="w-full lg:w-7/12 flex justify-center">
+            <div
+              className="relative aspect-square w-full max-w-[300px] sm:max-w-[400px] lg:max-w-none"
+              onMouseMove={handleMouseMove}
+              onMouseLeave={handleMouseLeave}
+              onTouchStart={handleTouchStart}
+              onTouchMove={handleTouchMove}
+            >
+              <svg
+                ref={svgRef}
+                viewBox="0 0 100 100"
+                className="w-full h-full drop-shadow-2xl"
+                style={{
+                  filter: hasInteracted
+                    ? 'drop-shadow(0 20px 40px rgba(0,0,0,0.1))'
+                    : 'drop-shadow(0 20px 60px rgba(59,130,246,0.18)) drop-shadow(0 0 40px rgba(139,92,246,0.14))',
+                  transition: 'filter 0.7s ease',
+                }}
               >
-                <svg
-                  ref={svgRef}
-                  viewBox="0 0 100 100"
-                  className="w-full h-full drop-shadow-2xl"
-                  style={{
-                    filter: hasInteracted
-                      ? 'drop-shadow(0 20px 40px rgba(0,0,0,0.1))'
-                      : 'drop-shadow(0 20px 60px rgba(59,130,246,0.18)) drop-shadow(0 0 40px rgba(139,92,246,0.14))',
-                    transition: 'filter 0.7s ease',
+                <motion.circle
+                  cx="35" cy="40" r="30"
+                  fill="var(--glass-bg)" stroke="var(--glass-border)" strokeWidth="0.5"
+                  className="origin-[35%_40%]"
+                  animate={{
+                    fill: isHighlighted('marketing') ? 'rgba(59,130,246,0.42)' : 'rgba(59,130,246,0.10)',
+                    scale: isHighlighted('marketing') ? 1.02 : 1,
                   }}
-                >
-                  {/* Marketing Circle */}
-                  <motion.circle
-                    cx="35" cy="40" r="30"
-                    fill="var(--glass-bg)" stroke="var(--glass-border)" strokeWidth="0.5"
-                    className="origin-[35%_40%]"
-                    animate={{
-                      fill: isHighlighted('marketing') ? 'rgba(59,130,246,0.42)' : 'rgba(59,130,246,0.10)',
-                      scale: isHighlighted('marketing') ? 1.02 : 1,
-                    }}
-                  />
-                  {/* Analytics Circle */}
-                  <motion.circle
-                    cx="65" cy="40" r="30"
-                    fill="var(--glass-bg)" stroke="var(--glass-border)" strokeWidth="0.5"
-                    className="origin-[65%_40%]"
-                    animate={{
-                      fill: isHighlighted('analytics') ? 'rgba(16,185,129,0.42)' : 'rgba(16,185,129,0.10)',
-                      scale: isHighlighted('analytics') ? 1.02 : 1,
-                    }}
-                  />
-                  {/* Customer Circle */}
-                  <motion.circle
-                    cx="50" cy="65" r="30"
-                    fill="var(--glass-bg)" stroke="var(--glass-border)" strokeWidth="0.5"
-                    className="origin-[50%_65%]"
-                    animate={{
-                      fill: isHighlighted('customer') ? 'rgba(139,92,246,0.42)' : 'rgba(139,92,246,0.10)',
-                      scale: isHighlighted('customer') ? 1.02 : 1,
-                    }}
-                  />
-                  {/* Labels */}
-                  <text x="25" y="35" textAnchor="middle" className="text-[4px] font-bold fill-foreground mix-blend-overlay pointer-events-none select-none">{t.roles.categories.marketing}</text>
-                  <text x="75" y="35" textAnchor="middle" className="text-[4px] font-bold fill-foreground mix-blend-overlay pointer-events-none select-none">{t.roles.categories.analytics}</text>
-                  <text x="50" y="80" textAnchor="middle" className="text-[4px] font-bold fill-foreground mix-blend-overlay pointer-events-none select-none">{t.roles.categories.customer}</text>
-                </svg>
-              </div>
+                />
+                <motion.circle
+                  cx="65" cy="40" r="30"
+                  fill="var(--glass-bg)" stroke="var(--glass-border)" strokeWidth="0.5"
+                  className="origin-[65%_40%]"
+                  animate={{
+                    fill: isHighlighted('analytics') ? 'rgba(16,185,129,0.42)' : 'rgba(16,185,129,0.10)',
+                    scale: isHighlighted('analytics') ? 1.02 : 1,
+                  }}
+                />
+                <motion.circle
+                  cx="50" cy="65" r="30"
+                  fill="var(--glass-bg)" stroke="var(--glass-border)" strokeWidth="0.5"
+                  className="origin-[50%_65%]"
+                  animate={{
+                    fill: isHighlighted('customer') ? 'rgba(139,92,246,0.42)' : 'rgba(139,92,246,0.10)',
+                    scale: isHighlighted('customer') ? 1.02 : 1,
+                  }}
+                />
+                <text x="25" y="35" textAnchor="middle" className="text-[4px] font-bold fill-foreground mix-blend-overlay pointer-events-none select-none">{t.roles.categories.marketing}</text>
+                <text x="75" y="35" textAnchor="middle" className="text-[4px] font-bold fill-foreground mix-blend-overlay pointer-events-none select-none">{t.roles.categories.analytics}</text>
+                <text x="50" y="80" textAnchor="middle" className="text-[4px] font-bold fill-foreground mix-blend-overlay pointer-events-none select-none">{t.roles.categories.customer}</text>
+              </svg>
             </div>
+          </div>
 
-            {/* ── Right column: invitation OR roles panel ─────────────── */}
-            <div className="w-full lg:w-5/12">
-              <AnimatePresence mode="wait">
-                {!hasInteracted ? (
+          {/* ── Right column: invitation OR roles (no glass-panel container) ── */}
+          <div className="w-full lg:w-5/12">
+            <AnimatePresence mode="wait">
+              {!hasInteracted ? (
 
-                  /* Invitation */
+                /* Invitation — glass-pill class on the same motion.div as opacity
+                   so backdrop-filter and opacity are co-located (no black flash). */
+                <motion.div
+                  key="invitation"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+                  className="flex flex-col items-center lg:items-start gap-3 pt-4 lg:pt-8"
+                >
                   <motion.div
-                    key="invitation"
-                    initial={{ opacity: 0, y: 12 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -8 }}
-                    transition={{ duration: 0.32, ease: [0.4, 0, 0.2, 1] }}
-                    className="flex flex-col items-center lg:items-start gap-3 pt-4 lg:pt-8"
+                    animate={{ y: [0, -6, 0] }}
+                    transition={{ repeat: Infinity, duration: 1.8, ease: 'easeInOut' }}
+                    className="text-primary/40 lg:hidden"
                   >
-                    <motion.div
-                      animate={{ y: [0, -6, 0] }}
-                      transition={{ repeat: Infinity, duration: 1.8, ease: 'easeInOut' }}
-                      className="text-primary/40 lg:hidden"
-                    >
-                      <svg width="22" height="14" viewBox="0 0 22 14" fill="none">
-                        <path d="M1 12L11 2L21 12" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/>
-                      </svg>
-                    </motion.div>
-
-                    <div className="glass-pill inline-flex items-center gap-3 px-7 py-4 rounded-2xl">
-                      <motion.div
-                        animate={{ scale: [1, 1.3, 1], opacity: [0.65, 1, 0.65] }}
-                        transition={{ repeat: Infinity, duration: 2.2, ease: 'easeInOut' }}
-                      >
-                        <Mouse className="w-5 h-5 text-primary" />
-                      </motion.div>
-                      <div className="text-left">
-                        <div className="text-foreground font-semibold text-sm tracking-wide">
-                          {t.roles.diagramInstruction}
-                        </div>
-                        <div className="text-muted-foreground text-xs mt-0.5 font-medium">
-                          {t.roles.diagramHint ?? 'Hover the circles to reveal matching roles'}
-                        </div>
-                      </div>
-                    </div>
+                    <svg width="22" height="14" viewBox="0 0 22 14" fill="none">
+                      <path d="M1 12L11 2L21 12" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
                   </motion.div>
 
-                ) : (
+                  <div className="glass-pill inline-flex items-center gap-3 px-7 py-4 rounded-2xl">
+                    <motion.div
+                      animate={{ scale: [1, 1.3, 1], opacity: [0.65, 1, 0.65] }}
+                      transition={{ repeat: Infinity, duration: 2.2, ease: 'easeInOut' }}
+                    >
+                      <Mouse className="w-5 h-5 text-primary" />
+                    </motion.div>
+                    <div className="text-left">
+                      <div className="text-foreground font-semibold text-sm tracking-wide">
+                        {t.roles.diagramInstruction}
+                      </div>
+                      <div className="text-muted-foreground text-xs mt-0.5 font-medium">
+                        {t.roles.diagramHint ?? 'Hover the circles to reveal matching roles'}
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
 
-                  /* Roles panel — FLIP layout animation:
-                     - container has `layout` → height animates via FLIP when items change
-                     - items have `layout` → positions animate via FLIP when list reorders
-                     - mode="popLayout" → exiting items removed from flow immediately
-                       so the container collapses while they animate out
-                     - key=role.title (no prefix) → framer-motion can track which items
-                       are shared between zones and animate them in-place */
-                  <motion.div
-                    key="roles-panel"
-                    layout
-                    initial={{ y: 14, filter: 'blur(6px)' }}
-                    animate={{ y: 0,  filter: 'blur(0px)' }}
-                    exit={{ y: -8,  filter: 'blur(6px)' }}
-                    transition={{
-                      duration: 0.35,
-                      ease: [0.4, 0, 0.2, 1],
-                      layout: { type: 'tween', duration: 0.4, ease: [0.4, 0, 0.2, 1] },
-                    }}
-                    className="glass-panel p-6 sm:p-8 rounded-[24px]"
-                  >
+              ) : (
+
+                /* Roles — no glass-panel container.
+                   Category title fades when area changes.
+                   Each pill owns its own opacity so backdrop-filter is co-located. */
+                <div key="roles" className="pt-4 lg:pt-2">
+
+                  {/* Category title — fades when area changes */}
+                  <AnimatePresence mode="wait">
                     <motion.h3
-                      layout="position"
+                      key={activeCategoryName}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
                       className="text-sm font-bold uppercase tracking-widest text-primary mb-6 flex items-center gap-2"
                     >
                       <span className="w-2 h-2 rounded-full bg-primary animate-pulse flex-shrink-0" />
                       {activeCategoryName}
                     </motion.h3>
+                  </AnimatePresence>
 
-                    <motion.div layout className="space-y-3">
-                      <AnimatePresence mode="popLayout" initial={false}>
-                        {activeRoles.map((role, idx) => (
-                          <motion.div
-                            key={role.title}
-                            layout
-                            initial={{ y: 8,  filter: 'blur(4px)' }}
-                            animate={{ y: 0,  filter: 'blur(0px)' }}
-                            exit={{    y: -8, filter: 'blur(4px)' }}
-                            transition={{
-                              duration: 0.22,
-                              delay: idx * 0.05,
-                              ease: [0.4, 0, 0.2, 1],
-                              layout: { type: 'tween', duration: 0.3, ease: [0.4, 0, 0.2, 1] },
-                            }}
-                            className="glass-pill p-5 rounded-[16px]"
-                          >
-                            <h4 className="text-base font-bold text-foreground mb-1.5">{role.title}</h4>
-                            <p className="text-muted-foreground text-sm leading-relaxed font-medium">{role.description}</p>
-                          </motion.div>
-                        ))}
-                      </AnimatePresence>
-                    </motion.div>
-                  </motion.div>
+                  {/* Role pills — each is a motion.div with glass-pill class so
+                      opacity and backdrop-filter are on the same element (no black flash). */}
+                  <div className="space-y-3">
+                    <AnimatePresence mode="popLayout" initial={false}>
+                      {activeRoles.map((role, idx) => (
+                        <motion.div
+                          key={role.title}
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                          transition={{ duration: 0.35, delay: idx * 0.07, ease: [0.4, 0, 0.2, 1] }}
+                          className="glass-pill p-5 rounded-[16px]"
+                        >
+                          <h4 className="text-base font-bold text-foreground mb-1.5">{role.title}</h4>
+                          <p className="text-muted-foreground text-sm leading-relaxed font-medium">{role.description}</p>
+                        </motion.div>
+                      ))}
+                    </AnimatePresence>
+                  </div>
 
-                )}
-              </AnimatePresence>
-            </div>
+                </div>
+
+              )}
+            </AnimatePresence>
+          </div>
 
         </div>
       </div>
