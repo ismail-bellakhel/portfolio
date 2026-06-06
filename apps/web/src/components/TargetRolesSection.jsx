@@ -3,13 +3,6 @@ import { useLanguage } from '@/contexts/LanguageContext.jsx';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Mouse } from 'lucide-react';
 
-// Rainbow keyframes — each circle starts at a different phase so they feel
-// independent but share the same Apple Intelligence colour vocabulary.
-const GLOW_M = ['#60a5fa', '#a78bfa', '#f472b6', '#34d399', '#fbbf24', '#60a5fa'];
-const GLOW_A = ['#f472b6', '#34d399', '#fbbf24', '#60a5fa', '#a78bfa', '#f472b6'];
-const GLOW_C = ['#fbbf24', '#60a5fa', '#a78bfa', '#f472b6', '#34d399', '#fbbf24'];
-const GLOW_TRANSITION = { duration: 5, repeat: Infinity, ease: 'linear' };
-
 const TargetRolesSection = () => {
   const { t } = useLanguage();
   const [activeArea, setActiveArea] = useState('all');
@@ -84,9 +77,6 @@ const TargetRolesSection = () => {
   const activeRoles = t.roles.positions[activeArea] || t.roles.positions.all;
   const activeCategoryName = t.roles.categories[activeArea];
 
-  // Shared transition for group opacity + scale
-  const groupTransition = { duration: 0.5, ease: [0.4, 0, 0.2, 1] };
-
   return (
     <section id="roles" ref={sectionRef} className="py-24 relative z-10 overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -109,10 +99,10 @@ const TargetRolesSection = () => {
 
         <div className="flex flex-col lg:flex-row gap-8 lg:gap-10 lg:items-start items-center">
 
-          {/* ── Venn Diagram ──────────────────────────────────────────── */}
+          {/* ── Venn Diagram — smaller on mobile so both columns fit ── */}
           <div className="w-full lg:w-7/12 flex justify-center">
             <div
-              className="relative aspect-square w-full max-w-[440px] sm:max-w-[480px]"
+              className="relative aspect-square w-full max-w-[300px] sm:max-w-[400px] lg:max-w-none"
               onMouseMove={handleMouseMove}
               onMouseLeave={handleMouseLeave}
               onTouchStart={handleTouchStart}
@@ -121,78 +111,41 @@ const TargetRolesSection = () => {
               <svg
                 ref={svgRef}
                 viewBox="0 0 100 100"
-                className="w-full h-full"
-                style={{ overflow: 'visible' }}
+                className="w-full h-full drop-shadow-2xl"
+                style={{
+                  filter: hasInteracted
+                    ? 'drop-shadow(0 20px 40px rgba(0,0,0,0.1))'
+                    : 'drop-shadow(0 20px 60px rgba(59,130,246,0.18)) drop-shadow(0 0 40px rgba(139,92,246,0.14))',
+                  transition: 'filter 0.7s ease',
+                }}
               >
-                <defs>
-                  {/*
-                    Apple Intelligence glow filter:
-                    - feGaussianBlur spreads the stroke into a soft halo
-                    - feMerge stacks two blurred copies (depth) + the sharp original on top
-                    - Oversized filter region (x/y -50%, width/height 200%) so the
-                      blur doesn't get clipped at the viewBox boundary
-                  */}
-                  <filter id="ai-glow" x="-50%" y="-50%" width="200%" height="200%" colorInterpolationFilters="sRGB">
-                    <feGaussianBlur in="SourceGraphic" stdDeviation="2.2" result="blur" />
-                    <feMerge>
-                      <feMergeNode in="blur" />
-                      <feMergeNode in="blur" />
-                      <feMergeNode in="SourceGraphic" />
-                    </feMerge>
-                  </filter>
-                </defs>
-
-                {/* ── Marketing circle (blue) ────────────────────────── */}
-                <motion.g
-                  style={{ transformOrigin: '35% 40%' }}
-                  animate={{ scale: isHighlighted('marketing') ? 1.02 : 1, opacity: isHighlighted('marketing') ? 1 : 0.28 }}
-                  transition={groupTransition}
-                >
-                  {/* Flat fill */}
-                  <circle cx="35" cy="40" r="30" fill="rgba(59,130,246,0.22)" />
-                  {/* Animated rainbow glow edge */}
-                  <motion.circle
-                    cx="35" cy="40" r="30"
-                    fill="none" strokeWidth="1.4"
-                    filter="url(#ai-glow)"
-                    animate={{ stroke: GLOW_M }}
-                    transition={GLOW_TRANSITION}
-                  />
-                </motion.g>
-
-                {/* ── Analytics circle (emerald) ─────────────────────── */}
-                <motion.g
-                  style={{ transformOrigin: '65% 40%' }}
-                  animate={{ scale: isHighlighted('analytics') ? 1.02 : 1, opacity: isHighlighted('analytics') ? 1 : 0.28 }}
-                  transition={groupTransition}
-                >
-                  <circle cx="65" cy="40" r="30" fill="rgba(16,185,129,0.22)" />
-                  <motion.circle
-                    cx="65" cy="40" r="30"
-                    fill="none" strokeWidth="1.4"
-                    filter="url(#ai-glow)"
-                    animate={{ stroke: GLOW_A }}
-                    transition={GLOW_TRANSITION}
-                  />
-                </motion.g>
-
-                {/* ── Customer circle (violet) ───────────────────────── */}
-                <motion.g
-                  style={{ transformOrigin: '50% 65%' }}
-                  animate={{ scale: isHighlighted('customer') ? 1.02 : 1, opacity: isHighlighted('customer') ? 1 : 0.28 }}
-                  transition={groupTransition}
-                >
-                  <circle cx="50" cy="65" r="30" fill="rgba(139,92,246,0.22)" />
-                  <motion.circle
-                    cx="50" cy="65" r="30"
-                    fill="none" strokeWidth="1.4"
-                    filter="url(#ai-glow)"
-                    animate={{ stroke: GLOW_C }}
-                    transition={GLOW_TRANSITION}
-                  />
-                </motion.g>
-
-                {/* Labels */}
+                <motion.circle
+                  cx="35" cy="40" r="30"
+                  fill="var(--glass-bg)" stroke="var(--glass-border)" strokeWidth="0.5"
+                  className="origin-[35%_40%]"
+                  animate={{
+                    fill: isHighlighted('marketing') ? 'rgba(59,130,246,0.42)' : 'rgba(59,130,246,0.10)',
+                    scale: isHighlighted('marketing') ? 1.02 : 1,
+                  }}
+                />
+                <motion.circle
+                  cx="65" cy="40" r="30"
+                  fill="var(--glass-bg)" stroke="var(--glass-border)" strokeWidth="0.5"
+                  className="origin-[65%_40%]"
+                  animate={{
+                    fill: isHighlighted('analytics') ? 'rgba(16,185,129,0.42)' : 'rgba(16,185,129,0.10)',
+                    scale: isHighlighted('analytics') ? 1.02 : 1,
+                  }}
+                />
+                <motion.circle
+                  cx="50" cy="65" r="30"
+                  fill="var(--glass-bg)" stroke="var(--glass-border)" strokeWidth="0.5"
+                  className="origin-[50%_65%]"
+                  animate={{
+                    fill: isHighlighted('customer') ? 'rgba(139,92,246,0.42)' : 'rgba(139,92,246,0.10)',
+                    scale: isHighlighted('customer') ? 1.02 : 1,
+                  }}
+                />
                 <text x="25" y="35" textAnchor="middle" className="text-[4px] font-bold fill-foreground mix-blend-overlay pointer-events-none select-none">{t.roles.categories.marketing}</text>
                 <text x="75" y="35" textAnchor="middle" className="text-[4px] font-bold fill-foreground mix-blend-overlay pointer-events-none select-none">{t.roles.categories.analytics}</text>
                 <text x="50" y="80" textAnchor="middle" className="text-[4px] font-bold fill-foreground mix-blend-overlay pointer-events-none select-none">{t.roles.categories.customer}</text>
@@ -200,11 +153,13 @@ const TargetRolesSection = () => {
             </div>
           </div>
 
-          {/* ── Right column: invitation OR roles ─────────────────────── */}
+          {/* ── Right column: invitation OR roles (no glass-panel container) ── */}
           <div className="w-full lg:w-5/12">
             <AnimatePresence mode="wait">
               {!hasInteracted ? (
 
+                /* Invitation — glass-pill class on the same motion.div as opacity
+                   so backdrop-filter and opacity are co-located (no black flash). */
                 <motion.div
                   key="invitation"
                   initial={{ opacity: 0 }}
@@ -243,8 +198,12 @@ const TargetRolesSection = () => {
 
               ) : (
 
+                /* Roles — no glass-panel container.
+                   Category title fades when area changes.
+                   Each pill owns its own opacity so backdrop-filter is co-located. */
                 <div key="roles" className="pt-4 lg:pt-2">
 
+                  {/* Category title — fades when area changes */}
                   <AnimatePresence mode="wait">
                     <motion.h3
                       key={activeCategoryName}
@@ -259,6 +218,8 @@ const TargetRolesSection = () => {
                     </motion.h3>
                   </AnimatePresence>
 
+                  {/* Role pills — each is a motion.div with glass-pill class so
+                      opacity and backdrop-filter are on the same element (no black flash). */}
                   <div className="space-y-3">
                     <AnimatePresence mode="wait">
                       {activeRoles.map((role, idx) => (
