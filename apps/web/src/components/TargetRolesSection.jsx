@@ -97,12 +97,13 @@ const TargetRolesSection = () => {
           </p>
         </motion.div>
 
-        <div className="flex flex-col lg:flex-row gap-8 lg:gap-10 lg:items-start items-center">
+        {/* Always side-by-side: 60/40 on mobile, 7/12 · 5/12 on desktop */}
+        <div className="flex flex-row gap-3 lg:gap-10 items-start">
 
-          {/* ── Venn Diagram — smaller on mobile so both columns fit ── */}
-          <div className="w-full lg:w-7/12 flex justify-center">
+          {/* ── Venn Diagram ──────────────────────────────────────────── */}
+          <div className="w-[60%] lg:w-7/12 flex justify-center">
             <div
-              className="relative aspect-square w-full max-w-[300px] sm:max-w-[400px] lg:max-w-none"
+              className="relative aspect-square w-full lg:max-w-none"
               onMouseMove={handleMouseMove}
               onMouseLeave={handleMouseLeave}
               onTouchStart={handleTouchStart}
@@ -119,33 +120,63 @@ const TargetRolesSection = () => {
                   transition: 'filter 0.7s ease',
                 }}
               >
+                <defs>
+                  {/* Marketing — blue radial gradient, bright top-left */}
+                  <radialGradient id="grad-marketing" cx="38%" cy="32%" r="68%" gradientUnits="objectBoundingBox">
+                    <stop offset="0%"   stopColor="#93c5fd" stopOpacity="0.95" />
+                    <stop offset="45%"  stopColor="#3b82f6" stopOpacity="0.75" />
+                    <stop offset="100%" stopColor="#1e3a8a" stopOpacity="0.35" />
+                  </radialGradient>
+                  {/* Analytics — emerald radial gradient, bright top-right */}
+                  <radialGradient id="grad-analytics" cx="62%" cy="32%" r="68%" gradientUnits="objectBoundingBox">
+                    <stop offset="0%"   stopColor="#6ee7b7" stopOpacity="0.95" />
+                    <stop offset="45%"  stopColor="#10b981" stopOpacity="0.75" />
+                    <stop offset="100%" stopColor="#064e3b" stopOpacity="0.35" />
+                  </radialGradient>
+                  {/* Customer — violet radial gradient, bright top-centre */}
+                  <radialGradient id="grad-customer" cx="50%" cy="28%" r="70%" gradientUnits="objectBoundingBox">
+                    <stop offset="0%"   stopColor="#c4b5fd" stopOpacity="0.95" />
+                    <stop offset="45%"  stopColor="#8b5cf6" stopOpacity="0.75" />
+                    <stop offset="100%" stopColor="#3b0764" stopOpacity="0.35" />
+                  </radialGradient>
+                </defs>
+
+                {/* Circles — gradient fill, opacity + scale animated */}
                 <motion.circle
                   cx="35" cy="40" r="30"
-                  fill="var(--glass-bg)" stroke="var(--glass-border)" strokeWidth="0.5"
+                  fill="url(#grad-marketing)"
+                  stroke="rgba(147,197,253,0.25)" strokeWidth="0.4"
                   className="origin-[35%_40%]"
                   animate={{
-                    fill: isHighlighted('marketing') ? 'rgba(59,130,246,0.42)' : 'rgba(59,130,246,0.10)',
-                    scale: isHighlighted('marketing') ? 1.02 : 1,
+                    opacity: isHighlighted('marketing') ? 1 : 0.22,
+                    scale:   isHighlighted('marketing') ? 1.02 : 1,
                   }}
+                  transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
                 />
                 <motion.circle
                   cx="65" cy="40" r="30"
-                  fill="var(--glass-bg)" stroke="var(--glass-border)" strokeWidth="0.5"
+                  fill="url(#grad-analytics)"
+                  stroke="rgba(110,231,183,0.25)" strokeWidth="0.4"
                   className="origin-[65%_40%]"
                   animate={{
-                    fill: isHighlighted('analytics') ? 'rgba(16,185,129,0.42)' : 'rgba(16,185,129,0.10)',
-                    scale: isHighlighted('analytics') ? 1.02 : 1,
+                    opacity: isHighlighted('analytics') ? 1 : 0.22,
+                    scale:   isHighlighted('analytics') ? 1.02 : 1,
                   }}
+                  transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
                 />
                 <motion.circle
                   cx="50" cy="65" r="30"
-                  fill="var(--glass-bg)" stroke="var(--glass-border)" strokeWidth="0.5"
+                  fill="url(#grad-customer)"
+                  stroke="rgba(196,181,253,0.25)" strokeWidth="0.4"
                   className="origin-[50%_65%]"
                   animate={{
-                    fill: isHighlighted('customer') ? 'rgba(139,92,246,0.42)' : 'rgba(139,92,246,0.10)',
-                    scale: isHighlighted('customer') ? 1.02 : 1,
+                    opacity: isHighlighted('customer') ? 1 : 0.22,
+                    scale:   isHighlighted('customer') ? 1.02 : 1,
                   }}
+                  transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
                 />
+
+                {/* Labels */}
                 <text x="25" y="35" textAnchor="middle" className="text-[4px] font-bold fill-foreground mix-blend-overlay pointer-events-none select-none">{t.roles.categories.marketing}</text>
                 <text x="75" y="35" textAnchor="middle" className="text-[4px] font-bold fill-foreground mix-blend-overlay pointer-events-none select-none">{t.roles.categories.analytics}</text>
                 <text x="50" y="80" textAnchor="middle" className="text-[4px] font-bold fill-foreground mix-blend-overlay pointer-events-none select-none">{t.roles.categories.customer}</text>
@@ -153,43 +184,32 @@ const TargetRolesSection = () => {
             </div>
           </div>
 
-          {/* ── Right column: invitation OR roles (no glass-panel container) ── */}
-          <div className="w-full lg:w-5/12">
+          {/* ── Right column: invitation OR roles ─────────────────────── */}
+          <div className="w-[40%] lg:w-5/12">
             <AnimatePresence mode="wait">
               {!hasInteracted ? (
 
-                /* Invitation — glass-pill class on the same motion.div as opacity
-                   so backdrop-filter and opacity are co-located (no black flash). */
                 <motion.div
                   key="invitation"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
-                  className="flex flex-col items-center lg:items-start gap-3 pt-4 lg:pt-8"
+                  className="flex flex-col items-start gap-2 pt-2 lg:pt-8"
                 >
-                  <motion.div
-                    animate={{ y: [0, -6, 0] }}
-                    transition={{ repeat: Infinity, duration: 1.8, ease: 'easeInOut' }}
-                    className="text-primary/40 lg:hidden"
-                  >
-                    <svg width="22" height="14" viewBox="0 0 22 14" fill="none">
-                      <path d="M1 12L11 2L21 12" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                  </motion.div>
-
-                  <div className="glass-pill inline-flex items-center gap-3 px-7 py-4 rounded-2xl">
+                  <div className="glass-pill inline-flex items-center gap-2 lg:gap-3 px-3 py-2 lg:px-7 lg:py-4 rounded-2xl">
                     <motion.div
                       animate={{ scale: [1, 1.3, 1], opacity: [0.65, 1, 0.65] }}
                       transition={{ repeat: Infinity, duration: 2.2, ease: 'easeInOut' }}
+                      className="shrink-0"
                     >
-                      <Mouse className="w-5 h-5 text-primary" />
+                      <Mouse className="w-4 h-4 lg:w-5 lg:h-5 text-primary" />
                     </motion.div>
                     <div className="text-left">
-                      <div className="text-foreground font-semibold text-sm tracking-wide">
+                      <div className="text-foreground font-semibold text-[10px] lg:text-sm tracking-wide leading-tight">
                         {t.roles.diagramInstruction}
                       </div>
-                      <div className="text-muted-foreground text-xs mt-0.5 font-medium">
+                      <div className="text-muted-foreground text-[9px] lg:text-xs mt-0.5 font-medium leading-tight hidden sm:block">
                         {t.roles.diagramHint ?? 'Hover the circles to reveal matching roles'}
                       </div>
                     </div>
@@ -198,12 +218,9 @@ const TargetRolesSection = () => {
 
               ) : (
 
-                /* Roles — no glass-panel container.
-                   Category title fades when area changes.
-                   Each pill owns its own opacity so backdrop-filter is co-located. */
-                <div key="roles" className="pt-4 lg:pt-2">
+                <div key="roles" className="pt-1 lg:pt-2">
 
-                  {/* Category title — fades when area changes */}
+                  {/* Category title */}
                   <AnimatePresence mode="wait">
                     <motion.h3
                       key={activeCategoryName}
@@ -211,16 +228,15 @@ const TargetRolesSection = () => {
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
                       transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
-                      className="text-sm font-bold uppercase tracking-widest text-primary mb-6 flex items-center gap-2"
+                      className="text-[10px] lg:text-sm font-bold uppercase tracking-widest text-primary mb-3 lg:mb-6 flex items-center gap-1.5 lg:gap-2"
                     >
-                      <span className="w-2 h-2 rounded-full bg-primary animate-pulse flex-shrink-0" />
+                      <span className="w-1.5 h-1.5 lg:w-2 lg:h-2 rounded-full bg-primary animate-pulse flex-shrink-0" />
                       {activeCategoryName}
                     </motion.h3>
                   </AnimatePresence>
 
-                  {/* Role pills — each is a motion.div with glass-pill class so
-                      opacity and backdrop-filter are on the same element (no black flash). */}
-                  <div className="space-y-3">
+                  {/* Role pills — glass-pill + opacity on same element (no black flash) */}
+                  <div className="space-y-2 lg:space-y-3">
                     <AnimatePresence mode="wait">
                       {activeRoles.map((role, idx) => (
                         <motion.div
@@ -229,10 +245,10 @@ const TargetRolesSection = () => {
                           animate={{ opacity: 1 }}
                           exit={{ opacity: 0, transition: { duration: 0.12, delay: 0 } }}
                           transition={{ duration: 0.32, delay: idx * 0.07, ease: [0.4, 0, 0.2, 1] }}
-                          className="glass-pill p-5 rounded-[16px]"
+                          className="glass-pill p-3 lg:p-5 rounded-[12px] lg:rounded-[16px]"
                         >
-                          <h4 className="text-base font-bold text-foreground mb-1.5">{role.title}</h4>
-                          <p className="text-muted-foreground text-sm leading-relaxed font-medium">{role.description}</p>
+                          <h4 className="text-[11px] lg:text-base font-bold text-foreground mb-0.5 lg:mb-1.5 leading-tight">{role.title}</h4>
+                          <p className="text-muted-foreground text-[10px] lg:text-sm leading-snug lg:leading-relaxed font-medium">{role.description}</p>
                         </motion.div>
                       ))}
                     </AnimatePresence>

@@ -12,14 +12,14 @@ const ContactSection = () => {
       label: t.contact.email,
       value: 'ismail.bellakhel@gmail.com',
       href: 'mailto:ismail.bellakhel@gmail.com',
-      color: 'text-blue-600'
+      color: 'text-white'
     },
     {
       icon: Linkedin,
       label: t.contact.linkedin,
       value: 'linkedin.com/in/ismailbellakhel',
       href: 'https://www.linkedin.com/in/ismailbellakhel/',
-      color: 'text-blue-700'
+      color: 'text-white'
     },
     {
       icon: Github,
