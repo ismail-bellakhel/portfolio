@@ -945,4 +945,36 @@ html.dark.lg-lens-on .glass-panel .glass-pill {
   backdrop-filter:         url(#lg-lens) blur(18px) saturate(1.35) brightness(0.93);
   -webkit-backdrop-filter: url(#lg-lens) blur(18px) saturate(1.35) brightness(0.93);
   background-color: rgba(255, 255, 255, 0.06);
+}.glass {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+
+  background: rgba(255, 255, 255, 0.12);
+
+  backdrop-filter: blur(18px) saturate(1.2);
+  -webkit-backdrop-filter: blur(18px) saturate(1.2);
+
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.glass::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+
+  opacity: 0;
+  pointer-events: none;
+
+  background: rgba(255, 255, 255, 0.001);
+
+  backdrop-filter: url("#lg-lens");
+  -webkit-backdrop-filter: url("#lg-lens");
+
+  transition: opacity 180ms ease;
+}
+
+html.lg-lens-on .glass::before {
+  opacity: 1;
 }

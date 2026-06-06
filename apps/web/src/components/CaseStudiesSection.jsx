@@ -156,8 +156,8 @@ const CaseStudiesSection = () => {
             return (
               <motion.div
                 key={study.key}
-                initial={{ opacity: 0, scale: 0.95, y: 20 }}
-                whileInView={{ opacity: 1, scale: 1, y: 0 }}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-50px" }}
                 transition={{ duration: 0.6, delay: index * 0.05, ease: [0.4, 0, 0.2, 1] }}
               >
