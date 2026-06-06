@@ -42,7 +42,7 @@ const TargetRolesSection = () => {
       activeAreaRef.current = area;
       setHasInteracted(true);
       setActiveArea(area);
-    }, 1000);
+    }, 700);
   };
 
   const handleMouseMove = (e) => {
@@ -221,14 +221,14 @@ const TargetRolesSection = () => {
                   {/* Role pills — each is a motion.div with glass-pill class so
                       opacity and backdrop-filter are on the same element (no black flash). */}
                   <div className="space-y-3">
-                    <AnimatePresence mode="popLayout" initial={false}>
+                    <AnimatePresence mode="wait">
                       {activeRoles.map((role, idx) => (
                         <motion.div
                           key={role.title}
                           initial={{ opacity: 0 }}
                           animate={{ opacity: 1 }}
-                          exit={{ opacity: 0 }}
-                          transition={{ duration: 0.35, delay: idx * 0.07, ease: [0.4, 0, 0.2, 1] }}
+                          exit={{ opacity: 0, transition: { duration: 0.12, delay: 0 } }}
+                          transition={{ duration: 0.32, delay: idx * 0.07, ease: [0.4, 0, 0.2, 1] }}
                           className="glass-pill p-5 rounded-[16px]"
                         >
                           <h4 className="text-base font-bold text-foreground mb-1.5">{role.title}</h4>
