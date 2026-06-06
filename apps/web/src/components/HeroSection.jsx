@@ -71,6 +71,7 @@ function NameCycler() {
 
   return (
     <motion.span
+      layout
       animate={{
         opacity: visible ? 1 : 0,
         filter:  visible ? 'blur(0px)' : 'blur(5px)',
@@ -123,9 +124,10 @@ const HeroSection = () => {
                   opacity:   { duration: 0.8, ease: [0.4, 0, 0.2, 1] },
                   y:         { duration: 0.8, ease: [0.4, 0, 0.2, 1] },
                   boxShadow: { duration: 4, repeat: Infinity, ease: 'linear' },
-                  layout:    { type: 'spring', stiffness: 110, damping: 18, mass: 0.7 },
+                  layout:    { type: 'spring', stiffness: 220, damping: 28, mass: 0.6 },
                 }}
-                className="inline-flex items-center px-4 py-2 rounded-full glass-panel text-sm font-medium text-muted-foreground"
+                style={{ borderRadius: 9999 }}
+                className="inline-flex items-center px-4 py-2 glass-panel text-sm font-medium text-muted-foreground"
               >
                 <NameCycler />
               </motion.div>
