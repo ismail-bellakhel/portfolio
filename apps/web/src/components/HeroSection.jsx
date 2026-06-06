@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext.jsx';
 import { motion, useScroll, useTransform } from 'framer-motion';
-import { Download, ArrowRight, Sparkles } from 'lucide-react';
+import { Download, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 // Apple Intelligence sweep — glass-panel inset shadows preserved in every frame
@@ -13,24 +13,77 @@ const GLASS_INSETS =
   'inset 0 -1px 0 rgba(0,0,0,0.05)';
 
 const AI_GLOW = [
-  [188, 130, 243],  // purple
-  [141, 159, 255],  // blue
-  [245, 185, 234],  // pink
-  [255, 103, 120],  // red
-  [255, 186, 113],  // orange
-  [188, 130, 243],  // purple — closes the loop for seamless repeat
+  [188, 130, 243],
+  [141, 159, 255],
+  [245, 185, 234],
+  [255, 103, 120],
+  [255, 186, 113],
+  [188, 130, 243],
 ].map(([r, g, b]) => [
-  `0 0 0 1.5px rgba(${r},${g},${b},0.85)`,        // thin ring
-  `0 0 14px 4px rgba(${r},${g},${b},0.42)`,        // medium glow
-  `0 0 32px 10px rgba(${r},${g},${b},0.14)`,       // wide soft halo
+  `0 0 0 1.5px rgba(${r},${g},${b},0.85)`,
+  `0 0 14px 4px rgba(${r},${g},${b},0.42)`,
+  `0 0 32px 10px rgba(${r},${g},${b},0.14)`,
   GLASS_INSETS,
 ].join(', '));
+
+// Name in 6 visually distinct scripts — cycles every ~3.4 s
+const NAME_VARIANTS = [
+  { text: 'Ismail Bellakhel',   lang: 'en' },
+  { text: 'إسماعيل بلكحل',      lang: 'ar', dir: 'rtl' },
+  { text: 'イスマイル・ベラヘル', lang: 'ja' },
+  { text: '伊斯梅尔·贝拉赫尔',   lang: 'zh' },
+  { text: 'Исмаил Беллахель',   lang: 'ru' },
+  { text: '이스마일 벨라헬',      lang: 'ko' },
+];
+
+const FADE_MS  = 350; // fade out / fade in duration
+const HOLD_MS  = 2800; // time each name stays fully visible
+
+// Cycles through name variants with a blur-fade transition.
+// The pill's `layout` prop handles smooth container resize.
+function NameCycler() {
+  const [index,   setIndex]   = useState(0);
+  const [visible, setVisible] = useState(true);
+  const timerRef = useRef(null);
+
+  useEffect(() => {
+    const schedule = () => {
+      timerRef.current = setTimeout(() => {
+        setVisible(false);
+        timerRef.current = setTimeout(() => {
+          setIndex(i => (i + 1) % NAME_VARIANTS.length);
+          setVisible(true);
+          schedule();
+        }, FADE_MS + 50);
+      }, HOLD_MS);
+    };
+    schedule();
+    return () => clearTimeout(timerRef.current);
+  }, []);
+
+  const { text, lang, dir } = NAME_VARIANTS[index];
+
+  return (
+    <motion.span
+      animate={{
+        opacity: visible ? 1 : 0,
+        filter:  visible ? 'blur(0px)' : 'blur(5px)',
+      }}
+      transition={{ duration: FADE_MS / 1000, ease: [0.4, 0, 0.2, 1] }}
+      lang={lang}
+      dir={dir}
+      className="inline-block whitespace-nowrap"
+    >
+      {text}
+    </motion.span>
+  );
+}
 
 const HeroSection = () => {
   const { t } = useLanguage();
   const { scrollY } = useScroll();
-  
-  const yImage = useTransform(scrollY, [0, 1000], [0, 150]);
+
+  const yImage     = useTransform(scrollY, [0, 1000], [0, 150]);
   const opacityText = useTransform(scrollY, [0, 400], [1, 0]);
 
   const scrollToSection = (sectionId) => {
@@ -45,30 +98,32 @@ const HeroSection = () => {
 
   return (
     <section id="home" className="relative min-h-[100dvh] flex items-center overflow-hidden pt-20 pb-16 lg:py-0">
-      
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
-          
+
           {/* Text Content */}
           <motion.div
             style={{ opacity: opacityText }}
             className="space-y-8 lg:col-span-6"
           >
             <div className="space-y-6">
+              {/* Name pill — layout animates width smoothly as the name changes length */}
               <motion.div
+                layout
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0, boxShadow: AI_GLOW }}
                 transition={{
                   opacity:   { duration: 0.8, ease: [0.4, 0, 0.2, 1] },
                   y:         { duration: 0.8, ease: [0.4, 0, 0.2, 1] },
                   boxShadow: { duration: 4, repeat: Infinity, ease: 'linear' },
+                  layout:    { duration: 0.45, ease: [0.4, 0, 0.2, 1] },
                 }}
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-panel text-sm font-medium text-muted-foreground"
+                className="inline-flex items-center px-4 py-2 rounded-full glass-panel text-sm font-medium text-muted-foreground"
               >
-                <Sparkles className="h-4 w-4 text-primary" />
-                <span>{t.hero.greeting}</span>
+                <NameCycler />
               </motion.div>
-              
+
               <motion.h1
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -77,7 +132,7 @@ const HeroSection = () => {
               >
                 {t.hero.title}
               </motion.h1>
-              
+
               <motion.p
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -129,10 +184,10 @@ const HeroSection = () => {
                 className="w-full h-full object-cover object-[left_center] transition-transform duration-1000 group-hover:scale-105"
                 loading="eager"
               />
-              
+
               {/* Glass Caption */}
               <div className="absolute bottom-6 left-6 right-6 lg:bottom-8 lg:left-8 lg:right-8">
-                <motion.div 
+                <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.8, delay: 0.6, ease: [0.4, 0, 0.2, 1] }}
