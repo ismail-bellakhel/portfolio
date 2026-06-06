@@ -52,28 +52,23 @@ const ContactSection = () => {
           {contactMethods.map((method, index) => {
             const Icon = method.icon;
             return (
-              <motion.div
+              <motion.a
                 key={method.label}
+                href={method.href}
+                target={method.href.startsWith('http') ? '_blank' : undefined}
+                rel={method.href.startsWith('http') ? 'noopener noreferrer' : undefined}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
+                className="glass-panel-interactive h-full p-6 rounded-[20px] text-center flex flex-col items-center"
               >
-                <a
-                  href={method.href}
-                  target={method.href.startsWith('http') ? '_blank' : undefined}
-                  rel={method.href.startsWith('http') ? 'noopener noreferrer' : undefined}
-                  className="block h-full"
-                >
-                  <div className="glass-panel-interactive h-full p-6 rounded-[20px] text-center flex flex-col items-center">
-                    <div className={`glass-pill inline-flex items-center justify-center p-3 rounded-xl mb-4 ${method.color}`}>
-                      <Icon className="h-6 w-6" />
-                    </div>
-                    <h3 className="font-semibold mb-2 text-foreground">{method.label}</h3>
-                    <p className="text-sm text-muted-foreground break-words">{method.value}</p>
-                  </div>
-                </a>
-              </motion.div>
+                <div className={`glass-pill inline-flex items-center justify-center p-3 rounded-xl mb-4 ${method.color}`}>
+                  <Icon className="h-6 w-6" />
+                </div>
+                <h3 className="font-semibold mb-2 text-foreground">{method.label}</h3>
+                <p className="text-sm text-muted-foreground break-words">{method.value}</p>
+              </motion.a>
             );
           })}
         </div>

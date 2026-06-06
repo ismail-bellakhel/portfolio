@@ -21,12 +21,18 @@ const SPARKLE_DEFS = [
   { top: '94%', left: '35%',  size: 10, delay: 0.24, rep: 0.42 },
 ];
 
-const SeoAwardCard = ({ t }) => {
+// SeoAwardCard owns its own entrance animation so opacity+backdrop-filter
+// are on the same element — avoids the GPU compositing layer / black flash.
+const SeoAwardCard = ({ t, delay = 0 }) => {
   const [hovered, setHovered] = useState(false);
 
   return (
-    <div
+    <motion.div
       className="case-card-award h-full p-8 rounded-[20px] flex flex-col relative overflow-hidden cursor-default"
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-50px" }}
+      transition={{ duration: 0.6, delay, ease: [0.4, 0, 0.2, 1] }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
@@ -66,7 +72,7 @@ const SeoAwardCard = ({ t }) => {
       <p className="leading-relaxed font-medium mt-auto case-card-award-desc">
         {t.caseStudies.seoAward.description}
       </p>
-    </div>
+    </motion.div>
   );
 };
 
@@ -74,42 +80,39 @@ const AnimatedMetric = ({ value }) => {
   const ref = React.useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-50px" });
   const [displayValue, setDisplayValue] = useState("0");
-  
+
   useEffect(() => {
     if (!isInView) return;
-    
-    // Parse value. E.g., "161%" -> 161, "%". "Winner" -> just display.
+
     const numMatch = value.match(/(\d+)(.*)/);
     if (!numMatch) {
       setDisplayValue(value);
       return;
     }
-    
+
     const targetStr = numMatch[1];
     const suffix = numMatch[2];
     const target = parseInt(targetStr, 10);
-    
-    let start = 0;
+
     const duration = 1500;
     const frameRate = 1000 / 60;
     const totalFrames = Math.round(duration / frameRate);
     let frame = 0;
-    
+
     const counter = setInterval(() => {
       frame++;
       const progress = frame / totalFrames;
-      // Ease out cubic
       const easeProgress = 1 - Math.pow(1 - progress, 3);
       const current = Math.round(easeProgress * target);
-      
+
       setDisplayValue(`${current}${suffix}`);
-      
+
       if (frame === totalFrames) {
         clearInterval(counter);
-        setDisplayValue(value); // Ensure exact final string
+        setDisplayValue(value);
       }
     }, frameRate);
-    
+
     return () => clearInterval(counter);
   }, [isInView, value]);
 
@@ -153,6 +156,11 @@ const CaseStudiesSection = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {caseStudies.map((study, index) => {
             const Icon = study.icon;
+
+            if (study.key === 'seoAward') {
+              return <SeoAwardCard key={study.key} t={t} delay={index * 0.05} />;
+            }
+
             return (
               <motion.div
                 key={study.key}
@@ -160,29 +168,24 @@ const CaseStudiesSection = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-50px" }}
                 transition={{ duration: 0.6, delay: index * 0.05, ease: [0.4, 0, 0.2, 1] }}
+                className="glass-panel-interactive h-full p-8 rounded-[20px] flex flex-col group"
               >
-                {study.key === 'seoAward' ? (
-                  <SeoAwardCard t={t} />
-                ) : (
-                  <div className="glass-panel-interactive h-full p-8 rounded-[20px] flex flex-col group">
-                    <div className="flex items-start gap-4 mb-6">
-                      <div className="p-4 rounded-[14px] glass-panel bg-primary/5 text-primary group-hover:scale-110 transition-transform duration-500 ease-out">
-                        <Icon className="h-6 w-6" />
-                      </div>
-                      <div className="flex-1 pt-1">
-                        <h3 className="text-xl font-bold leading-snug text-foreground tracking-tight mb-2">
-                          {t.caseStudies[study.key].title}
-                        </h3>
-                        <div className="inline-flex items-center px-3 py-1 rounded-full bg-primary/10 text-primary font-bold text-sm tracking-wide">
-                          <AnimatedMetric value={t.caseStudies[study.key].metric} />
-                        </div>
-                      </div>
-                    </div>
-                    <p className="text-muted-foreground leading-relaxed font-medium mt-auto">
-                      {t.caseStudies[study.key].description}
-                    </p>
+                <div className="flex items-start gap-4 mb-6">
+                  <div className="p-4 rounded-[14px] glass-panel bg-primary/5 text-primary group-hover:scale-110 transition-transform duration-500 ease-out">
+                    <Icon className="h-6 w-6" />
                   </div>
-                )}
+                  <div className="flex-1 pt-1">
+                    <h3 className="text-xl font-bold leading-snug text-foreground tracking-tight mb-2">
+                      {t.caseStudies[study.key].title}
+                    </h3>
+                    <div className="inline-flex items-center px-3 py-1 rounded-full bg-primary/10 text-primary font-bold text-sm tracking-wide">
+                      <AnimatedMetric value={t.caseStudies[study.key].metric} />
+                    </div>
+                  </div>
+                </div>
+                <p className="text-muted-foreground leading-relaxed font-medium mt-auto">
+                  {t.caseStudies[study.key].description}
+                </p>
               </motion.div>
             );
           })}

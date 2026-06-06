@@ -22,7 +22,6 @@ import {
 const TechnicalStackSection = () => {
   const { t } = useLanguage();
 
-  // Static icon map to avoid dynamic namespace access (ESLint compliant)
   const iconMap = {
     Database,
     Terminal,
@@ -41,7 +40,6 @@ const TechnicalStackSection = () => {
     Code
   };
 
-  // Safely access technicalStack and extract categories
   const techStackData = t?.technicalStack;
   const categories = techStackData?.categories || [];
 
@@ -76,26 +74,24 @@ const TechnicalStackSection = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-50px" }}
                 transition={{ duration: 0.6, delay: index * 0.1, ease: [0.4, 0, 0.2, 1] }}
+                className="glass-panel-interactive h-full p-8 rounded-[24px] flex flex-col group relative overflow-hidden"
               >
-                <div className="glass-panel-interactive h-full p-8 rounded-[24px] flex flex-col group relative overflow-hidden">
-                  <h3 className="text-xl font-bold mb-6 text-foreground tracking-tight">
-                    {category.title || 'Category'}
-                  </h3>
-                  <div className="flex flex-wrap gap-3">
-                    {category.technologies?.map((tech, techIndex) => {
-                      // Use static iconMap with fallback to Code icon
-                      const IconComponent = iconMap[tech.icon] || Code;
-                      return (
-                        <div
-                          key={techIndex}
-                          className="glass-pill inline-flex items-center gap-2 px-4 py-2 rounded-xl text-foreground font-medium hover:-translate-y-0.5 transition-all duration-300"
-                        >
-                          <IconComponent className="w-4 h-4 text-primary" />
-                          <span className="text-sm tracking-wide">{tech.name || 'Technology'}</span>
-                        </div>
-                      );
-                    })}
-                  </div>
+                <h3 className="text-xl font-bold mb-6 text-foreground tracking-tight">
+                  {category.title || 'Category'}
+                </h3>
+                <div className="flex flex-wrap gap-3">
+                  {category.technologies?.map((tech, techIndex) => {
+                    const IconComponent = iconMap[tech.icon] || Code;
+                    return (
+                      <div
+                        key={techIndex}
+                        className="glass-pill inline-flex items-center gap-2 px-4 py-2 rounded-xl text-foreground font-medium hover:-translate-y-0.5 transition-all duration-300"
+                      >
+                        <IconComponent className="w-4 h-4 text-primary" />
+                        <span className="text-sm tracking-wide">{tech.name || 'Technology'}</span>
+                      </div>
+                    );
+                  })}
                 </div>
               </motion.div>
             ))

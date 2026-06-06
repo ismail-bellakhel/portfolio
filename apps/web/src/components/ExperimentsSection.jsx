@@ -15,8 +15,8 @@ const ExperimentsSection = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-50px" }}
           transition={{ duration: 0.8, ease: [0.4, 0, 0.2, 1] }}
+          className="glass-panel p-8 md:p-12 rounded-[32px] text-center relative overflow-hidden group"
         >
-          <div className="glass-panel p-8 md:p-12 rounded-[32px] text-center relative overflow-hidden group">
             <div className="absolute inset-0 bg-gradient-to-tr from-primary/5 via-transparent to-primary/5 opacity-50" />
 
             <div className="relative z-10">
@@ -47,7 +47,6 @@ const ExperimentsSection = () => {
                 </a>
               </Button>
             </div>
-          </div>
         </motion.div>
       </div>
     </section>
