@@ -163,13 +163,19 @@ const HeroSection = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
 
-          <motion.div
-            style={{ opacity: opacityText }}
-            className="space-y-8 lg:col-span-6"
-          >
-            <div className="space-y-6">
-              <NamePill />
+          <div className="space-y-8 lg:col-span-6">
+            {/*
+              NamePill lives OUTSIDE the scroll-fade wrapper.
+              The wrapper uses style={{ opacity: opacityText }} which sets
+              opacity < 1 on scroll → stacking context → child backdrop-filter
+              samples a transparent composite layer = black pill.
+              Moving it here means its own motion.div owns opacity,
+              co-located with glass-panel's backdrop-filter. Safe. ✓
+            */}
+            <NamePill />
 
+            {/* Scroll-fade covers only non-glass content (h1, p, buttons) */}
+            <motion.div style={{ opacity: opacityText }} className="space-y-6">
               <motion.h1
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -187,7 +193,6 @@ const HeroSection = () => {
               >
                 {t.hero.description}
               </motion.p>
-            </div>
 
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -212,6 +217,7 @@ const HeroSection = () => {
               </Button>
             </motion.div>
           </motion.div>
+          </div>
 
           {/* Image */}
           <motion.div
