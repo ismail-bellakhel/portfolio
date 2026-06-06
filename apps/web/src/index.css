@@ -100,12 +100,12 @@
     font-feature-settings: "kern" 1, "liga" 1;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    /* Apple Intelligence palette test */
+    /* Warm day ambient background — golden top-left, coral top-right, green bottom */
     background-image:
-      radial-gradient(ellipse 75% 55% at 0% 0%,   hsla(271, 83%, 73%, 0.18) 0, transparent 55%),
-      radial-gradient(ellipse 60% 50% at 100% 0%,  hsla(230,100%, 78%, 0.14) 0, transparent 50%),
-      radial-gradient(ellipse 65% 50% at 100% 100%, hsla(316, 78%, 84%, 0.10) 0, transparent 50%),
-      radial-gradient(ellipse 50% 40% at 0% 100%,  hsla( 31,100%, 72%, 0.12) 0, transparent 50%);
+      radial-gradient(ellipse 75% 55% at 0% 0%,   hsla(40,  92%, 62%, 0.16) 0, transparent 55%),
+      radial-gradient(ellipse 60% 50% at 100% 0%,  hsla(18,  88%, 65%, 0.12) 0, transparent 50%),
+      radial-gradient(ellipse 65% 50% at 100% 100%, hsla(140, 58%, 55%, 0.08) 0, transparent 50%),
+      radial-gradient(ellipse 50% 40% at 0% 100%,  hsla(28,  90%, 62%, 0.10) 0, transparent 50%);
     background-attachment: fixed;
   }
   
@@ -292,15 +292,15 @@
   left: -80%;
   will-change: transform;
 }
-/* Apple Intelligence palette — purple / blue / red / orange */
+/* Day-theme palette: golden yellow, warm orange, fresh green, coral-red, warm rose */
 .aurora-light-l1 {
   top: -18%; height: 90%;
   background: repeating-linear-gradient(
     108deg,
     transparent 0%, transparent 3.5%,
-    hsla(271, 83%, 73%, 0.36) 6.5%, hsla(265, 82%, 70%, 0.40) 10%,
-    hsla(278, 80%, 76%, 0.28) 13%, transparent 16%, transparent 22%,
-    hsla(268, 81%, 72%, 0.32) 25%, hsla(274, 84%, 74%, 0.36) 28.5%,
+    hsla(46, 92%, 58%, 0.34) 6.5%, hsla(38, 88%, 60%, 0.38) 10%,
+    hsla(52, 95%, 62%, 0.28) 13%, transparent 16%, transparent 22%,
+    hsla(42, 88%, 56%, 0.30) 25%, hsla(48, 92%, 60%, 0.34) 28.5%,
     transparent 32%, transparent 38%
   );
   filter: blur(72px);
@@ -311,9 +311,9 @@
   background: repeating-linear-gradient(
     105deg,
     transparent 0%, transparent 4%,
-    hsla(230,100%, 78%, 0.28) 8%, hsla(222, 98%, 75%, 0.32) 12%,
-    hsla(238,100%, 80%, 0.24) 15.5%, transparent 19%, transparent 26%,
-    hsla(226, 99%, 77%, 0.26) 30%, transparent 34%
+    hsla(140, 62%, 48%, 0.26) 8%, hsla(132, 58%, 50%, 0.30) 12%,
+    hsla(148, 56%, 50%, 0.24) 15.5%, transparent 19%, transparent 26%,
+    hsla(138, 60%, 48%, 0.24) 30%, transparent 34%
   );
   filter: blur(80px);
   animation: aurora-2 30s ease-in-out infinite;
@@ -323,20 +323,21 @@
   background: repeating-linear-gradient(
     102deg,
     transparent 0%, transparent 5.5%,
-    hsla(354,100%, 70%, 0.26) 9%, hsla(348, 98%, 68%, 0.24) 13%,
-    hsla(360,100%, 72%, 0.20) 16%, transparent 20%, transparent 28%
+    hsla(16, 82%, 60%, 0.26) 9%, hsla(8, 78%, 62%, 0.24) 13%,
+    hsla(22, 85%, 58%, 0.22) 16%, transparent 20%, transparent 28%
   );
   filter: blur(85px);
   animation: aurora-3 19s ease-in-out infinite;
 }
+/* Layer 4: warm rose / peach — high-altitude warmth */
 .aurora-light-l4 {
   top: -8%; height: 55%;
   background: repeating-linear-gradient(
     100deg,
     transparent 0%, transparent 6%,
-    hsla( 31,100%, 72%, 0.18) 10%, hsla( 25, 98%, 70%, 0.16) 14%,
+    hsla(340, 72%, 62%, 0.16) 10%, hsla(350, 70%, 65%, 0.14) 14%,
     transparent 18%, transparent 27%,
-    hsla( 35,100%, 74%, 0.14) 31%, transparent 35%
+    hsla(335, 68%, 60%, 0.13) 31%, transparent 35%
   );
   filter: blur(90px);
   animation: aurora-4 28s ease-in-out infinite;
@@ -359,94 +360,94 @@
   will-change: transform;
 }
 
-/* ── Layer 1: purple — dominant band ── */
+/* ── Layer 1: green / teal — dominant aurora band ── */
 .aurora-l1 {
   top: -18%;
   height: 90%;
   background: repeating-linear-gradient(
     108deg,
     transparent            0%,  transparent            3.5%,
-    hsla(271, 83%, 73%, 0.52)  6.5%,
-    hsla(265, 82%, 70%, 0.58) 10%,
-    hsla(278, 80%, 76%, 0.45) 13%,
+    hsla(158, 88%, 42%, 0.52)  6.5%,
+    hsla(168, 90%, 46%, 0.58) 10%,
+    hsla(180, 88%, 48%, 0.45) 13%,
     transparent           16%,  transparent            22%,
-    hsla(268, 81%, 72%, 0.42) 25%,
-    hsla(274, 84%, 74%, 0.48) 28.5%,
+    hsla(155, 84%, 40%, 0.42) 25%,
+    hsla(165, 88%, 44%, 0.48) 28.5%,
     transparent           32%,  transparent            38%,
-    hsla(272, 82%, 73%, 0.38) 41.5%,
-    hsla(266, 83%, 71%, 0.44) 44.5%,
+    hsla(172, 86%, 46%, 0.38) 41.5%,
+    hsla(162, 90%, 44%, 0.44) 44.5%,
     transparent           48%
   );
   filter: blur(58px);
   animation: aurora-1 22s ease-in-out infinite;
 }
 
-/* ── Layer 2: blue ── */
+/* ── Layer 2: blue / indigo ── */
 .aurora-l2 {
   top: -12%;
   height: 78%;
   background: repeating-linear-gradient(
     105deg,
     transparent            0%,  transparent            4%,
-    hsla(230,100%, 78%, 0.42)  8%,
-    hsla(222, 98%, 75%, 0.48) 12%,
-    hsla(238,100%, 80%, 0.38) 15.5%,
+    hsla(218, 82%, 55%, 0.42)  8%,
+    hsla(232, 78%, 52%, 0.48) 12%,
+    hsla(248, 76%, 56%, 0.38) 15.5%,
     transparent           19%,  transparent            26%,
-    hsla(226, 99%, 77%, 0.36) 30%,
-    hsla(234,100%, 79%, 0.40) 33.5%,
+    hsla(224, 80%, 54%, 0.36) 30%,
+    hsla(238, 76%, 52%, 0.40) 33.5%,
     transparent           37%
   );
   filter: blur(50px);
   animation: aurora-2 30s ease-in-out infinite;
 }
 
-/* ── Layer 3: pink ── */
+/* ── Layer 3: violet / purple ── */
 .aurora-l3 {
   top: -10%;
   height: 72%;
   background: repeating-linear-gradient(
     102deg,
     transparent            0%,  transparent            5.5%,
-    hsla(316, 78%, 84%, 0.42)  9%,
-    hsla(310, 75%, 80%, 0.36) 13%,
-    hsla(322, 76%, 86%, 0.30) 16.5%,
+    hsla(270, 72%, 55%, 0.42)  9%,
+    hsla(282, 70%, 52%, 0.36) 13%,
+    hsla(294, 66%, 50%, 0.30) 16.5%,
     transparent           20%,  transparent            28%,
-    hsla(314, 77%, 83%, 0.34) 32%,
-    hsla(320, 74%, 82%, 0.28) 35.5%,
+    hsla(274, 68%, 52%, 0.34) 32%,
+    hsla(286, 65%, 50%, 0.28) 35.5%,
     transparent           39%
   );
   filter: blur(62px);
   animation: aurora-3 19s ease-in-out infinite;
 }
 
-/* ── Layer 4: red / coral — fast shimmer ── */
+/* ── Layer 4: cyan — bright shimmer / fast ── */
 .aurora-l4 {
   top: -20%;
   height: 65%;
   background: repeating-linear-gradient(
     110deg,
     transparent            0%,  transparent            7%,
-    hsla(354,100%, 70%, 0.34) 11%,
-    hsla(348, 98%, 68%, 0.28) 14.5%,
+    hsla(186, 92%, 52%, 0.34) 11%,
+    hsla(195, 90%, 56%, 0.28) 14.5%,
     transparent           18%,  transparent            26%,
-    hsla(358, 99%, 71%, 0.30) 30%,
+    hsla(184, 88%, 50%, 0.30) 30%,
     transparent           34%
   );
   filter: blur(68px);
   animation: aurora-4 16s ease-in-out infinite;
 }
 
-/* ── Layer 5: orange — high-altitude accent ── */
+/* ── Layer 5: pink / magenta — rare high-altitude aurora ── */
 .aurora-l5 {
   top: -22%;
   height: 58%;
   background: repeating-linear-gradient(
     112deg,
     transparent            0%,  transparent            9%,
-    hsla( 31,100%, 72%, 0.28) 13%,
-    hsla( 25, 98%, 70%, 0.22) 16.5%,
+    hsla(310, 68%, 55%, 0.28) 13%,
+    hsla(325, 65%, 52%, 0.22) 16.5%,
     transparent           20%,  transparent            29%,
-    hsla( 35,100%, 74%, 0.24) 33%,
+    hsla(308, 66%, 52%, 0.24) 33%,
     transparent           37%
   );
   filter: blur(72px);
