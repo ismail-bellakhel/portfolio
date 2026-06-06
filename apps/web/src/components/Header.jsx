@@ -13,6 +13,16 @@ const Header = () => {
   useEffect(() => {
     const onScroll = () => {
       setIsScrolled(window.scrollY > 20);
+
+      // If the user has scrolled to (or very near) the bottom of the page,
+      // force the last section active regardless of its offsetTop position.
+      const atBottom =
+        window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 4;
+      if (atBottom) {
+        setActiveSection('contact');
+        return;
+      }
+
       const sections = ['home','sectors','roles','cases','stack','experiments','writing','contact'];
       const pos = window.scrollY + 100;
       for (const id of sections) {
@@ -29,9 +39,12 @@ const Header = () => {
 
   const scrollTo = (id) => {
     const el = document.getElementById(id);
-    if (el) {
-      window.scrollTo({ top: el.getBoundingClientRect().top + window.pageYOffset - 80, behavior: 'smooth' });
-    }
+    if (!el) { setMobileOpen(false); return; }
+    // Clamp the target to the maximum scrollable position so the browser
+    // doesn't silently stop short on bottom sections like Contact.
+    const raw       = el.getBoundingClientRect().top + window.pageYOffset - 80;
+    const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+    window.scrollTo({ top: Math.min(raw, maxScroll), behavior: 'smooth' });
     setMobileOpen(false);
   };
 
