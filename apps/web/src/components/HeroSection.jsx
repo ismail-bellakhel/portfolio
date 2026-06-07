@@ -24,6 +24,11 @@ const AI_GLOW = [
   GLASS_INSETS,
 ].join(', '));
 
+// Computed once at module level — stable across renders, safe on SSR (defaults false).
+const isTouchDevice =
+  typeof window !== 'undefined' &&
+  window.matchMedia('(hover: none) and (pointer: coarse)').matches;
+
 const NAME_VARIANTS = [
   { text: 'Ismail Bellakhel',   lang: 'en' },
   { text: 'إسماعيل بلكحل',      lang: 'ar', dir: 'rtl' },
@@ -111,7 +116,8 @@ function NamePill() {
         animate={{
           opacity:   1,
           y:         0,
-          boxShadow: AI_GLOW,
+          // box-shadow animation forces a repaint every frame — skip on mobile
+          ...(isTouchDevice ? {} : { boxShadow: AI_GLOW }),
           ...(width !== null && { width }),
         }}
         transition={{
@@ -174,8 +180,9 @@ const HeroSection = () => {
             */}
             <NamePill />
 
-            {/* Scroll-fade covers only non-glass content (h1, p, buttons) */}
-            <motion.div style={{ opacity: opacityText }} className="space-y-6">
+            {/* Scroll-fade — disabled on mobile (scroll-linked opacity creates a
+                compositing layer that breaks any backdrop-filter children) */}
+            <motion.div style={isTouchDevice ? undefined : { opacity: opacityText }} className="space-y-6">
               <motion.h1
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -227,7 +234,7 @@ const HeroSection = () => {
             className="lg:col-span-6 relative flex justify-center lg:justify-end"
           >
             <motion.div
-              style={{ y: yImage }}
+              style={isTouchDevice ? undefined : { y: yImage }}
               className="relative w-full max-w-md lg:max-w-lg aspect-[4/5] rounded-3xl overflow-hidden shadow-[0_32px_64px_rgba(0,0,0,0.15)] group glass-frame"
             >
               <motion.img

@@ -978,3 +978,52 @@ html.dark.lg-lens-on .glass-panel .glass-pill {
 html.lg-lens-on .glass::before {
   opacity: 1;
 }
+
+/* ── Mobile performance ───────────────────────────────────────────────────────
+   Primary causes of scroll stutter on phone:
+   1. will-change:backdrop-filter promotes every glass card to its own GPU
+      compositing layer → exhausts mobile VRAM → compositor stalls each frame.
+   2. blur(20px) across many elements = massive GPU fill-rate cost per frame.
+   3. SVG lens filter (feDisplacementMap + feBlend) runs per-element every frame
+      (disabled in GlassFilter.jsx via the matchMedia check).
+
+   Fix: on touch devices drop will-change to auto and halve the blur radius.
+   The glass look is preserved — just lighter — and scrolling stays at 60 fps.
+────────────────────────────────────────────────────────────────────────────── */
+@media (hover: none) and (pointer: coarse) {
+  .glass-panel,
+  .glass-panel-interactive,
+  .glass-pill,
+  .case-card-award,
+  .liquid-glass-nav-btn,
+  .glass-frame {
+    will-change: auto;
+  }
+
+  .glass-panel,
+  .glass-panel-interactive {
+    backdrop-filter: blur(8px) saturate(1.3);
+    -webkit-backdrop-filter: blur(8px) saturate(1.3);
+  }
+
+  .glass-pill {
+    backdrop-filter: blur(5px) saturate(1.2);
+    -webkit-backdrop-filter: blur(5px) saturate(1.2);
+  }
+
+  /* Safety net: GlassFilter already skips lg-lens-on on touch devices,
+     but override any residual lens rules in case the class leaks through */
+  .lg-lens-on .glass-panel,
+  .lg-lens-on .glass-panel-interactive,
+  .dark.lg-lens-on .glass-panel,
+  .dark.lg-lens-on .glass-panel-interactive {
+    backdrop-filter: blur(8px) saturate(1.3);
+    -webkit-backdrop-filter: blur(8px) saturate(1.3);
+  }
+
+  .lg-lens-on .glass-pill,
+  .dark.lg-lens-on .glass-pill {
+    backdrop-filter: blur(5px) saturate(1.2);
+    -webkit-backdrop-filter: blur(5px) saturate(1.2);
+  }
+}
