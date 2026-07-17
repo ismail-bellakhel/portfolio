@@ -28,7 +28,7 @@ const SeoAwardCard = ({ t, delay = 0 }) => {
 
   return (
     <motion.div
-      className="case-card-award h-full p-8 rounded-[20px] flex flex-col relative overflow-hidden cursor-default"
+      className="case-card-award h-[320px] p-8 rounded-[20px] flex flex-col relative overflow-hidden cursor-default"
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-50px" }}
@@ -84,14 +84,15 @@ const AnimatedMetric = ({ value }) => {
   useEffect(() => {
     if (!isInView) return;
 
-    const numMatch = value.match(/(\d+)(.*)/);
+    const numMatch = value.match(/^(.*?)(\d+)(.*)$/);
     if (!numMatch) {
       setDisplayValue(value);
       return;
     }
 
-    const targetStr = numMatch[1];
-    const suffix = numMatch[2];
+    const prefix = numMatch[1];
+    const targetStr = numMatch[2];
+    const suffix = numMatch[3];
     const target = parseInt(targetStr, 10);
 
     const duration = 1500;
@@ -105,7 +106,7 @@ const AnimatedMetric = ({ value }) => {
       const easeProgress = 1 - Math.pow(1 - progress, 3);
       const current = Math.round(easeProgress * target);
 
-      setDisplayValue(`${current}${suffix}`);
+      setDisplayValue(`${prefix}${current}${suffix}`);
 
       if (frame === totalFrames) {
         clearInterval(counter);
@@ -127,12 +128,14 @@ const CaseStudiesSection = () => {
     { key: 'adRevenue', icon: BarChart3 },
     { key: 'seoAward', icon: Award },
     { key: 'serverSideTracking', icon: Server },
-    { key: 'croExperimentation', icon: Target },
-    { key: 'consentOptimisation', icon: Shield },
+    { key: 'dagensReaders', icon: TrendingUp },
     { key: 'dataPipelines', icon: Database },
-    { key: 'dashboarding', icon: BarChart3 },
+    { key: 'croExperimentation', icon: Target },
+    { key: 'crmAutomation', icon: Workflow },
+    { key: 'consentOptimisation', icon: Shield },
+    { key: 'commercialLeadership', icon: Target },
     { key: 'campaignOptimisation', icon: Globe },
-    { key: 'crmAutomation', icon: Workflow }
+    { key: 'networkReaders', icon: TrendingUp }
   ];
 
   return (
@@ -168,7 +171,7 @@ const CaseStudiesSection = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-50px" }}
                 transition={{ duration: 0.6, delay: index * 0.05, ease: [0.4, 0, 0.2, 1] }}
-                className="glass-panel-interactive h-full p-8 rounded-[20px] flex flex-col group"
+                className="glass-panel-interactive h-[320px] p-8 rounded-[20px] flex flex-col group"
               >
                 <div className="flex items-start gap-4 mb-6">
                   <div className="p-4 rounded-[14px] glass-panel bg-primary/5 text-primary group-hover:scale-110 transition-transform duration-500 ease-out">

@@ -16,6 +16,7 @@ import {
   Bot,
   Workflow,
   Network,
+  Target,
   Code
 } from 'lucide-react';
 
@@ -37,6 +38,7 @@ const TechnicalStackSection = () => {
     Bot,
     Workflow,
     Network,
+    Target,
     Code
   };
 
@@ -65,7 +67,7 @@ const TechnicalStackSection = () => {
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
           {categories.length > 0 ? (
             categories.map((category, index) => (
               <motion.div

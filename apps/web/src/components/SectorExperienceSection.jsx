@@ -3,18 +3,15 @@ import { useLanguage } from '@/contexts/LanguageContext.jsx';
 import { motion, useMotionValue, useTransform, animate } from 'framer-motion';
 import {
   ChevronLeft, ChevronRight,
-  Newspaper, Zap, BookOpen, Wifi, Briefcase,
-  Car, Home, Globe, Headphones, Users,
-  ShoppingBag, Activity, Phone,
+  Newspaper, BookOpen, Home, Globe, Activity, Phone,
 } from 'lucide-react';
 
 const SECTORS = [
-  'newsMedia', 'saas', 'edtech', 'telecom', 'consulting',
-  'automotive', 'realEstate', 'international', 'customerService',
-  'customerServiceMgmt', 'retail', 'fitness', 'frenchTelecom',
+  'newsMedia', 'edtech', 'realEstate',
+  'international', 'fitness', 'frenchTelecom',
 ];
 
-const N = SECTORS.length; // 13 real cards
+const N = SECTORS.length;
 // Doubled array: phantom copies of every card so the seamless snap happens
 // only after frenchTelecom (index N-1) is well off-screen (signedDist > 4).
 // Snap triggers at extNext >= N + 4, then resets to realNext = (N+4) % N.
@@ -22,16 +19,9 @@ const EXTENDED = [...SECTORS, ...SECTORS];
 
 const SECTOR_ICONS = {
   newsMedia: Newspaper,
-  saas: Zap,
   edtech: BookOpen,
-  telecom: Wifi,
-  consulting: Briefcase,
-  automotive: Car,
   realEstate: Home,
   international: Globe,
-  customerService: Headphones,
-  customerServiceMgmt: Users,
-  retail: ShoppingBag,
   fitness: Activity,
   frenchTelecom: Phone,
 };
