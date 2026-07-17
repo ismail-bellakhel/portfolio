@@ -26,7 +26,7 @@ export const translations = {
     },
     roles: {
       title: 'Target Roles', subtitle: 'Roles at the intersection of growth, analytics, and AI', diagramInstruction: 'Hover over the diagram to explore roles across disciplines.',
-      categories: { marketing: 'Tillväxt', analytics: 'Analys', customer: 'AI', marketingAnalytics: 'Tillväxt + analys', marketingCustomer: 'Tillväxt + AI', analyticsCustomer: 'Analys + AI', all: 'Tillväxt + analys + AI' },
+      categories: { marketing: 'Growth', analytics: 'Analytics', customer: 'AI', marketingAnalytics: 'Growth + Analytics', marketingCustomer: 'Growth + AI', analyticsCustomer: 'Analytics + AI', all: 'Growth + Analytics + AI' },
       positions: {
         marketing: [{ title: 'Growth Marketing Manager', description: '' }, { title: 'Performance Marketing Manager', description: '' }, { title: 'SEO / GEO Manager', description: '' }, { title: 'CRM & Lifecycle Manager', description: '' }],
         analytics: [{ title: 'Marketing Analytics Manager', description: '' }, { title: 'Product Analytics Manager', description: '' }, { title: 'Measurement & Attribution Lead', description: '' }],
@@ -86,7 +86,7 @@ export const translations = {
     },
     roles: {
       title: 'Målroller', subtitle: 'Roller i skärningspunkten mellan tillväxt, analys och AI', diagramInstruction: 'Håll muspekaren över diagrammet för att utforska roller.',
-      categories: { marketing: 'Vekst', analytics: 'Analyse', customer: 'AI', marketingAnalytics: 'Vekst + analyse', marketingCustomer: 'Vekst + AI', analyticsCustomer: 'Analyse + AI', all: 'Vekst + analyse + AI' },
+      categories: { marketing: 'Tillväxt', analytics: 'Analys', customer: 'AI', marketingAnalytics: 'Tillväxt + analys', marketingCustomer: 'Tillväxt + AI', analyticsCustomer: 'Analys + AI', all: 'Tillväxt + analys + AI' },
       positions: {
         marketing: [{ title: 'Growth Marketing Manager', description: '' }, { title: 'Performance Marketing Manager', description: '' }, { title: 'SEO / GEO Manager', description: '' }, { title: 'CRM & Lifecycle Manager', description: '' }],
         analytics: [{ title: 'Marketing Analytics Manager', description: '' }, { title: 'Product Analytics Manager', description: '' }, { title: 'Measurement & Attribution Lead', description: '' }],
@@ -146,7 +146,7 @@ export const translations = {
     },
     roles: {
       title: 'Målroller', subtitle: 'Roller i skjæringspunktet mellom vekst, analyse og AI', diagramInstruction: 'Hold pekeren over diagrammet for å utforske roller.',
-      categories: { marketing: 'Croissance', analytics: 'Analyse', customer: 'IA', marketingAnalytics: 'Croissance + analyse', marketingCustomer: 'Croissance + IA', analyticsCustomer: 'Analyse + IA', all: 'Croissance + analyse + IA' },
+      categories: { marketing: 'Vekst', analytics: 'Analyse', customer: 'AI', marketingAnalytics: 'Vekst + analyse', marketingCustomer: 'Vekst + AI', analyticsCustomer: 'Analyse + AI', all: 'Vekst + analyse + AI' },
       positions: {
         marketing: [{ title: 'Growth Marketing Manager', description: '' }, { title: 'Performance Marketing Manager', description: '' }, { title: 'SEO / GEO Manager', description: '' }, { title: 'CRM & Lifecycle Manager', description: '' }],
         analytics: [{ title: 'Marketing Analytics Manager', description: '' }, { title: 'Product Analytics Manager', description: '' }, { title: 'Measurement & Attribution Lead', description: '' }],
@@ -206,7 +206,7 @@ export const translations = {
     },
     roles: {
       title: 'Postes ciblés', subtitle: 'Des postes à l’intersection de la croissance, de l’analytique et de l’IA', diagramInstruction: 'Survolez le diagramme pour explorer les postes.',
-      categories: { marketing: 'Growth', analytics: 'Analytics', customer: 'AI', marketingAnalytics: 'Growth + Analytics', marketingCustomer: 'Growth + AI', analyticsCustomer: 'Analytics + AI', all: 'Growth + Analytics + AI' },
+      categories: { marketing: 'Croissance', analytics: 'Analyse', customer: 'IA', marketingAnalytics: 'Croissance + analyse', marketingCustomer: 'Croissance + IA', analyticsCustomer: 'Analyse + IA', all: 'Croissance + analyse + IA' },
       positions: {
         marketing: [{ title: 'Growth Marketing Manager', description: '' }, { title: 'Performance Marketing Manager', description: '' }, { title: 'SEO / GEO Manager', description: '' }, { title: 'CRM & Lifecycle Manager', description: '' }],
         analytics: [{ title: 'Marketing Analytics Manager', description: '' }, { title: 'Product Analytics Manager', description: '' }, { title: 'Measurement & Attribution Lead', description: '' }],
