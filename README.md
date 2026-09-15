@@ -47,7 +47,7 @@ The hero's visit count and online status use a Cloudflare Pages Function in `fun
 
 Keep the Cloudflare Pages root directory set to the repository root so Cloudflare discovers its `functions` directory. Redeploy after adding or changing bindings and secrets.
 
-Visits are counted once per browser session cookie (30-day lifetime), rather than on each refresh. To activate the owner heartbeat on a trusted browser, visit the deployed site once using `https://your-site.example/#presence=YOUR_SECRET`. The fragment is removed immediately and the key stays only in that browser. While the site is open in a visible tab, a heartbeat is sent every two minutes; status changes to Offline five minutes after the last heartbeat.
+Visits are counted once per browser session cookie (30-day lifetime), rather than on each refresh. To activate the owner heartbeat on a trusted browser, open `https://your-site.example/presence.html` and enter the presence key. The server verifies it and creates a secure, HTTP-only owner session cookie. While the portfolio is open in a visible tab, a heartbeat is sent every two minutes; status changes to Offline five minutes after the last heartbeat.
 
 ---
 

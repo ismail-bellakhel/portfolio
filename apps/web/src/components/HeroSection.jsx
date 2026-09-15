@@ -151,25 +151,8 @@ function NamePill() {
 
 function PortfolioStatus({ labels }) {
   const [status, setStatus] = useState(null);
-  const presenceKeyRef = useRef(null);
 
   useEffect(() => {
-    const presenceMatch = window.location.hash.match(/^#presence=(.+)$/);
-    if (presenceMatch) {
-      try {
-        localStorage.setItem('portfolio_presence_key', decodeURIComponent(presenceMatch[1]).trim());
-      } catch {
-        // Storage can be unavailable in privacy-focused browser modes.
-      }
-      window.history.replaceState(null, '', `${window.location.pathname}${window.location.search}`);
-    }
-
-    try {
-      presenceKeyRef.current = localStorage.getItem('portfolio_presence_key');
-    } catch {
-      presenceKeyRef.current = null;
-    }
-
     let cancelled = false;
 
     const loadStatus = async () => {
@@ -184,11 +167,10 @@ function PortfolioStatus({ labels }) {
     };
 
     const heartbeat = async () => {
-      if (!presenceKeyRef.current || document.visibilityState !== 'visible') return;
+      if (document.visibilityState !== 'visible') return;
       try {
         const response = await fetch('/api/portfolio-status', {
           method: 'POST',
-          headers: { 'x-presence-key': presenceKeyRef.current },
         });
         if (!response.ok) return;
         if (!cancelled) setStatus(current => current ? { ...current, online: true } : current);

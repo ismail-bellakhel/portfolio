@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Portfolio presence</title>
+    <style>
+      :root { color-scheme: dark; font-family: Inter, ui-sans-serif, system-ui, sans-serif; }
+      body { min-height: 100vh; margin: 0; display: grid; place-items: center; background: #070812; color: #f7f7fb; }
+      main { width: min(420px, calc(100% - 40px)); padding: 32px; border: 1px solid #ffffff24; border-radius: 24px; background: #ffffff0d; box-shadow: 0 24px 80px #0008; }
+      h1 { margin: 0 0 8px; font-size: 1.5rem; }
+      p { color: #b8bac8; line-height: 1.5; }
+      label { display: block; margin: 24px 0 8px; font-size: .875rem; }
+      input, button { width: 100%; box-sizing: border-box; border-radius: 12px; font: inherit; }
+      input { padding: 13px 14px; color: #fff; background: #080912; border: 1px solid #ffffff30; }
+      button { margin-top: 12px; padding: 13px; border: 0; color: #11121a; background: #fff; font-weight: 700; cursor: pointer; }
+      button:disabled { opacity: .6; cursor: wait; }
+      #message { min-height: 24px; margin-bottom: 0; }
+      .success { color: #6ee7a8; }
+      .error { color: #fda4af; }
+      a { color: #fff; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Owner presence</h1>
+      <p>Sign in once on this browser. A secure cookie will keep your portfolio status Online while the site is open.</p>
+      <form id="presence-form">
+        <label for="presence-key">Presence key</label>
+        <input id="presence-key" type="password" autocomplete="current-password" required />
+        <button type="submit">Activate presence</button>
+      </form>
+      <p id="message" role="status" aria-live="polite"></p>
+    </main>
+    <script>
+      const form = document.querySelector('#presence-form');
+      const input = document.querySelector('#presence-key');
+      const button = form.querySelector('button');
+      const message = document.querySelector('#message');
+
+      form.addEventListener('submit', async event => {
+        event.preventDefault();
+        button.disabled = true;
+        message.className = '';
+        message.textContent = 'Checking…';
+
+        try {
+          const response = await fetch('/api/portfolio-status', {
+            method: 'POST',
+            headers: { 'x-presence-key': input.value.trim() },
+          });
+          if (!response.ok) throw new Error('The key was not accepted. Check the value saved in Cloudflare.');
+          input.value = '';
+          message.className = 'success';
+          message.innerHTML = 'Presence activated. <a href="/">Open your portfolio</a>.';
+        } catch (error) {
+          message.className = 'error';
+          message.textContent = error.message || 'Activation failed. Please try again.';
+        } finally {
+          button.disabled = false;
+        }
+      });
+    </script>
+  </body>
+</html>
