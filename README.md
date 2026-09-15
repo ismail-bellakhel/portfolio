@@ -39,13 +39,13 @@ npm run build    # outputs to apps/web/dist/
 
 ### Portfolio visits and presence (Cloudflare Pages)
 
-The hero's visit count and online status use a Cloudflare Pages Function in `apps/web/functions/api/portfolio-status.js` with an Upstash Redis database. Configure these encrypted runtime variables in **Workers & Pages → your project → Settings → Variables and Secrets**:
+The hero's visit count and online status use a Cloudflare Pages Function in `functions/api/portfolio-status.js` with an Upstash Redis database. Configure these encrypted runtime variables in **Workers & Pages → your project → Settings → Variables and Secrets**:
 
 - `UPSTASH_REDIS_REST_URL`
 - `UPSTASH_REDIS_REST_TOKEN`
 - `PORTFOLIO_PRESENCE_KEY` with a long random secret
 
-Keep the Cloudflare Pages root directory set to `apps/web` so Cloudflare discovers its `functions` directory. Redeploy after adding or changing bindings and secrets.
+Keep the Cloudflare Pages root directory set to the repository root so Cloudflare discovers its `functions` directory. Redeploy after adding or changing bindings and secrets.
 
 Visits are counted once per browser session cookie (30-day lifetime), rather than on each refresh. To activate the owner heartbeat on a trusted browser, visit the deployed site once using `https://your-site.example/#presence=YOUR_SECRET`. The fragment is removed immediately and the key stays only in that browser. While the site is open in a visible tab, a heartbeat is sent every two minutes; status changes to Offline five minutes after the last heartbeat.
 

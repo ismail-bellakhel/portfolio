@@ -51,5 +51,4 @@ export default [
 		},
 	},
 	{ files: ['tools/**/*.js', 'tailwind.config.js'], languageOptions: { globals: globals.node } },
-	{ files: ['functions/**/*.js'], languageOptions: { globals: globals.serviceworker } },
 ];
