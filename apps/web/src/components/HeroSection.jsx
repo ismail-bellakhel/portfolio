@@ -4,6 +4,9 @@ import { motion, useScroll, useTransform } from 'framer-motion';
 import { Download, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
+const STATUS_REFRESH_MS = 60 * 1000;
+const HEARTBEAT_MS = 2 * 60 * 1000;
+
 const GLASS_INSETS =
   'inset 0 1.5px 0 rgba(255,255,255,0.85), ' +
   'inset 1.5px 0 0 rgba(255,215,165,0.45), ' +
@@ -146,6 +149,97 @@ function NamePill() {
   );
 }
 
+function PortfolioStatus({ labels }) {
+  const [status, setStatus] = useState(null);
+  const presenceKeyRef = useRef(null);
+
+  useEffect(() => {
+    const presenceMatch = window.location.hash.match(/^#presence=(.+)$/);
+    if (presenceMatch) {
+      try {
+        localStorage.setItem('portfolio_presence_key', decodeURIComponent(presenceMatch[1]));
+      } catch {
+        // Storage can be unavailable in privacy-focused browser modes.
+      }
+      window.history.replaceState(null, '', `${window.location.pathname}${window.location.search}`);
+    }
+
+    try {
+      presenceKeyRef.current = localStorage.getItem('portfolio_presence_key');
+    } catch {
+      presenceKeyRef.current = null;
+    }
+
+    let cancelled = false;
+
+    const loadStatus = async () => {
+      try {
+        const response = await fetch('/api/portfolio-status');
+        if (!response.ok) return;
+        const data = await response.json();
+        if (!cancelled) setStatus(data);
+      } catch {
+        // Keep this secondary UI hidden if the status service is unavailable.
+      }
+    };
+
+    const heartbeat = async () => {
+      if (!presenceKeyRef.current || document.visibilityState !== 'visible') return;
+      try {
+        await fetch('/api/portfolio-status', {
+          method: 'POST',
+          headers: { 'x-presence-key': presenceKeyRef.current },
+        });
+        if (!cancelled) setStatus(current => current ? { ...current, online: true } : current);
+      } catch {
+        // The next scheduled heartbeat will retry automatically.
+      }
+    };
+
+    loadStatus();
+    heartbeat();
+
+    const statusTimer = window.setInterval(loadStatus, STATUS_REFRESH_MS);
+    const heartbeatTimer = window.setInterval(heartbeat, HEARTBEAT_MS);
+    const onVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        loadStatus();
+        heartbeat();
+      }
+    };
+    document.addEventListener('visibilitychange', onVisibilityChange);
+
+    return () => {
+      cancelled = true;
+      window.clearInterval(statusTimer);
+      window.clearInterval(heartbeatTimer);
+      document.removeEventListener('visibilitychange', onVisibilityChange);
+    };
+  }, []);
+
+  if (!status) return null;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, delay: 0.15 }}
+      className="flex items-center gap-2.5 pl-1 text-xs font-medium text-muted-foreground"
+      aria-live="polite"
+    >
+      <span className="inline-flex items-center gap-1.5">
+        <span
+          className={`h-1.5 w-1.5 rounded-full ${status.online ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.75)]' : 'bg-muted-foreground/50'}`}
+          aria-hidden="true"
+        />
+        {status.online ? labels.online : labels.offline}
+      </span>
+      <span className="text-muted-foreground/40" aria-hidden="true">·</span>
+      <span>{new Intl.NumberFormat().format(status.visits)} {labels.visits}</span>
+    </motion.div>
+  );
+}
+
 const HeroSection = () => {
   const { t } = useLanguage();
   const { scrollY } = useScroll();
@@ -178,7 +272,10 @@ const HeroSection = () => {
               Moving it here means its own motion.div owns opacity,
               co-located with glass-panel's backdrop-filter. Safe. ✓
             */}
-            <NamePill />
+            <div className="flex flex-col items-start gap-3">
+              <NamePill />
+              <PortfolioStatus labels={t.hero.status} />
+            </div>
 
             {/* Scroll-fade — disabled on mobile (scroll-linked opacity creates a
                 compositing layer that breaks any backdrop-filter children) */}

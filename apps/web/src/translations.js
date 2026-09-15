@@ -12,7 +12,8 @@ export const translations = {
       description: 'I help businesses grow by connecting marketing strategy with AI, analytics, experimentation and automation. I build scalable measurement systems and data-driven solutions that turn insights into measurable business outcomes.',
       awardCaption: 'Contributor to the award-winning SEO strategy recognised by the Swedish SEO Award.',
       downloadCV: 'Download CV',
-      viewWork: 'View Case Studies'
+      viewWork: 'View Case Studies',
+      status: { online: 'Online', offline: 'Offline', visits: 'visits' }
     },
     sectors: {
       title: 'Sector Experience',
@@ -74,7 +75,7 @@ export const translations = {
   sv: {
     metadata: { title: 'Ismail Bellakhel - Teknisk marknadsföring, tillväxt & analys', description: 'Technical Marketing Manager som förenar tillväxtstrategi, AI, analys, teknisk SEO, experimentering, automation, mätning och CRM.', keywords: 'teknisk marknadsföring, tillväxtmarknadsföring, marknadsanalys, AI, LLM-arbetsflöden, teknisk SEO, mätning, attribuering, CRO, automation, datapipelines, CRM, livscykelmarknadsföring' },
     nav: { home: 'Hem', sectors: 'Branscherfarenhet', roles: 'Målroller', cases: 'Fallstudier', stack: 'Teknisk stack', experiments: 'Experiment', writing: 'Artiklar', contact: 'Kontakt' },
-    hero: { greeting: 'Ismail Bellakhel', title: 'Förenar marknadsföring, AI, analys och tillväxt', description: 'Jag hjälper företag att växa genom att förena marknadsstrategi med AI, analys, experimentering och automation. Jag bygger skalbara mätsystem och datadrivna lösningar som omvandlar insikter till mätbara affärsresultat.', awardCaption: 'Bidrog till den prisbelönta SEO-strategin som uppmärksammades av Svenska SEO-priset.', downloadCV: 'Ladda ner CV', viewWork: 'Visa fallstudier' },
+    hero: { greeting: 'Ismail Bellakhel', title: 'Förenar marknadsföring, AI, analys och tillväxt', description: 'Jag hjälper företag att växa genom att förena marknadsstrategi med AI, analys, experimentering och automation. Jag bygger skalbara mätsystem och datadrivna lösningar som omvandlar insikter till mätbara affärsresultat.', awardCaption: 'Bidrog till den prisbelönta SEO-strategin som uppmärksammades av Svenska SEO-priset.', downloadCV: 'Ladda ner CV', viewWork: 'Visa fallstudier', status: { online: 'Online', offline: 'Offline', visits: 'besök' } },
     sectors: {
       title: 'Branscherfarenhet', subtitle: 'Erfarenhet av tillväxt, mätning och marknadsföring inom fem branscher och internationella marknader',
       newsMedia: { title: 'Nyhetsmedier', description: 'Teknisk SEO, publikutveckling, annonsmonetisering, mätning och AI-stödda redaktionella arbetsflöden.' },
@@ -134,7 +135,7 @@ export const translations = {
   no: {
     metadata: { title: 'Ismail Bellakhel - Teknisk markedsføring, vekst og analyse', description: 'Technical Marketing Manager som kobler vekststrategi, AI, analyse, teknisk SEO, eksperimentering, automatisering, måling og CRM.', keywords: 'teknisk markedsføring, vekstmarkedsføring, markedsanalyse, AI, LLM-arbeidsflyter, teknisk SEO, måling, attribusjon, CRO, automatisering, datapipelines, CRM, livssyklusmarkedsføring' },
     nav: { home: 'Hjem', sectors: 'Bransjeerfaring', roles: 'Målroller', cases: 'Casestudier', stack: 'Teknisk stack', experiments: 'Eksperimenter', writing: 'Artikler', contact: 'Kontakt' },
-    hero: { greeting: 'Ismail Bellakhel', title: 'Kobler markedsføring, AI, analyse og vekst', description: 'Jeg hjelper virksomheter med å vokse ved å koble markedsstrategi med AI, analyse, eksperimentering og automatisering. Jeg bygger skalerbare målesystemer og datadrevne løsninger som omsetter innsikt til målbare forretningsresultater.', awardCaption: 'Bidro til den prisvinnende SEO-strategien som ble anerkjent med den svenske SEO-prisen.', downloadCV: 'Last ned CV', viewWork: 'Vis casestudier' },
+    hero: { greeting: 'Ismail Bellakhel', title: 'Kobler markedsføring, AI, analyse og vekst', description: 'Jeg hjelper virksomheter med å vokse ved å koble markedsstrategi med AI, analyse, eksperimentering og automatisering. Jeg bygger skalerbare målesystemer og datadrevne løsninger som omsetter innsikt til målbare forretningsresultater.', awardCaption: 'Bidro til den prisvinnende SEO-strategien som ble anerkjent med den svenske SEO-prisen.', downloadCV: 'Last ned CV', viewWork: 'Vis casestudier', status: { online: 'Pålogget', offline: 'Frakoblet', visits: 'besøk' } },
     sectors: {
       title: 'Bransjeerfaring', subtitle: 'Erfaring med vekst, måling og markedsføring i fem bransjer og internasjonale markeder',
       newsMedia: { title: 'Nyhetsmedier', description: 'Teknisk SEO, publikumsvekst, annonsemonetisering, måling og AI-støttede redaksjonelle arbeidsflyter.' },
@@ -194,7 +195,7 @@ export const translations = {
   fr: {
     metadata: { title: 'Ismail Bellakhel - Marketing technique, croissance & analyse', description: 'Technical Marketing Manager à l’intersection de la stratégie de croissance, de l’IA, de l’analyse marketing, du SEO technique, de l’expérimentation, de l’automatisation, de la mesure et du CRM.', keywords: 'marketing technique, growth marketing, analyse marketing, IA, workflows LLM, SEO technique, mesure, attribution, CRO, automatisation, pipelines de données, CRM, marketing du cycle de vie' },
     nav: { home: 'Accueil', sectors: 'Expérience sectorielle', roles: 'Postes ciblés', cases: 'Études de cas', stack: 'Compétences techniques', experiments: 'Expérimentations', writing: 'Publications', contact: 'Contact' },
-    hero: { greeting: 'Ismail Bellakhel', title: 'À la croisée du marketing, de l’IA, de l’analyse et de la croissance', description: 'J’aide les entreprises à accélérer leur croissance en reliant la stratégie marketing à l’IA, à l’analyse de données, à l’expérimentation et à l’automatisation. Je conçois des systèmes de mesure évolutifs et des solutions pilotées par les données qui transforment les enseignements en résultats commerciaux mesurables.', awardCaption: 'Contribution à la stratégie SEO primée par le Prix suédois du SEO.', downloadCV: 'Télécharger le CV', viewWork: 'Voir les études de cas' },
+    hero: { greeting: 'Ismail Bellakhel', title: 'À la croisée du marketing, de l’IA, de l’analyse et de la croissance', description: 'J’aide les entreprises à accélérer leur croissance en reliant la stratégie marketing à l’IA, à l’analyse de données, à l’expérimentation et à l’automatisation. Je conçois des systèmes de mesure évolutifs et des solutions pilotées par les données qui transforment les enseignements en résultats commerciaux mesurables.', awardCaption: 'Contribution à la stratégie SEO primée par le Prix suédois du SEO.', downloadCV: 'Télécharger le CV', viewWork: 'Voir les études de cas', status: { online: 'En ligne', offline: 'Hors ligne', visits: 'visites' } },
     sectors: {
       title: 'Expérience sectorielle', subtitle: 'Expérience en croissance, mesure et marketing dans cinq secteurs et sur plusieurs marchés internationaux',
       newsMedia: { title: 'Médias d’information', description: 'SEO technique, développement d’audience, monétisation publicitaire, mesure et processus éditoriaux assistés par l’IA.' },
