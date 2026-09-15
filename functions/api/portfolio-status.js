@@ -26,6 +26,14 @@ function hasVisitorSession(request) {
   return cookies.split(';').some(cookie => cookie.trim().startsWith(`${SESSION_COOKIE}=`));
 }
 
+function normalizePresenceKey(value) {
+  const trimmed = value?.trim() || '';
+  const hasMatchingQuotes =
+    (trimmed.startsWith('"') && trimmed.endsWith('"')) ||
+    (trimmed.startsWith("'") && trimmed.endsWith("'"));
+  return hasMatchingQuotes ? trimmed.slice(1, -1).trim() : trimmed;
+}
+
 function json(body, status = 200, extraHeaders = {}) {
   return Response.json(body, {
     status,
@@ -36,7 +44,9 @@ function json(body, status = 200, extraHeaders = {}) {
 export async function onRequest({ request, env }) {
   try {
     if (request.method === 'POST') {
-      if (!env.PORTFOLIO_PRESENCE_KEY || request.headers.get('x-presence-key') !== env.PORTFOLIO_PRESENCE_KEY) {
+      const configuredKey = normalizePresenceKey(env.PORTFOLIO_PRESENCE_KEY);
+      const suppliedKey = normalizePresenceKey(request.headers.get('x-presence-key'));
+      if (!configuredKey || suppliedKey !== configuredKey) {
         return json({ error: 'Unauthorized' }, 401);
       }
 

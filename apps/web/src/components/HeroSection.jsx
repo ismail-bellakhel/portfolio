@@ -157,7 +157,7 @@ function PortfolioStatus({ labels }) {
     const presenceMatch = window.location.hash.match(/^#presence=(.+)$/);
     if (presenceMatch) {
       try {
-        localStorage.setItem('portfolio_presence_key', decodeURIComponent(presenceMatch[1]));
+        localStorage.setItem('portfolio_presence_key', decodeURIComponent(presenceMatch[1]).trim());
       } catch {
         // Storage can be unavailable in privacy-focused browser modes.
       }
@@ -186,25 +186,24 @@ function PortfolioStatus({ labels }) {
     const heartbeat = async () => {
       if (!presenceKeyRef.current || document.visibilityState !== 'visible') return;
       try {
-        await fetch('/api/portfolio-status', {
+        const response = await fetch('/api/portfolio-status', {
           method: 'POST',
           headers: { 'x-presence-key': presenceKeyRef.current },
         });
+        if (!response.ok) return;
         if (!cancelled) setStatus(current => current ? { ...current, online: true } : current);
       } catch {
         // The next scheduled heartbeat will retry automatically.
       }
     };
 
-    loadStatus();
-    heartbeat();
+    heartbeat().finally(loadStatus);
 
     const statusTimer = window.setInterval(loadStatus, STATUS_REFRESH_MS);
     const heartbeatTimer = window.setInterval(heartbeat, HEARTBEAT_MS);
     const onVisibilityChange = () => {
       if (document.visibilityState === 'visible') {
-        loadStatus();
-        heartbeat();
+        heartbeat().finally(loadStatus);
       }
     };
     document.addEventListener('visibilitychange', onVisibilityChange);
