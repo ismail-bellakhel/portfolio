@@ -73,6 +73,7 @@ export async function onRequest({ request, env }) {
       visits: Number(visits) || 0,
       online: Boolean(lastSeen && Date.now() - lastSeen < ONLINE_WINDOW_MS),
       lastSeen,
+      presenceConfigured: Boolean(normalizePresenceKey(env.PORTFOLIO_PRESENCE_KEY)),
     }, 200, headers);
   } catch (error) {
     console.error('Portfolio status error:', error);
