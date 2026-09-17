@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useLayoutEffect, useRef } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext.jsx';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion';
 import { Download, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -119,8 +119,9 @@ function NamePill() {
         animate={{
           opacity:   1,
           y:         0,
-          // box-shadow animation forces a repaint every frame — skip on mobile
-          ...(isTouchDevice ? {} : { boxShadow: AI_GLOW }),
+          // This is the hero's signature effect. One animated shadow is light
+          // enough to keep enabled on touch devices as well as desktop.
+          boxShadow: AI_GLOW,
           ...(width !== null && { width }),
         }}
         transition={{
@@ -151,6 +152,7 @@ function NamePill() {
 
 function PortfolioStatus({ labels }) {
   const [status, setStatus] = useState(null);
+  const reduceMotion = useReducedMotion();
 
   useEffect(() => {
     let cancelled = false;
@@ -209,10 +211,18 @@ function PortfolioStatus({ labels }) {
       aria-live="polite"
     >
       <span className="inline-flex items-center gap-1.5">
-        <span
-          className={`h-1.5 w-1.5 rounded-full ${status.online ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.75)]' : 'bg-muted-foreground/50'}`}
-          aria-hidden="true"
-        />
+        <span className="relative inline-flex h-2.5 w-2.5 items-center justify-center" aria-hidden="true">
+          {status.online && (
+            <motion.span
+              className="absolute inset-0 rounded-full border border-emerald-400/80"
+              animate={reduceMotion ? undefined : { scale: [1, 2.2], opacity: [0.8, 0] }}
+              transition={{ duration: 1.8, repeat: Infinity, ease: 'easeOut' }}
+            />
+          )}
+          <span
+            className={`relative h-1.5 w-1.5 rounded-full ${status.online ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.75)]' : 'bg-muted-foreground/50'}`}
+          />
+        </span>
         {status.online ? labels.online : labels.offline}
       </span>
       <span className="text-muted-foreground/40" aria-hidden="true">·</span>
