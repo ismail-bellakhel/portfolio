@@ -212,15 +212,25 @@ function PortfolioStatus({ labels }) {
     >
       <span className="inline-flex items-center gap-1.5">
         <span className="relative inline-flex h-2.5 w-2.5 items-center justify-center" aria-hidden="true">
-          {status.online && (
-            <motion.span
-              className="absolute inset-0 rounded-full border border-emerald-400/80"
-              animate={reduceMotion ? undefined : { scale: [1, 2.2], opacity: [0.8, 0] }}
-              transition={{ duration: 1.8, repeat: Infinity, ease: 'easeOut' }}
-            />
-          )}
-          <span
+          <motion.span
             className={`relative h-1.5 w-1.5 rounded-full ${status.online ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.75)]' : 'bg-muted-foreground/50'}`}
+            animate={status.online && !reduceMotion ? {
+              scale: [1, 1.55, 1, 1.35, 1, 1],
+              boxShadow: [
+                '0 0 8px rgba(16,185,129,0.65)',
+                '0 0 14px rgba(16,185,129,0.95)',
+                '0 0 8px rgba(16,185,129,0.65)',
+                '0 0 12px rgba(16,185,129,0.85)',
+                '0 0 8px rgba(16,185,129,0.65)',
+                '0 0 8px rgba(16,185,129,0.65)',
+              ],
+            } : undefined}
+            transition={{
+              duration: 1.6,
+              repeat: Infinity,
+              times: [0, 0.1, 0.2, 0.32, 0.44, 1],
+              ease: 'easeInOut',
+            }}
           />
         </span>
         {status.online ? labels.online : labels.offline}
