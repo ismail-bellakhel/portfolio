@@ -1,0 +1,13 @@
+# The site used to serve one page per language at /en, /sv, /no and /fr.
+# v2 is a single English page, so those paths are permanently redirected to the
+# root instead of 404ing. They are indexed by Google and /en is linked from the
+# personal-portfolio-showcase repository, so dropping them would lose that
+# traffic and those backlinks.
+/en   /  301
+/sv   /  301
+/no   /  301
+/fr   /  301
+/en/* /  301
+/sv/* /  301
+/no/* /  301
+/fr/* /  301

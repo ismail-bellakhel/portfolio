@@ -1,32 +1,87 @@
-import React from 'react';
-import { Route, Routes, BrowserRouter as Router, Navigate } from 'react-router-dom';
-import { LanguageProvider } from './contexts/LanguageContext.jsx';
-import { ThemeProvider } from './contexts/ThemeContext.jsx';
-import GradientBackground from './components/GradientBackground.jsx';
-import GlassFilter from './components/GlassFilter.jsx';
-import ScrollToTop from './components/ScrollToTop.jsx';
-import HomePage from './pages/HomePage.jsx';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import Lenis from 'lenis';
 
-function App() {
+import FiberField from '@/components/FiberField';
+import SceneLayer from '@/components/SceneLayer';
+import Nav from '@/components/Nav';
+import Hero from '@/sections/Hero';
+import Sectors from '@/sections/Sectors';
+import Experience from '@/sections/Experience';
+import Cases from '@/sections/Cases';
+import Projects from '@/sections/Projects';
+import Stack from '@/sections/Stack';
+import Roles from '@/sections/Roles';
+import Contact from '@/sections/Contact';
+import { stack as stackData } from '@/data/content';
+
+/** The conduit colour for each section. */
+const TINTS = {
+  hero: { r: 96, g: 165, b: 250 },
+  sectors: { r: 96, g: 165, b: 250 },
+  experience: { r: 34, g: 211, b: 238 },
+  cases: { r: 52, g: 211, b: 153 },
+  projects: { r: 167, g: 139, b: 250 },
+  stack: { r: 56, g: 189, b: 248 },
+  roles: { r: 129, g: 140, b: 248 },
+  contact: { r: 96, g: 165, b: 250 },
+};
+
+export default function App() {
+  const [active, setActive] = useState('hero');
+
+  // Smooth scroll. Lenis transforms the page, but the canvases are
+  // position:fixed and read window.scrollY, so they stay in sync.
+  useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    const lenis = new Lenis({
+      duration: 1.05,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      smoothWheel: true,
+      syncTouch: false,
+    });
+
+    let raf = 0;
+    const loop = (time) => {
+      lenis.raf(time);
+      raf = requestAnimationFrame(loop);
+    };
+    raf = requestAnimationFrame(loop);
+
+    window.__lenis = lenis;
+    return () => {
+      cancelAnimationFrame(raf);
+      lenis.destroy();
+      delete window.__lenis;
+    };
+  }, []);
+
+  const stackLabels = useMemo(
+    () => stackData.flatMap((c) => c.tools.map((t) => t.name)),
+    [],
+  );
+
+  const handleActive = useCallback((id) => {
+    if (id) setActive(id);
+  }, []);
+
   return (
-    <Router>
-      <ThemeProvider>
-        <GlassFilter />
-        <GradientBackground />
-      <LanguageProvider>
-        <ScrollToTop />
-        <Routes>
-          <Route path="/" element={<Navigate to="/en" replace />} />
-          <Route path="/en" element={<HomePage />} />
-          <Route path="/sv" element={<HomePage />} />
-          <Route path="/no" element={<HomePage />} />
-          <Route path="/fr" element={<HomePage />} />
-          <Route path="*" element={<Navigate to="/en" replace />} />
-        </Routes>
-      </LanguageProvider>
-      </ThemeProvider>
-    </Router>
+    <div className="noise relative min-h-screen bg-ink-950">
+      <SceneLayer stackLabels={stackLabels} onActive={handleActive} />
+      <FiberField tint={TINTS[active] || TINTS.hero} />
+
+      <Nav active={active} />
+
+      <main className="relative z-10">
+        <Hero />
+        <Sectors />
+        <Experience />
+        <Cases />
+        <Projects />
+        <Stack />
+        <Roles />
+        <Contact />
+      </main>
+    </div>
   );
 }
-
-export default App;
