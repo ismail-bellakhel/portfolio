@@ -153,17 +153,17 @@ export default function Projects() {
             title="Things I designed and shipped."
             lede="Freelance and independent work: products, client sites and prototypes, built end to end outside the day job."
             progress={progress}
-          />
-
-          <Reveal className="-mt-6 mb-10 flex flex-wrap items-center gap-2.5">
-            <span className="glass-pill inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 text-[11.5px] font-medium text-white/80">
-              <Briefcase className="h-3 w-3 text-glow-violet" />
-              Freelance · Available for projects
-            </span>
-            <span className="text-[12px] text-white/40">
-              Strategy, build and measurement, by the project or on retainer.
-            </span>
-          </Reveal>
+          >
+            <Reveal delay={0.2} className="mt-6 flex flex-wrap items-center gap-x-3 gap-y-2">
+              <span className="glass-pill inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 text-[11.5px] font-medium text-white/80">
+                <Briefcase className="h-3 w-3 text-glow-violet" />
+                Freelance · Available for projects
+              </span>
+              <span className="text-[12px] text-white/40">
+                Strategy, build and measurement, by the project or on retainer.
+              </span>
+            </Reveal>
+          </SectionHeading>
 
           <div className="grid gap-4 lg:grid-cols-3">
             {featured.map((p, i) => (

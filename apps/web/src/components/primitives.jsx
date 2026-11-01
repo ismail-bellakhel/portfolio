@@ -239,7 +239,14 @@ export function Section({ id, children, className, ...rest }) {
 }
 
 /** Eyebrow + title + optional lede, used at the top of every section. */
-export function SectionHeading({ eyebrow, title, lede, progress, align = 'left' }) {
+export function SectionHeading({
+  eyebrow,
+  title,
+  lede,
+  progress,
+  align = 'left',
+  children,
+}) {
   const y = useParallax(progress, 52);
   return (
     <motion.div
@@ -264,6 +271,11 @@ export function SectionHeading({ eyebrow, title, lede, progress, align = 'left' 
           {lede}
         </Reveal>
       )}
+      {/* Anything that trails the lede has to live inside this block. It
+          parallaxes by up to 52px in each direction while the rest of the
+          section stays put, so a sibling tucked underneath with a negative
+          margin gets run over by the lede on the way down. */}
+      {children}
     </motion.div>
   );
 }
