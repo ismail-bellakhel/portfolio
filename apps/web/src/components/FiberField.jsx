@@ -48,8 +48,6 @@ function makeStrands(count, w, h) {
       freq2: 0.0045 + rand() * 0.006,
       phase1: rand() * Math.PI * 2,
       phase2: rand() * Math.PI * 2,
-      // Dim always-on strand so the conduit is visible between packets.
-      base: 0.05 + depth * 0.1,
       packets: [],
       nextSpawn: rand() * 2.4,
       hueShift: (rand() - 0.5) * 48,
@@ -211,6 +209,8 @@ export default function FiberField({ tint, intensity = 1 }) {
         const reach = h * 0.5;
         warp = {
           cx: focus.x,
+          cy: focus.y,
+          strength: converge,
           at(y) {
             const f = 1 - clamp01(Math.abs(y - focus.y) / reach);
             return converge * f * f * (3 - 2 * f);
@@ -221,6 +221,13 @@ export default function FiberField({ tint, intensity = 1 }) {
       }
 
       ctx.clearRect(0, 0, w, h);
+
+      // The strands themselves are never stroked. Only the travelling light and
+      // its trail are drawn, so the path is implied by the motion rather than
+      // laid out as visible wiring. With motion reduced there is no travelling
+      // light, so there is nothing left to draw.
+      if (reduce) return;
+
       ctx.globalCompositeOperation = 'lighter';
 
       for (const s of strands) {
@@ -229,12 +236,6 @@ export default function FiberField({ tint, intensity = 1 }) {
           g: clamp(colour.g + s.hueShift * 0.45, 0, 255),
           b: clamp(colour.b - s.hueShift * 0.25, 0, 255),
         };
-
-        // --- always-on strand ---
-        const baseAlpha = s.base * amp * (0.62 + energy * 0.5);
-        strokeRun(s, -40, h + 40, rgb, baseAlpha, 1);
-
-        if (reduce) continue;
 
         // --- spawn packets ---
         s.nextSpawn -= dt * (1 + energy * 3.2);
@@ -246,6 +247,9 @@ export default function FiberField({ tint, intensity = 1 }) {
               speed: (150 + Math.random() * 230) * (0.5 + s.depth),
               len: 90 + Math.random() * 190,
               bright: 0.4 + Math.random() * 0.6,
+              // 0 while travelling, ramps to 1 once the packet reaches the
+              // merge point and is drawn into it.
+              absorb: 0,
             });
           }
         }
@@ -255,15 +259,38 @@ export default function FiberField({ tint, intensity = 1 }) {
           const p = s.packets[i];
 
           // Scroll velocity drags packets along and stretches their tail.
+          const prevY = p.y;
           p.y += (p.speed * (1 + energy * 5) + velocity * s.depth * 0.55) * dt;
-          const tail = p.len * (1 + energy * 3.4);
 
-          if (p.y - tail > h + 160 || p.y < -900) {
+          /*
+            The merge point is a terminus, not a waypoint. Once the pinch is
+            established, a packet that reaches the focus line stops there and
+            is drawn in, instead of sliding through the point it just merged
+            into and out the bottom of the screen.
+
+            `prevY <= warp.cy` is what makes this safe. Only packets arriving
+            from above are held; any that were already past the focus when the
+            pinch began keep falling and leave normally, rather than snapping
+            backwards up to the line.
+          */
+          const merging =
+            warp && warp.strength > 0.55 && prevY <= warp.cy && p.y >= warp.cy;
+          if (merging) {
+            p.y = warp.cy;
+            p.absorb = clamp01(p.absorb + dt * 2.4);
+          }
+
+          // Arriving light retracts into the point rather than just fading, so
+          // the trail reads as being swallowed by it.
+          const ease = 1 - p.absorb * p.absorb;
+          const tail = p.len * (1 + energy * 3.4) * (merging ? ease : 1);
+
+          if (p.absorb >= 1 || p.y - tail > h + 160 || p.y < -900) {
             s.packets.splice(i, 1);
             continue;
           }
 
-          const a = p.bright * amp * (0.5 + s.depth * 0.5);
+          const a = p.bright * amp * (0.5 + s.depth * 0.5) * (merging ? ease : 1);
 
           // Three additive passes fake a bloom far more cheaply than shadowBlur.
           strokeRun(s, p.y - tail, p.y, rgb, a * 0.1, 7);

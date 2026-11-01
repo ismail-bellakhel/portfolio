@@ -42,9 +42,7 @@ export default function Hero() {
               >
                 <motion.span
                   className={
-                    i === 2
-                      ? 'inline-block bg-gradient-to-r from-glow-blue via-glow-cyan to-glow-violet bg-clip-text pb-[0.22em] text-transparent [margin-bottom:-0.22em]'
-                      : 'inline-block grad-text'
+                    i === 2 ? 'inline-block grad-text-live' : 'inline-block grad-text'
                   }
                   initial={reduce ? false : { y: '102%' }}
                   animate={{ y: '0%' }}

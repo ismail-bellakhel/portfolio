@@ -180,6 +180,53 @@ body {
   margin-bottom: -0.22em;
 }
 
+/*
+  The living gradient on "evidence."
+
+  A long cool-to-warm-to-cool ramp, four times wider than the text, slid
+  horizontally. Because the ramp starts and ends on the same blue, the loop
+  closes seamlessly and the word reads as continuously lit rather than as a
+  band that snaps back.
+
+  `background-position` is animated rather than the colour stops themselves:
+  interpolating stops would re-rasterise the gradient every frame, while
+  sliding an already-rasterised one is cheap. This is also why the paint box
+  fix below has to be repeated here rather than inherited from `.grad-text`,
+  since both classes own their own `background` shorthand.
+*/
+.grad-text-live {
+  background-image: linear-gradient(
+    100deg,
+    #60a5fa 0%,
+    #22d3ee 12%,
+    #a78bfa 24%,
+    #f0abfc 33%,
+    #fbbf24 42%,
+    #fb923c 50%,
+    #fbbf24 58%,
+    #f0abfc 67%,
+    #a78bfa 76%,
+    #22d3ee 88%,
+    #60a5fa 100%
+  );
+  background-size: 400% 100%;
+  background-position: 0% 50%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: grad-drift 18s linear infinite;
+  /* Same paint-box widening as .grad-text: without it the tail of the "d"
+     and the full descender depth fall outside the painted area. */
+  padding-bottom: 0.22em;
+  margin-bottom: -0.22em;
+}
+
+@keyframes grad-drift {
+  to {
+    background-position: -400% 50%;
+  }
+}
+
 .tnum {
   font-variant-numeric: tabular-nums;
 }

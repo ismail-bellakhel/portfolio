@@ -160,15 +160,6 @@ function Diagram({ active, setActive, onTouch, progress }) {
                 transition={{ repeat: Infinity, duration: 1.9, ease: 'easeOut' }}
               />
             )}
-            <text
-              x={r.x}
-              y={r.y - 14}
-              textAnchor="middle"
-              className="pointer-events-none fill-white font-mono text-[9.5px] tabular-nums"
-              opacity={on ? 0.9 : 0.35}
-            >
-              {g.roles.length}
-            </text>
           </g>
         );
       })}
