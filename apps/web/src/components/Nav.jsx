@@ -26,6 +26,9 @@ export default function Nav({ active }) {
 
   // The menu only exists below lg. Crossing that breakpoint with it open would
   // otherwise leave an orphaned sheet floating over the desktop bar.
+  // The page is also pinned while it is open: the sheet hangs off a fixed
+  // header, so without this a stray swipe scrolls the content behind it and
+  // the menu appears to float away from the page it belongs to.
   useEffect(() => {
     if (!menu) return;
     const onKey = (e) => e.key === 'Escape' && setMenu(false);
@@ -33,9 +36,11 @@ export default function Nav({ active }) {
     const onWide = () => mq.matches && setMenu(false);
     window.addEventListener('keydown', onKey);
     mq.addEventListener('change', onWide);
+    window.__lenis?.stop();
     return () => {
       window.removeEventListener('keydown', onKey);
       mq.removeEventListener('change', onWide);
+      window.__lenis?.start();
     };
   }, [menu]);
 
@@ -52,6 +57,25 @@ export default function Nav({ active }) {
         style={{ scaleX: bar }}
         className="fixed left-0 top-0 z-50 h-px w-full origin-left bg-gradient-to-r from-glow-blue via-glow-cyan to-glow-violet"
       />
+
+      {/* Scrim. Sits under the header and over the content so the page reads
+          as dismissed rather than as competing with the menu, and gives the
+          sheet a tap-anywhere close. */}
+      <AnimatePresence>
+        {menu && (
+          <motion.button
+            key="scrim"
+            type="button"
+            aria-label="Close menu"
+            onClick={() => setMenu(false)}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+            className="fixed inset-0 z-30 bg-ink-950/75 lg:hidden"
+          />
+        )}
+      </AnimatePresence>
 
       {/* Top bar. The glass lives on this element itself, never a wrapper. */}
       <header
@@ -148,7 +172,7 @@ export default function Nav({ active }) {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
-              className="glass mx-4 mt-2 overflow-hidden p-2 lg:hidden"
+              className="glass glass-sheet mx-4 mt-2 overflow-hidden p-2 lg:hidden"
             >
               <nav aria-label="Sections" className="grid grid-cols-2 gap-1">
                 {sections.map((s) => (
@@ -157,13 +181,16 @@ export default function Nav({ active }) {
                     onClick={() => go(s.id)}
                     aria-current={active === s.id ? 'true' : undefined}
                     className={cn(
-                      'rounded-xl px-3.5 py-3 text-left text-[13.5px] font-medium transition-colors duration-200',
+                      'flex items-center justify-between gap-2 rounded-xl px-3.5 py-3.5 text-left text-[14px] font-medium transition-colors duration-200',
                       active === s.id
                         ? 'bg-white/[0.1] text-white'
-                        : 'text-white/55 active:bg-white/[0.06]',
+                        : 'text-white/60 active:bg-white/[0.06]',
                     )}
                   >
                     {s.label}
+                    {active === s.id && (
+                      <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-glow-cyan" />
+                    )}
                   </button>
                 ))}
               </nav>
@@ -172,7 +199,7 @@ export default function Nav({ active }) {
                 href={profile.cv}
                 download
                 onClick={() => setMenu(false)}
-                className="mt-1 flex items-center justify-center gap-2 rounded-xl bg-white/[0.07] px-3.5 py-3 text-[13.5px] font-medium text-white/85 sm:hidden"
+                className="mt-1.5 flex items-center justify-center gap-2 rounded-xl bg-white/[0.09] px-3.5 py-3.5 text-[14px] font-medium text-white/90 sm:hidden"
               >
                 <Download className="h-4 w-4" />
                 Download CV

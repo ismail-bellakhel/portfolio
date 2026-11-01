@@ -39,7 +39,13 @@ const MOBILE_STRANDS = 8;
 */
 const LIGHT_DENSITY = 0.9;
 
-function makeStrands(count, w, h) {
+/*
+  A phone shows the same traffic in a third of the width, so the bundle reads
+  as busier there at an identical setting. It carries a further 10% less.
+*/
+const MOBILE_LIGHT_DENSITY = LIGHT_DENSITY * 0.9;
+
+function makeStrands(count, w, h, density) {
   const rand = seeded(20260401);
   const strands = [];
 
@@ -60,7 +66,7 @@ function makeStrands(count, w, h) {
       phase1: rand() * Math.PI * 2,
       phase2: rand() * Math.PI * 2,
       packets: [],
-      nextSpawn: (rand() * 2.4) / LIGHT_DENSITY,
+      nextSpawn: (rand() * 2.4) / density,
       hueShift: (rand() - 0.5) * 48,
     });
   }
@@ -103,6 +109,7 @@ export default function FiberField({ tint, intensity = 1 }) {
 
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const coarse = window.matchMedia('(pointer: coarse)').matches;
+    const density = coarse ? MOBILE_LIGHT_DENSITY : LIGHT_DENSITY;
 
     let w = 0;
     let h = 0;
@@ -133,7 +140,12 @@ export default function FiberField({ tint, intensity = 1 }) {
       canvas.style.width = `${w}px`;
       canvas.style.height = `${h}px`;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      strands = makeStrands(coarse ? MOBILE_STRANDS : DESKTOP_STRANDS, w, h);
+      strands = makeStrands(
+        coarse ? MOBILE_STRANDS : DESKTOP_STRANDS,
+        w,
+        h,
+        density,
+      );
     };
 
     const onScroll = () => {
@@ -251,7 +263,7 @@ export default function FiberField({ tint, intensity = 1 }) {
         // --- spawn packets ---
         s.nextSpawn -= dt * (1 + energy * 3.2);
         if (s.nextSpawn <= 0) {
-          s.nextSpawn = (1.1 + Math.random() * 3.4) / LIGHT_DENSITY;
+          s.nextSpawn = (1.1 + Math.random() * 3.4) / density;
           if (s.packets.length < 4) {
             s.packets.push({
               y: -120 - Math.random() * 200,

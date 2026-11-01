@@ -129,7 +129,7 @@ export default function Contact() {
               © {new Date().getFullYear()} {profile.name} · Marketing &amp; AI
               Consultancy
             </div>
-            <Presence />
+            <Presence className="hidden sm:inline-flex" />
           </Reveal>
         </div>
       )}

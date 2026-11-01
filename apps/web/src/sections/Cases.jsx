@@ -72,8 +72,17 @@ function AwardMoment() {
         )}
 
         <div className="relative grid items-center gap-7 p-6 sm:gap-9 sm:p-10 md:grid-cols-[1.15fr_1fr] md:gap-12 md:p-14">
-          {/* Caption */}
-          <div>
+          {/*
+            `min-w-0` is load-bearing. A grid track's automatic minimum is the
+            min-content of its items, and the article link below holds a
+            `truncate` line, which is `white-space: nowrap`, so its min-content
+            is the entire untruncated headline. That pushed this column to
+            420px inside a 287px grid on a 375px screen and the band's
+            `overflow-hidden` sheared every line of the caption off at the
+            right edge. Letting the track go below min-content lets the
+            headline truncate as it was always meant to.
+          */}
+          <div className="min-w-0">
             <Reveal className="mb-6 inline-flex items-center gap-2.5 rounded-full bg-glow-amber/15 px-3.5 py-1.5 ring-1 ring-glow-amber/30">
               <Trophy className="h-3.5 w-3.5 text-glow-amber" />
               <span className="text-[11px] font-semibold uppercase tracking-[0.18em] text-glow-amber">
@@ -114,10 +123,13 @@ function AwardMoment() {
                   decoding="async"
                   width={112}
                   height={56}
-                  className="h-12 w-20 shrink-0 rounded-lg object-cover ring-1 ring-white/10 sm:h-14 sm:w-28 sm:rounded-xl"
+                  className="h-11 w-16 shrink-0 rounded-lg object-cover ring-1 ring-white/10 sm:h-14 sm:w-28 sm:rounded-xl"
                 />
                 <span className="min-w-0 flex-1">
-                  <span className="block text-[10.5px] uppercase tracking-[0.14em] text-white/40">
+                  {/* Tracking is relaxed only once there is room for it. At
+                      0.14em this line is wider than the 137px the row leaves
+                      on a 375px screen and it wraps onto two. */}
+                  <span className="block truncate text-[10.5px] uppercase tracking-[0.08em] text-white/40 sm:tracking-[0.14em]">
                     Dagens PS · Nov 2024
                   </span>
                   <span className="block truncate text-[13px] font-medium text-white/85">
@@ -144,7 +156,7 @@ function AwardMoment() {
           <Reveal
             delay={0.1}
             y={34}
-            className="relative mx-auto w-full max-w-[330px] md:max-w-none"
+            className="relative mx-auto w-full min-w-0 max-w-[330px] md:max-w-none"
           >
             <div className="relative overflow-hidden rounded-[22px] shadow-[0_30px_80px_-20px_rgba(0,0,0,0.85)] ring-1 ring-white/15">
               <motion.img

@@ -97,6 +97,20 @@ body {
   z-index: 3;
 }
 
+/*
+  The mobile menu sheet.
+
+  A panel with the whole page still scrolling behind it needs more body than
+  the standard glass film. On a phone `backdrop-filter` has almost nothing to
+  work with over a near-black page, so at 6.6% white the section links were
+  reading straight through to the buttons and copy underneath. This keeps the
+  blur and the rim and puts an almost opaque base behind them. It has to live
+  after `.glass` in the file, since that rule owns the `background` shorthand.
+*/
+.glass-sheet {
+  background: rgba(10, 13, 20, 0.95);
+}
+
 .glass-i {
   transition:
     background 0.45s cubic-bezier(0.22, 1, 0.36, 1),
