@@ -1,9 +1,15 @@
 import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion';
 import { ArrowDown } from 'lucide-react';
-import { Counter, Reveal } from '@/components/primitives';
+import { Counter, Reveal, RevealText } from '@/components/primitives';
 import { Flag } from '@/components/Logo';
 import Presence from '@/components/Presence';
 import { headline, markets, profile } from '@/data/content';
+
+const HEADLINE = [
+  { text: 'Marketing', grad: 'grad-text' },
+  { text: 'that runs on', grad: 'grad-text' },
+  { text: 'evidence.', grad: 'grad-text-live' },
+];
 
 export default function Hero() {
   const { scrollYProgress } = useScroll();
@@ -11,6 +17,7 @@ export default function Hero() {
   // Gentle lift of the whole hero as you leave it.
   const y = useTransform(scrollYProgress, [0, 0.12], [0, -70]);
   const fade = useTransform(scrollYProgress, [0, 0.1], [1, 0]);
+  let word = 0;
 
   return (
     <section
@@ -24,38 +31,28 @@ export default function Hero() {
             <Presence />
           </Reveal>
 
-          {/* Name */}
+          {/* Marketing & AI Consultancy. Also repeated in the footer. */}
           <Reveal delay={0.05} className="eyebrow mb-6">
-            {profile.name} · {profile.role}
+            Marketing &amp; AI Consultancy
           </Reveal>
 
-          {/* The statement. Each line masked and lifted separately.
-              The mask is padded below and pulled back by an equal negative
-              margin: at line-height 0.95 the glyph ink overflows its content
-              box, so an unpadded overflow:hidden shears the descenders off
-              g and p. See SplitHeading in primitives for the full reasoning. */}
+          {/* The statement. The word counter runs across all three lines, so
+              the 40ms stagger carries straight through instead of restarting
+              at the left edge of each one. */}
           <h1 className="display text-[clamp(2.6rem,8.4vw,7rem)]">
-            {['Marketing', 'that runs on', 'evidence.'].map((line, i) => (
-              <span
-                key={line}
-                className="block overflow-hidden pb-[0.3em] [margin-bottom:-0.3em]"
-              >
-                <motion.span
-                  className={
-                    i === 2 ? 'inline-block grad-text-live' : 'inline-block grad-text'
-                  }
-                  initial={reduce ? false : { y: '102%' }}
-                  animate={{ y: '0%' }}
-                  transition={{
-                    duration: 1.1,
-                    delay: 0.15 + i * 0.1,
-                    ease: [0.22, 1, 0.36, 1],
-                  }}
-                >
-                  {line}
-                </motion.span>
-              </span>
-            ))}
+            {HEADLINE.map((line) => {
+              const at = 0.15 + word * 0.04;
+              word += line.text.split(' ').length;
+              return (
+                <RevealText
+                  key={line.text}
+                  text={line.text}
+                  delay={at}
+                  className="block"
+                  partClassName={line.grad}
+                />
+              );
+            })}
           </h1>
 
           <Reveal

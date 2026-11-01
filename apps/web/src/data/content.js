@@ -166,10 +166,13 @@ export const education = {
 };
 
 // Sectors. Each gets a themed icon and a live background motif.
+// `short` is the label drawn under this sector's column in the background
+// canvas, where there is roughly 70px of room at 10px type.
 export const sectors = [
   {
     key: 'newsMedia',
     title: 'News Media',
+    short: 'News Media',
     icon: 'Newspaper',
     description:
       'Technical SEO, audience growth, advertising monetisation, measurement and AI-supported editorial workflows.',
@@ -178,6 +181,7 @@ export const sectors = [
   {
     key: 'realEstate',
     title: 'Real Estate',
+    short: 'Real Estate',
     icon: 'Building2',
     description:
       'SEO, SEM, CRO, lead generation, performance measurement and paid media optimisation.',
@@ -186,6 +190,7 @@ export const sectors = [
   {
     key: 'edtech',
     title: 'EdTech',
+    short: 'EdTech',
     icon: 'GraduationCap',
     description:
       'CRM lifecycle automation, paid acquisition, funnel analysis and customer communications.',
@@ -194,6 +199,7 @@ export const sectors = [
   {
     key: 'fitness',
     title: 'Fitness & Wellbeing',
+    short: 'Fitness',
     icon: 'Dumbbell',
     description:
       'Go-to-market strategy, budget leadership, partnerships and cross-functional growth across MENA.',
@@ -202,6 +208,7 @@ export const sectors = [
   {
     key: 'telecom',
     title: 'Telecommunications',
+    short: 'Telecom',
     icon: 'RadioTower',
     description:
       'Direct sales, competitive intelligence, CRM data, market benchmarking and executive reporting for the French market.',
@@ -210,6 +217,7 @@ export const sectors = [
   {
     key: 'automotive',
     title: 'Automotive Retail',
+    short: 'Automotive',
     icon: 'Car',
     description:
       'Headless dealership delivery, vehicle catalogue SEO and inventory publishing automation.',

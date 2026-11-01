@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { motion, useScroll, useSpring } from 'framer-motion';
-import { ArrowUpRight, Download } from 'lucide-react';
+import { AnimatePresence, motion, useScroll, useSpring } from 'framer-motion';
+import { ArrowUpRight, Download, Menu, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { profile, sections } from '@/data/content';
 
@@ -13,6 +13,7 @@ function scrollToId(id) {
 
 export default function Nav({ active }) {
   const [scrolled, setScrolled] = useState(false);
+  const [menu, setMenu] = useState(false);
   const { scrollYProgress } = useScroll();
   const bar = useSpring(scrollYProgress, { stiffness: 200, damping: 40, mass: 0.2 });
 
@@ -22,6 +23,26 @@ export default function Nav({ active }) {
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
+
+  // The menu only exists below lg. Crossing that breakpoint with it open would
+  // otherwise leave an orphaned sheet floating over the desktop bar.
+  useEffect(() => {
+    if (!menu) return;
+    const onKey = (e) => e.key === 'Escape' && setMenu(false);
+    const mq = window.matchMedia('(min-width: 1024px)');
+    const onWide = () => mq.matches && setMenu(false);
+    window.addEventListener('keydown', onKey);
+    mq.addEventListener('change', onWide);
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      mq.removeEventListener('change', onWide);
+    };
+  }, [menu]);
+
+  const go = (id) => {
+    setMenu(false);
+    scrollToId(id);
+  };
 
   return (
     <>
@@ -97,8 +118,68 @@ export default function Nav({ active }) {
               Contact
               <ArrowUpRight className="h-3.5 w-3.5" />
             </button>
+
+            {/* Below lg the section links and the rail are both hidden, so
+                without this the page has no navigation at all on a phone. */}
+            <button
+              onClick={() => setMenu((v) => !v)}
+              aria-expanded={menu}
+              aria-controls="mobile-menu"
+              aria-label={menu ? 'Close menu' : 'Open menu'}
+              className="glass-pill flex h-9 w-9 items-center justify-center rounded-full text-white/80 lg:hidden"
+            >
+              {menu ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+            </button>
           </div>
         </div>
+
+        {/*
+          The sheet is glass, so its entrance animates on the sheet itself.
+          Wrapping it in a fading parent would promote that parent to its own
+          layer and the backdrop-filter would sample the layer's transparent
+          background, painting the panel black.
+        */}
+        <AnimatePresence>
+          {menu && (
+            <motion.div
+              id="mobile-menu"
+              key="sheet"
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+              className="glass mx-4 mt-2 overflow-hidden p-2 lg:hidden"
+            >
+              <nav aria-label="Sections" className="grid grid-cols-2 gap-1">
+                {sections.map((s) => (
+                  <button
+                    key={s.id}
+                    onClick={() => go(s.id)}
+                    aria-current={active === s.id ? 'true' : undefined}
+                    className={cn(
+                      'rounded-xl px-3.5 py-3 text-left text-[13.5px] font-medium transition-colors duration-200',
+                      active === s.id
+                        ? 'bg-white/[0.1] text-white'
+                        : 'text-white/55 active:bg-white/[0.06]',
+                    )}
+                  >
+                    {s.label}
+                  </button>
+                ))}
+              </nav>
+
+              <a
+                href={profile.cv}
+                download
+                onClick={() => setMenu(false)}
+                className="mt-1 flex items-center justify-center gap-2 rounded-xl bg-white/[0.07] px-3.5 py-3 text-[13.5px] font-medium text-white/85 sm:hidden"
+              >
+                <Download className="h-4 w-4" />
+                Download CV
+              </a>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </header>
 
       {/* Section rail: the visible spine of the page. */}

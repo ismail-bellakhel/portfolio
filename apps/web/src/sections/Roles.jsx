@@ -202,7 +202,7 @@ export default function Roles() {
               />
             </Reveal>
 
-            <GlassCard progress={progress} depth={26} className="p-7 sm:p-9">
+            <GlassCard progress={progress} depth={26} className="p-6 sm:p-9">
               <div className="mb-6 flex items-center gap-3">
                 <span
                   className="h-2.5 w-2.5 rounded-full"
@@ -219,7 +219,7 @@ export default function Roles() {
                 </span>
               </div>
 
-              <motion.ul key={active} className="min-h-[190px] space-y-2.5">
+              <motion.ul key={active} className="space-y-2.5 sm:min-h-[190px]">
                 {group.roles.map((role, i) => (
                   <motion.li
                     key={role}

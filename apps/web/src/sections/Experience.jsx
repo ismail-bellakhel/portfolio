@@ -36,22 +36,29 @@ export default function Experience() {
             progress={progress}
           />
 
+          {/*
+            The rail is a desktop affordance and it is dropped below md.
+            Its 48px indent plus the card's own padding left under 240px of
+            measure on a 375px screen, which wrapped the summary every three
+            or four words. On mobile the card runs full width and the company
+            mark sits above it instead of beside it.
+          */}
           <div ref={railRef} className="relative">
             {/* Rail */}
-            <div className="absolute bottom-0 left-[19px] top-2 w-px bg-white/[0.08] md:left-[27px]" />
+            <div className="absolute bottom-0 left-[19px] top-2 hidden w-px bg-white/[0.08] md:left-[27px] md:block" />
             <motion.div
               style={{ scaleY: draw }}
-              className="absolute bottom-0 left-[19px] top-2 w-px origin-top bg-gradient-to-b from-glow-cyan via-glow-blue to-transparent shadow-[0_0_14px_2px_rgba(34,211,238,0.45)] md:left-[27px]"
+              className="absolute bottom-0 left-[19px] top-2 hidden w-px origin-top bg-gradient-to-b from-glow-cyan via-glow-blue to-transparent shadow-[0_0_14px_2px_rgba(34,211,238,0.45)] md:left-[27px] md:block"
             />
 
             <div className="space-y-5">
               {experience.map((job, i) => (
-                <div key={job.company} className="relative pl-12 md:pl-20">
+                <div key={job.company} className="relative md:pl-20">
                   {/* Node */}
                   <Reveal
                     y={0}
                     delay={0.05}
-                    className="absolute left-0 top-6 flex h-10 w-10 items-center justify-center md:h-14 md:w-14"
+                    className="mb-3 flex h-10 w-10 items-center justify-center md:absolute md:left-0 md:top-6 md:mb-0 md:h-14 md:w-14"
                   >
                     <CompanyLogo
                       logo={job.logo}
@@ -116,7 +123,7 @@ export default function Experience() {
           {/* Education + languages. Same depth on both, or the parallax
               pulls them to different heights and they stop lining up. */}
           <div className="mt-6 grid items-stretch gap-5 md:grid-cols-2">
-            <GlassCard progress={progress} depth={CARD_DEPTH} className="p-7">
+            <GlassCard progress={progress} depth={CARD_DEPTH} className="p-6 sm:p-7">
               <div className="eyebrow mb-4">Education</div>
               <h3 className="mb-1.5 text-[15px] font-semibold text-white/95">
                 {education.school}
@@ -134,7 +141,7 @@ export default function Experience() {
               </div>
             </GlassCard>
 
-            <GlassCard progress={progress} depth={CARD_DEPTH} className="p-7">
+            <GlassCard progress={progress} depth={CARD_DEPTH} className="p-6 sm:p-7">
               <div className="eyebrow mb-4">Languages</div>
               <div className="space-y-3.5">
                 {languages.map((l) => (

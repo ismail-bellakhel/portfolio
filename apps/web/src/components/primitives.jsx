@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { Fragment, useEffect, useRef, useState } from 'react';
 import {
   motion,
   useInView,
@@ -156,56 +156,70 @@ export function Counter({ to, duration = 1.6, decimals = 0, className }) {
   );
 }
 
+/*
+  Shared timing for the blur reveal, so every title in the site rises with the
+  same curve. Framer takes the cubic-bezier control points directly.
+*/
+export const REVEAL_DURATION = 0.7;
+export const REVEAL_EASE = [0.2, 0.7, 0.2, 1];
+
 /**
- * Headline that animates in word by word.
+ * Staggered blur-in reveal: each part fades up from `blur(10px)` and 0.3em
+ * below, 40ms apart (18ms for `by="char"`), once, when 30% of the line is in
+ * view. Used for every heading on the page.
  *
- * Two traps are being avoided here.
+ * Three details are load-bearing.
  *
- * 1. The `whileInView` trigger lives on the CLIPPING wrapper, not on the word.
- *    IntersectionObserver intersects against clipping ancestors, so a word
- *    parked at y:105% inside `overflow:hidden` reports zero visible area, so it
- *    would never animate in, and so would never become visible. Deadlock.
+ * 1. The separator is a real space in its own text node, NOT a non-breaking
+ *    space inside the word's span. NBSP is line-break class GL, which forbids a
+ *    break on either side of it, so gluing it to the word removes every break
+ *    opportunity in the line and a long title overflows its column instead of
+ *    wrapping.
  *
- * 2. `wordClassName` lands on the transformed span. A transformed element forms
- *    its own containing block, so an ancestor's `background-clip: text` never
- *    paints through it. The gradient has to be declared on the word itself.
+ * 2. `partClassName` lands on the animated span. `filter` and `transform` both
+ *    make an element a containing block, so an ancestor's
+ *    `background-clip: text` cannot paint through it. The gradient has to be
+ *    declared on the part itself.
  *
- * 3. The mask is padded at the bottom and pulled back by an equal negative
- *    margin. `line-height: 0.95` is tighter than Inter's ascent + descent
- *    (~1.19em), so half-leading is negative and glyph ink overflows the
- *    content box by ~0.12em below. `overflow:hidden` then shears the tails off
- *    y, p, g and Q. 0.3em clears that with room to spare, and the equal
- *    negative margin keeps layout unchanged.
+ * 3. There is no `overflow: hidden` mask around each part, unlike the lift
+ *    reveal this replaced. A mask would clip the blur halo square at the word's
+ *    own box and leave a visible hard edge on all four sides while the word is
+ *    still soft. With a rise of only 0.3em there is nothing worth masking.
  */
-export function SplitHeading({ text, className, wordClassName, delay = 0 }) {
+export function RevealText({
+  text,
+  by = 'word',
+  delay = 0,
+  className,
+  partClassName,
+  as: Tag = 'span',
+}) {
   const reduce = useReducedMotion();
-  const words = text.split(' ');
+  const chars = by === 'char';
+  const parts = chars ? Array.from(text) : text.split(' ');
+  const step = chars ? 0.018 : 0.04;
 
   return (
-    <span className={className}>
-      {words.map((word, i) => (
-        <motion.span
-          key={`${word}-${i}`}
-          className="inline-block overflow-hidden pb-[0.3em] align-bottom [margin-bottom:-0.3em]"
-          initial={reduce ? false : 'hidden'}
-          whileInView="show"
-          viewport={{ once: true, margin: '-60px 0px' }}
-        >
+    <Tag className={className}>
+      {parts.map((part, i) => (
+        <Fragment key={`${part}-${i}`}>
           <motion.span
-            className={cn('inline-block', wordClassName)}
-            variants={{ hidden: { y: '105%' }, show: { y: '0%' } }}
+            className={cn('inline-block', partClassName)}
+            initial={reduce ? false : { opacity: 0, filter: 'blur(10px)', y: '0.3em' }}
+            whileInView={{ opacity: 1, filter: 'blur(0px)', y: '0em' }}
+            viewport={{ once: true, amount: 0.3 }}
             transition={{
-              duration: 0.85,
-              delay: delay + i * 0.045,
-              ease: [0.22, 1, 0.36, 1],
+              duration: REVEAL_DURATION,
+              delay: delay + i * step,
+              ease: REVEAL_EASE,
             }}
           >
-            {word}
+            {part === ' ' ? '\u00A0' : part}
           </motion.span>
-          {i < words.length - 1 && <span>&nbsp;</span>}
-        </motion.span>
+          {!chars && i < parts.length - 1 ? ' ' : null}
+        </Fragment>
       ))}
-    </span>
+    </Tag>
   );
 }
 
@@ -216,7 +230,7 @@ export function Section({ id, children, className, ...rest }) {
     <section
       id={id}
       ref={ref}
-      className={cn('relative z-10 px-5 py-28 sm:px-8 md:py-36', className)}
+      className={cn('relative z-10 px-5 py-20 sm:px-8 sm:py-28 md:py-36', className)}
       {...rest}
     >
       {typeof children === 'function' ? children(progress) : children}
@@ -230,17 +244,23 @@ export function SectionHeading({ eyebrow, title, lede, progress, align = 'left' 
   return (
     <motion.div
       style={y ? { y } : undefined}
-      className={cn('mb-14 max-w-3xl md:mb-20', align === 'center' && 'mx-auto text-center')}
+      className={cn(
+        'mb-10 max-w-3xl sm:mb-14 md:mb-20',
+        align === 'center' && 'mx-auto text-center',
+      )}
     >
       <Reveal className="eyebrow mb-5 flex items-center gap-3">
         {align !== 'center' && <span className="h-px w-8 bg-white/25" />}
         {eyebrow}
       </Reveal>
       <h2 className="display text-[clamp(2rem,5.5vw,3.75rem)]">
-        <SplitHeading text={title} wordClassName="grad-text" />
+        <RevealText text={title} partClassName="grad-text" />
       </h2>
       {lede && (
-        <Reveal delay={0.12} className="mt-6 text-lg leading-relaxed text-muted md:text-xl">
+        <Reveal
+          delay={0.12}
+          className="mt-5 text-[16.5px] leading-relaxed text-muted sm:mt-6 sm:text-lg md:text-xl"
+        >
           {lede}
         </Reveal>
       )}

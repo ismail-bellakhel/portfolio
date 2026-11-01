@@ -12,7 +12,11 @@ import Projects from '@/sections/Projects';
 import Stack from '@/sections/Stack';
 import Roles from '@/sections/Roles';
 import Contact from '@/sections/Contact';
-import { stack as stackData } from '@/data/content';
+import { sectors as sectorData, stack as stackData } from '@/data/content';
+
+/* Module scope, so the reference is stable and SceneLayer's registry memo
+   does not rebuild every render. */
+const SECTOR_LABELS = sectorData.map((s) => s.short);
 
 /** The conduit colour for each section. */
 const TINTS = {
@@ -67,7 +71,11 @@ export default function App() {
 
   return (
     <div className="noise relative min-h-screen bg-ink-950">
-      <SceneLayer stackLabels={stackLabels} onActive={handleActive} />
+      <SceneLayer
+        stackLabels={stackLabels}
+        sectorLabels={SECTOR_LABELS}
+        onActive={handleActive}
+      />
       <FiberField tint={TINTS[active] || TINTS.hero} />
 
       <Nav active={active} />

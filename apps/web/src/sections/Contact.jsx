@@ -35,7 +35,7 @@ export default function Contact() {
 
           <div className="grid gap-4 lg:grid-cols-[1.25fr_1fr]">
             {/* Primary call to action */}
-            <GlassCard progress={progress} depth={28} className="flex flex-col p-8 sm:p-10">
+            <GlassCard progress={progress} depth={28} className="flex flex-col p-6 sm:p-10">
               <h3 className="display mb-5 text-[clamp(1.6rem,3.4vw,2.5rem)] leading-[1.1] text-white">
                 Tell me what you&apos;re measuring.
               </h3>
@@ -64,7 +64,7 @@ export default function Contact() {
             </GlassCard>
 
             {/* Channels */}
-            <GlassCard progress={progress} depth={-24} delay={0.06} className="p-7 sm:p-8">
+            <GlassCard progress={progress} depth={-24} delay={0.06} className="p-6 sm:p-8">
               <div className="eyebrow mb-5">Direct</div>
               <div className="space-y-2">
                 {channels.map(({ icon: Icon, slug, label, value, href }) => (
@@ -95,7 +95,7 @@ export default function Contact() {
             </GlassCard>
 
             {/* Languages */}
-            <GlassCard progress={progress} depth={22} delay={0.04} className="p-7">
+            <GlassCard progress={progress} depth={22} delay={0.04} className="p-6 sm:p-7">
               <div className="eyebrow mb-5">Languages</div>
               <div className="grid gap-3 sm:grid-cols-2">
                 {languages.map((l) => (
@@ -111,7 +111,7 @@ export default function Contact() {
             </GlassCard>
 
             {/* Writing */}
-            <GlassCard progress={progress} depth={-20} delay={0.1} className="p-7">
+            <GlassCard progress={progress} depth={-20} delay={0.1} className="p-6 sm:p-7">
               <div className="eyebrow mb-4">{writing.title}</div>
               <p className="text-[13px] leading-relaxed text-muted">{writing.description}</p>
             </GlassCard>
@@ -122,8 +122,12 @@ export default function Contact() {
             delay={0.1}
             className="mt-16 flex flex-col items-center gap-5 border-t border-white/[0.07] pt-9 sm:flex-row sm:justify-between"
           >
+            {/* The closing signature, matching the line that opens the hero.
+                Not profile.role: that is the job title and it still belongs in
+                the page metadata and the CV. */}
             <div className="text-[12px] text-white/35">
-              © {new Date().getFullYear()} {profile.name} · {profile.role}
+              © {new Date().getFullYear()} {profile.name} · Marketing &amp; AI
+              Consultancy
             </div>
             <Presence />
           </Reveal>

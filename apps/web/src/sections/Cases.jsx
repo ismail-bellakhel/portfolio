@@ -40,7 +40,7 @@ function AwardMoment() {
 
   return (
     <div ref={ref} className="relative my-6">
-      <div className="relative overflow-hidden rounded-[30px] ring-1 ring-white/10">
+      <div className="relative overflow-hidden rounded-[24px] ring-1 ring-white/10 sm:rounded-[30px]">
         {/* Ambient backdrop. The stage behind him is navy with gold signage, so
             the band borrows those two colours as gradients rather than blurring
             a copy of the bitmap, since a filter that large stalls the compositor. */}
@@ -71,7 +71,7 @@ function AwardMoment() {
           />
         )}
 
-        <div className="relative grid items-center gap-9 p-7 sm:p-10 md:grid-cols-[1.15fr_1fr] md:gap-12 md:p-14">
+        <div className="relative grid items-center gap-7 p-6 sm:gap-9 sm:p-10 md:grid-cols-[1.15fr_1fr] md:gap-12 md:p-14">
           {/* Caption */}
           <div>
             <Reveal className="mb-6 inline-flex items-center gap-2.5 rounded-full bg-glow-amber/15 px-3.5 py-1.5 ring-1 ring-glow-amber/30">
@@ -114,7 +114,7 @@ function AwardMoment() {
                   decoding="async"
                   width={112}
                   height={56}
-                  className="h-14 w-28 shrink-0 rounded-xl object-cover ring-1 ring-white/10"
+                  className="h-12 w-20 shrink-0 rounded-lg object-cover ring-1 ring-white/10 sm:h-14 sm:w-28 sm:rounded-xl"
                 />
                 <span className="min-w-0 flex-1">
                   <span className="block text-[10.5px] uppercase tracking-[0.14em] text-white/40">
@@ -173,7 +173,7 @@ function ResultCard({ item, progress, delay }) {
       progress={progress}
       depth={CARD_DEPTH}
       delay={delay}
-      className="flex min-h-[340px] flex-col p-7"
+      className="flex flex-col p-6 sm:min-h-[340px] sm:p-7"
     >
       <div className="display mb-1 text-[clamp(2.1rem,4.6vw,3.1rem)] leading-none text-white">
         {item.display ? (

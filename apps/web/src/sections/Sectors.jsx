@@ -29,9 +29,9 @@ export default function Sectors() {
                   progress={progress}
                   depth={CARD_DEPTH}
                   delay={(i % 3) * 0.06}
-                  className="group flex min-h-[256px] flex-col p-7"
+                  className="group flex flex-col p-6 sm:min-h-[256px] sm:p-7"
                 >
-                  <div className="mb-6 flex items-start justify-between gap-4">
+                  <div className="mb-5 flex items-start justify-between gap-4 sm:mb-6">
                     <span className="glass-pill flex h-11 w-11 items-center justify-center rounded-2xl">
                       <Icon className="h-[18px] w-[18px] text-white/75" />
                     </span>
@@ -50,7 +50,7 @@ export default function Sectors() {
           </div>
 
           {/* Markets band: real flags, scrolling */}
-          <div className="edge-fade-x relative mt-16 overflow-hidden">
+          <div className="edge-fade-x relative mt-12 overflow-hidden sm:mt-16">
             <div className="flex w-max animate-marquee gap-10">
               {[0, 1].map((dup) => (
                 <div key={dup} className="flex shrink-0 gap-10" aria-hidden={dup === 1}>

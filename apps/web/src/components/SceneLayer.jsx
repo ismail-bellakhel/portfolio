@@ -6,7 +6,7 @@ import {
   casesScene,
   projectsScene,
   stackScene,
-  orbitScene,
+  coverageScene,
   contactScene,
 } from './scenes';
 
@@ -18,14 +18,14 @@ import {
   glass panels' backdrop-filter picks it up and refracts it.
 */
 
-export default function SceneLayer({ stackLabels = [], onActive }) {
+export default function SceneLayer({ stackLabels = [], sectorLabels = [], onActive }) {
   const canvasRef = useRef(null);
   const onActiveRef = useRef(onActive);
   onActiveRef.current = onActive;
 
   const registry = useMemo(
     () => [
-      ['sectors', orbitScene()],
+      ['sectors', coverageScene(sectorLabels)],
       ['experience', experienceScene()],
       ['cases', casesScene()],
       ['projects', projectsScene()],
@@ -33,7 +33,7 @@ export default function SceneLayer({ stackLabels = [], onActive }) {
       ['roles', radarScene()],
       ['contact', contactScene()],
     ],
-    [stackLabels],
+    [stackLabels, sectorLabels],
   );
 
   useEffect(() => {

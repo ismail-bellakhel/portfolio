@@ -375,86 +375,112 @@ export function stackScene(labels = []) {
 }
 
 /* ---------------------------------------------------------------
-   Tilted orbital rings with travelling satellites. Bound to Sectors:
-   several industries circling one method.
-   --------------------------------------------------------------- */
-export function orbitScene() {
-  let cx = 0;
-  let cy = 0;
-  let R = 0;
-  let rings = [];
-  let sats = [];
+   One labelled column per industry, each stack of cells filling from the
+   baseline up as the section scrolls, with a signal climbing each at its
+   own rate. Bound to Sectors: six industries, one method.
 
-  const TINTS = [
-    [96, 165, 250],
-    [52, 211, 153],
-    [167, 139, 250],
-  ];
+   This replaced a set of orbiting rings. The rings were a pretty motif but
+   an arbitrary one, the kind of generic science-y loop that could sit
+   behind any section on any site. A labelled column per industry is the
+   same density of motion and it says what the section says.
+   --------------------------------------------------------------- */
+export function coverageScene(labels = []) {
+  let cols = [];
+  let baseY = 0;
+  let pitch = 0;
+  let barW = 0;
+  let labelled = false;
+
+  const ROWS = 9;
 
   return {
     resize(w, h) {
-      cx = w * 0.5;
-      cy = h * 0.5;
-      R = Math.min(w, h) * 0.42;
-      const rand = seeded(2213);
-      rings = [];
-      for (let i = 0; i < 5; i++) {
-        rings.push({
-          rx: R * (0.42 + i * 0.15),
-          ry: R * (0.42 + i * 0.15) * (0.26 + rand() * 0.42),
-          rot: rand() * Math.PI,
-          spin: (rand() - 0.5) * 0.09,
-          tint: TINTS[i % 3],
-        });
-      }
-      sats = [];
-      for (let i = 0; i < 18; i++) {
-        const ring = rings[i % rings.length];
-        sats.push({
-          ring,
-          ang: rand() * TAU,
-          speed: 0.14 + rand() * 0.4,
-          size: 1.2 + rand() * 2,
-        });
-      }
+      const rand = seeded(4409);
+      const n = Math.max(labels.length, 1);
+      // Tied to the content column so the stacks line up under the cards.
+      const span = Math.min(w * 0.88, 1060);
+      const left = (w - span) / 2;
+      const step = span / n;
+
+      barW = Math.min(step * 0.42, 54);
+      pitch = Math.min(h * 0.052, 30);
+      baseY = h * 0.8;
+      // The longest label is ~68px at 10px type. Below that the six names run
+      // into each other, so on a phone the columns go unlabelled.
+      labelled = step > 84;
+
+      cols = labels.length ? labels : [''];
+      cols = cols.map((label, i) => ({
+        label,
+        x: left + step * (i + 0.5),
+        // Where the stack settles, and how fast its signal climbs.
+        fill: 0.52 + rand() * 0.46,
+        rate: 0.34 + rand() * 0.42,
+        phase: rand(),
+      }));
     },
-    draw(ctx, w, h, t, a) {
+    draw(ctx, w, h, t, a, p) {
       ctx.save();
-      ctx.globalCompositeOperation = 'lighter';
 
-      // Core glow
-      const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, R * 0.68);
-      g.addColorStop(0, `rgba(150,190,255,${0.1 * a})`);
-      g.addColorStop(1, 'rgba(0,0,0,0)');
-      ctx.fillStyle = g;
+      // Baseline
+      const x0 = cols[0].x - pitch;
+      const x1 = cols[cols.length - 1].x + pitch;
+      ctx.strokeStyle = `rgba(148,197,255,${0.1 * a})`;
+      ctx.lineWidth = 1;
       ctx.beginPath();
-      ctx.arc(cx, cy, R * 0.68, 0, TAU);
-      ctx.fill();
+      ctx.moveTo(x0, baseY + 0.5);
+      ctx.lineTo(x1, baseY + 0.5);
+      ctx.stroke();
 
-      for (const r of rings) {
-        const rot = r.rot + t * r.spin;
-        const [cr, cg, cb] = r.tint;
-        ctx.strokeStyle = `rgba(${cr},${cg},${cb},${0.14 * a})`;
-        ctx.lineWidth = 1;
-        ctx.beginPath();
-        ctx.ellipse(cx, cy, r.rx, r.ry, rot, 0, TAU);
-        ctx.stroke();
+      // Labels sit on the dark background, not on the additive pass, so
+      // they stay legible instead of blooming into the cells above them.
+      if (labelled) {
+        ctx.font = '600 10px ui-sans-serif, system-ui, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillStyle = `rgba(190,215,255,${0.22 * a})`;
+        for (const c of cols) {
+          if (c.label) ctx.fillText(c.label, c.x, baseY + 17);
+        }
       }
 
-      for (const s of sats) {
-        const r = s.ring;
-        const rot = r.rot + t * r.spin;
-        const ang = s.ang + t * s.speed;
-        const ex = Math.cos(ang) * r.rx;
-        const ey = Math.sin(ang) * r.ry;
-        const x = cx + ex * Math.cos(rot) - ey * Math.sin(rot);
-        const y = cy + ex * Math.sin(rot) + ey * Math.cos(rot);
-        const [cr, cg, cb] = r.tint;
+      ctx.globalCompositeOperation = 'lighter';
+      const cellH = pitch * 0.46;
 
-        ctx.fillStyle = `rgba(${cr},${cg},${cb},${0.6 * a})`;
-        ctx.beginPath();
-        ctx.arc(x, y, s.size, 0, TAU);
-        ctx.fill();
+      for (let i = 0; i < cols.length; i++) {
+        const c = cols[i];
+        // Columns open left to right as the section crosses the viewport.
+        const open = smoothstep(0, 1, clamp01((p * 1.7 - i * 0.07) / 0.55));
+        const lit = c.fill * open * ROWS;
+        const climb = ((t * c.rate + c.phase) % 1.35) / 1.35 * (ROWS + 1.5);
+
+        for (let r = 0; r < ROWS; r++) {
+          const y = baseY - (r + 1) * pitch + (pitch - cellH);
+          const on = clamp01(lit - r);
+          const hit = Math.max(0, 1 - Math.abs(climb - r) * 1.5) * on;
+
+          // The gap between an empty cell and a filled one is what makes this
+          // read as a chart rather than as a grid of boxes, so the unlit state
+          // stays very low and the lit state carries the contrast.
+          ctx.fillStyle = `rgba(110,170,255,${(0.03 + on * 0.21) * a})`;
+          ctx.fillRect(c.x - barW / 2, y, barW, cellH);
+
+          if (hit > 0.01) {
+            ctx.fillStyle = `rgba(52,211,153,${hit * 0.45 * a})`;
+            ctx.fillRect(c.x - barW / 2, y, barW, cellH);
+          }
+        }
+
+        // Crest: a soft cap riding the top of whatever is lit.
+        const top = baseY - lit * pitch;
+        if (lit > 0.2) {
+          const g = ctx.createRadialGradient(c.x, top, 0, c.x, top, pitch * 1.6);
+          g.addColorStop(0, `rgba(170,215,255,${0.17 * a})`);
+          g.addColorStop(1, 'rgba(0,0,0,0)');
+          ctx.fillStyle = g;
+          ctx.beginPath();
+          ctx.arc(c.x, top, pitch * 1.6, 0, TAU);
+          ctx.fill();
+        }
       }
       ctx.restore();
     },

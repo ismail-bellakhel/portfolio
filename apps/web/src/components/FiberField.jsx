@@ -28,6 +28,17 @@ import { contactFocus } from '@/components/scenes';
 const DESKTOP_STRANDS = 16;
 const MOBILE_STRANDS = 8;
 
+/*
+  How many lights are in flight, relative to the original tuning.
+
+  A packet's population is its lifetime divided by its spawn interval, so
+  dividing the interval by this number scales the count on screen by it. The
+  knob is here rather than on the strand count because dropping strands would
+  also widen the gaps in the bundle; this thins the traffic while leaving the
+  spread across the viewport exactly as it was.
+*/
+const LIGHT_DENSITY = 0.9;
+
 function makeStrands(count, w, h) {
   const rand = seeded(20260401);
   const strands = [];
@@ -49,7 +60,7 @@ function makeStrands(count, w, h) {
       phase1: rand() * Math.PI * 2,
       phase2: rand() * Math.PI * 2,
       packets: [],
-      nextSpawn: rand() * 2.4,
+      nextSpawn: (rand() * 2.4) / LIGHT_DENSITY,
       hueShift: (rand() - 0.5) * 48,
     });
   }
@@ -240,7 +251,7 @@ export default function FiberField({ tint, intensity = 1 }) {
         // --- spawn packets ---
         s.nextSpawn -= dt * (1 + energy * 3.2);
         if (s.nextSpawn <= 0) {
-          s.nextSpawn = 1.1 + Math.random() * 3.4;
+          s.nextSpawn = (1.1 + Math.random() * 3.4) / LIGHT_DENSITY;
           if (s.packets.length < 4) {
             s.packets.push({
               y: -120 - Math.random() * 200,
