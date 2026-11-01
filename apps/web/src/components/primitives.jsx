@@ -37,12 +37,25 @@ export function useSectionScroll() {
   return { ref, progress: scrollYProgress };
 }
 
+/*
+  Parallax is for pointers that hover, which in practice means desktop.
+
+  A phone's address bar collapses and expands on its own as you scroll, and
+  that changes window.innerHeight. Every section's progress is measured
+  against the viewport, so a toolbar that slides away rewrites the progress
+  of the whole page at once and every parallaxed block springs to a new
+  offset. The result is a page that drifts up and down while the finger is
+  nowhere near it. There is no parallax to fight over if there is none.
+*/
+const COARSE =
+  typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches;
+
 /** Parallax offset derived from a section progress value. */
 export function useParallax(progress, depth = 40) {
   const reduce = useReducedMotion();
   const raw = useTransform(progress, [0, 1], [depth, -depth]);
   const y = useSpring(raw, { stiffness: 140, damping: 30, mass: 0.35 });
-  return reduce ? undefined : y;
+  return reduce || COARSE ? undefined : y;
 }
 
 /** Fade/slide in. For TEXT and non-glass content only. */
