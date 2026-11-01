@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion';
-import { Trophy } from 'lucide-react';
+import { ArrowUpRight, Trophy } from 'lucide-react';
 import {
   CARD_DEPTH,
   Counter,
@@ -21,6 +21,9 @@ import { cases } from '@/data/content';
    foreground portrait is parallaxed; the blurred backdrop is static
    so the browser rasterises that filter exactly once.
    --------------------------------------------------------------- */
+const AWARD_ARTICLE =
+  'https://www.dagensps.se/redaktionen-har-ordet/dagens-ps-vinner-svenska-seo-priset-2024/';
+
 function AwardMoment() {
   const ref = useRef(null);
   const reduce = useReducedMotion();
@@ -92,7 +95,40 @@ function AwardMoment() {
               readers.
             </Reveal>
 
-            <Reveal delay={0.22} className="mt-7 flex flex-wrap gap-2">
+            {/* The receipt. The claim above is checkable, so it links to the
+                announcement DagensPS published on 12 Nov 2024. The thumbnail is
+                that article's own og:image, the ceremony photo, served from this
+                origin rather than hotlinked so the card cannot break if they
+                move the file. */}
+            <Reveal delay={0.22} className="mt-7">
+              <a
+                href={AWARD_ARTICLE}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group flex items-center gap-3.5 rounded-2xl bg-white/[0.05] p-2.5 pr-4 ring-1 ring-white/10 transition-colors duration-300 hover:bg-white/[0.09]"
+              >
+                <img
+                  src="/images/dagensps-seo-award-2024.jpg"
+                  alt="The DagensPS team at the Svenska SEO-priset 2024 ceremony"
+                  loading="lazy"
+                  decoding="async"
+                  width={112}
+                  height={56}
+                  className="h-14 w-28 shrink-0 rounded-xl object-cover ring-1 ring-white/10"
+                />
+                <span className="min-w-0 flex-1">
+                  <span className="block text-[10.5px] uppercase tracking-[0.14em] text-white/40">
+                    Dagens PS · Nov 2024
+                  </span>
+                  <span className="block truncate text-[13px] font-medium text-white/85">
+                    Dagens PS vinner svenska SEO-priset 2024
+                  </span>
+                </span>
+                <ArrowUpRight className="h-4 w-4 shrink-0 text-white/30 transition-all duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-glow-amber" />
+              </a>
+            </Reveal>
+
+            <Reveal delay={0.28} className="mt-5 flex flex-wrap gap-2">
               {['Svenska SEO-priset', 'Stockholm', 'DagensPS'].map((t) => (
                 <span
                   key={t}

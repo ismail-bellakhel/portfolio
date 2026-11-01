@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { clamp, clamp01, lerp, seeded } from '@/lib/utils';
+import { contactFocus } from '@/components/scenes';
 
 /*
   FiberField
@@ -57,14 +58,25 @@ function makeStrands(count, w, h) {
   return strands;
 }
 
-/** x position of a strand at viewport y, given current scroll. */
-function strandX(s, y, scroll) {
+/**
+ * x position of a strand at viewport y, given current scroll.
+ *
+ * `warp` is the contact-section pinch. It pulls x toward the focus by an
+ * amount that peaks at the focus line and falls to zero at the edges of its
+ * reach, so the bundle narrows to a waist and opens again rather than being
+ * bent wholesale. At full strength every strand resolves to the same x at the
+ * focus line, which is what makes them read as merging into one point.
+ */
+function strandX(s, y, scroll, warp) {
   const py = y + scroll * s.depth;
-  return (
+  const x =
     s.x +
     Math.sin(py * s.freq1 + s.phase1) * s.amp1 +
-    Math.sin(py * s.freq2 + s.phase2) * s.amp2
-  );
+    Math.sin(py * s.freq2 + s.phase2) * s.amp2;
+
+  if (!warp) return x;
+  const k = warp.at(y);
+  return k > 0 ? x + (warp.cx - x) * k : x;
 }
 
 export default function FiberField({ tint, intensity = 1 }) {
@@ -98,6 +110,11 @@ export default function FiberField({ tint, intensity = 1 }) {
     // Current blended colour of the conduit.
     const colour = { r: 96, g: 165, b: 250 };
 
+    // How strongly the strands are pinched toward the contact scene's focus.
+    // 0 everywhere except over the contact section at the end of the page.
+    let converge = 0;
+    let warp = null;
+
     const resize = () => {
       dpr = Math.min(window.devicePixelRatio || 1, 1.5);
       w = window.innerWidth;
@@ -121,12 +138,17 @@ export default function FiberField({ tint, intensity = 1 }) {
     /** Stroke a glowing run along strand `s` from y0 to y1. */
     const strokeRun = (s, y0, y1, rgb, alpha, width) => {
       const span = y1 - y0;
-      const steps = clamp(Math.ceil(Math.abs(span) / 26), 2, 26);
+      // While pinching, x changes fast near the waist, so the run is sampled
+      // more finely. At the usual 26-step cap the tip of the waist renders as
+      // a visible corner instead of a curve.
+      const steps = warp
+        ? clamp(Math.ceil(Math.abs(span) / 14), 2, 54)
+        : clamp(Math.ceil(Math.abs(span) / 26), 2, 26);
 
       ctx.beginPath();
       for (let i = 0; i <= steps; i++) {
         const y = y0 + (span * i) / steps;
-        const x = strandX(s, y, scrollSmooth);
+        const x = strandX(s, y, scrollSmooth, warp);
         if (i === 0) ctx.moveTo(x, y);
         else ctx.lineTo(x, y);
       }
@@ -169,6 +191,34 @@ export default function FiberField({ tint, intensity = 1 }) {
       // Scroll "energy": 0 at rest, 1 when flicking hard.
       const energy = clamp01(Math.abs(velocity) / 2600);
       const amp = intensityRef.current;
+
+      // --- contact pinch ---
+      // Measured the same way SceneLayer weights its scenes, so the strands
+      // tighten in step with the converging rays being drawn underneath
+      // instead of leading or trailing them.
+      const contact = document.getElementById('contact');
+      let targetConverge = 0;
+      if (contact) {
+        const r = contact.getBoundingClientRect();
+        const overlap = Math.min(h, r.bottom) - Math.max(0, r.top);
+        const frac = clamp01(overlap / Math.min(h, Math.max(r.height, 1)));
+        targetConverge = frac * frac * (3 - 2 * frac); // smoothstep
+      }
+      converge += (targetConverge - converge) * clamp01(dt * 2.6);
+
+      if (converge > 0.002) {
+        const focus = contactFocus(w, h);
+        const reach = h * 0.5;
+        warp = {
+          cx: focus.x,
+          at(y) {
+            const f = 1 - clamp01(Math.abs(y - focus.y) / reach);
+            return converge * f * f * (3 - 2 * f);
+          },
+        };
+      } else {
+        warp = null;
+      }
 
       ctx.clearRect(0, 0, w, h);
       ctx.globalCompositeOperation = 'lighter';
@@ -221,7 +271,7 @@ export default function FiberField({ tint, intensity = 1 }) {
           strokeRun(s, p.y - tail * 0.3, p.y, rgb, a * 0.95, 1.1);
 
           // Bright head.
-          const hx = strandX(s, p.y, scrollSmooth);
+          const hx = strandX(s, p.y, scrollSmooth, warp);
           const g = ctx.createRadialGradient(hx, p.y, 0, hx, p.y, 13);
           g.addColorStop(0, `rgba(255,255,255,${a * 0.85})`);
           g.addColorStop(0.35, `rgba(${rgb.r},${rgb.g},${rgb.b},${a * 0.45})`);

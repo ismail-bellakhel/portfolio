@@ -59,7 +59,7 @@ export function Reveal({
     <Tag
       initial={reduce ? false : { opacity: 0, y }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '-80px' }}
+      viewport={{ once: true, margin: '-80px 0px' }}
       transition={{ duration: 0.75, delay, ease: [0.22, 1, 0.36, 1] }}
       className={className}
       {...rest}
@@ -96,7 +96,7 @@ export function GlassCard({
       style={y ? { y } : undefined}
       initial={{ opacity: 0 }}
       whileInView={{ opacity: 1 }}
-      viewport={{ once: true, margin: '-60px' }}
+      viewport={{ once: true, margin: '-60px 0px' }}
       transition={{ duration: 0.7, delay, ease: [0.22, 1, 0.36, 1] }}
       className={cn('glass glass-i', sheen && 'glass-sheen', className)}
       {...rest}
@@ -114,10 +114,19 @@ export function GlassCard({
 */
 export const CARD_DEPTH = 24;
 
-/** Count-up number that fires once when scrolled into view. */
+/**
+ * Count-up number that fires once when scrolled into view.
+ *
+ * The root margin is vertical-only on purpose. `margin: '-60px'` is a CSS
+ * shorthand, so it shrinks the observation root on all four sides, including
+ * horizontally. This span wraps only the digits, so it can be ~18px wide, and
+ * in the hero's left column it sits at x 20-38 on a narrow viewport. A root
+ * shrunk to x >= 60 never intersects it, `inView` stays false, and the number
+ * sits at 0 forever while the wider right column counts up normally.
+ */
 export function Counter({ to, duration = 1.6, decimals = 0, className }) {
   const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: '-60px' });
+  const inView = useInView(ref, { once: true, margin: '-60px 0px' });
   const reduce = useReducedMotion();
   const [val, setVal] = useState(0);
 
@@ -180,7 +189,7 @@ export function SplitHeading({ text, className, wordClassName, delay = 0 }) {
           className="inline-block overflow-hidden pb-[0.3em] align-bottom [margin-bottom:-0.3em]"
           initial={reduce ? false : 'hidden'}
           whileInView="show"
-          viewport={{ once: true, margin: '-60px' }}
+          viewport={{ once: true, margin: '-60px 0px' }}
         >
           <motion.span
             className={cn('inline-block', wordClassName)}

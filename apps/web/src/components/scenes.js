@@ -464,6 +464,18 @@ export function orbitScene() {
 /* ---------------------------------------------------------------
    CONTACT: signals converging on a single point.
    --------------------------------------------------------------- */
+
+/**
+ * The point the contact scene converges on, in viewport coordinates.
+ *
+ * FiberField reads this too, so the descending strands pinch exactly where
+ * these rays land. Both canvases are `position: fixed` and full-viewport, so
+ * they share a coordinate space. Keep this as the single source of truth: if
+ * the two drift apart, the end of the page reads as two unrelated motions
+ * fighting each other.
+ */
+export const contactFocus = (w, h) => ({ x: w * 0.5, y: h * 0.5 });
+
 export function contactScene() {
   let cx = 0;
   let cy = 0;
@@ -472,8 +484,9 @@ export function contactScene() {
 
   return {
     resize(w, h) {
-      cx = w * 0.5;
-      cy = h * 0.5;
+      const focus = contactFocus(w, h);
+      cx = focus.x;
+      cy = focus.y;
       R = Math.hypot(w, h) * 0.55;
       const rand = seeded(8803);
       rays = [];
