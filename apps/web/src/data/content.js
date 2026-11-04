@@ -568,6 +568,110 @@ export const writing = {
     'I write about sport, technology and the automotive industry, using research and analysis to examine market shifts and strategic developments.',
 };
 
+/*
+  Signals.
+
+  These are the payloads carried by the light travelling down the fibre
+  strands in the background, and they are shown as text in the hero only.
+
+  Three kinds: the outcomes, the measures behind them, and the tools used to
+  read them. A result, the thing it was measured by, and the instrument that
+  measured it. Nothing decorative.
+
+  `value` is the bright part of the label, `label` the dim context beside it.
+*/
+const kpiSignals = cases.map((c) => ({
+  value: c.display ?? `${c.prefix ?? ''}${c.metric}${c.suffix ?? ''}`,
+  label: c.title,
+}));
+
+/*
+  The measures each position was run on.
+
+  The CV states outcomes. These are the dials underneath them: what was
+  actually watched day to day in that seat, including the ones no result was
+  written about. They are deliberately names without numbers. A KPI that was
+  monitored is a fact about the work; a figure attached to it would be a claim,
+  and every claim on this page is one the CV can stand behind.
+*/
+const positionMetrics = [
+  {
+    at: 'DagensPS',
+    metrics: [
+      'Core Web Vitals',
+      'Crawl Budget',
+      'Index Coverage',
+      'Discover Impressions',
+      'Organic CTR',
+      'Consent Opt-in Rate',
+      'Ad Viewability',
+      'Fill Rate',
+      'Session RPM',
+      'Returning Readers',
+      'Attribution Coverage',
+      'Data Pipeline Freshness',
+    ],
+  },
+  {
+    at: 'HusmanHagberg',
+    metrics: [
+      'CAC',
+      'ROAS',
+      'Cost per Lead',
+      'Lead Quality Score',
+      'Funnel Conversion Rate',
+      'Landing Page Speed',
+      'Ad Relevance',
+      'Nurture Engagement',
+    ],
+  },
+  {
+    at: 'Life Fitness',
+    metrics: [
+      'Budget Utilisation',
+      'Partner Pipeline',
+      'Market Penetration',
+      'Share of Voice',
+      'Campaign Reach',
+      'Cost per Acquisition',
+      'Sales Enablement Uptake',
+    ],
+  },
+  {
+    at: 'ILT Education',
+    metrics: [
+      'ABM Account Coverage',
+      'Organic Visibility',
+      'Keyword Rankings',
+      'Lifecycle Conversion',
+      'Email Engagement',
+      'Localised Content Reach',
+      'Demand Gen Pipeline',
+    ],
+  },
+  {
+    at: 'Concentrix',
+    metrics: [
+      'Competitive Price Index',
+      'Offer Win Rate',
+      'Market Share',
+      'Churn Rate',
+      'ARPU',
+      'Benchmark Coverage',
+    ],
+  },
+];
+
+const measureSignals = positionMetrics.flatMap((p) =>
+  p.metrics.map((m) => ({ value: m, label: p.at })),
+);
+
+const toolSignals = stack.flatMap((group) =>
+  group.tools.map((t) => ({ value: t.name, label: group.title })),
+);
+
+export const signals = [...kpiSignals, ...measureSignals, ...toolSignals];
+
 // Navigation / section registry. Order defines the page and the scroll spine.
 export const sections = [
   { id: 'hero', label: 'Home' },

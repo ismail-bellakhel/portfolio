@@ -12,7 +12,11 @@ import Projects from '@/sections/Projects';
 import Stack from '@/sections/Stack';
 import Roles from '@/sections/Roles';
 import Contact from '@/sections/Contact';
-import { sectors as sectorData, stack as stackData } from '@/data/content';
+import {
+  sectors as sectorData,
+  signals,
+  stack as stackData,
+} from '@/data/content';
 
 /* Module scope, so the reference is stable and SceneLayer's registry memo
    does not rebuild every render. */
@@ -81,7 +85,7 @@ export default function App() {
         sectorLabels={SECTOR_LABELS}
         onActive={handleActive}
       />
-      <FiberField tint={TINTS[active] || TINTS.hero} />
+      <FiberField tint={TINTS[active] || TINTS.hero} signals={signals} />
 
       <Nav active={active} />
 
