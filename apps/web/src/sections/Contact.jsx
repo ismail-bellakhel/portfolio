@@ -6,8 +6,7 @@ import {
   SectionHeading,
 } from '@/components/primitives';
 import { ToolLogo } from '@/components/Logo';
-import Presence from '@/components/Presence';
-import { languages, profile, writing } from '@/data/content';
+import { profile, writing } from '@/data/content';
 
 const channels = [
   { icon: Mail, label: 'Email', value: profile.email, href: `mailto:${profile.email}` },
@@ -94,42 +93,31 @@ export default function Contact() {
               </div>
             </GlassCard>
 
-            {/* Languages */}
-            <GlassCard progress={progress} depth={22} delay={0.04} className="p-6 sm:p-7">
-              <div className="eyebrow mb-5">Languages</div>
-              <div className="grid gap-3 sm:grid-cols-2">
-                {languages.map((l) => (
-                  <div
-                    key={l.name}
-                    className="flex items-center justify-between gap-3 rounded-xl bg-white/[0.035] px-3.5 py-2.5 ring-1 ring-white/[0.06]"
-                  >
-                    <span className="text-[13px] font-medium text-white/85">{l.name}</span>
-                    <span className="font-mono text-[11px] text-white/50">{l.level}</span>
-                  </div>
-                ))}
-              </div>
-            </GlassCard>
-
-            {/* Writing */}
-            <GlassCard progress={progress} depth={-20} delay={0.1} className="p-6 sm:p-7">
+            {/* Writing. Spans the full width: the Languages card that used to
+                sit beside it is gone (Experience already carries one), and a
+                half-width card alone on the second row reads as a gap. */}
+            <GlassCard
+              progress={progress}
+              depth={-20}
+              delay={0.1}
+              className="p-6 sm:p-7 lg:col-span-2"
+            >
               <div className="eyebrow mb-4">{writing.title}</div>
               <p className="text-[13px] leading-relaxed text-muted">{writing.description}</p>
             </GlassCard>
           </div>
 
-          {/* Footer */}
+          {/* Footer. The visit counter lives in the hero only; a second one
+              down here was the same number twice on one page. */}
           <Reveal
             delay={0.1}
-            className="mt-16 flex flex-col items-center gap-5 border-t border-white/[0.07] pt-9 sm:flex-row sm:justify-between"
+            className="mt-16 border-t border-white/[0.07] pt-9 text-center text-[12px] text-white/35"
           >
             {/* The closing signature, matching the line that opens the hero.
                 Not profile.role: that is the job title and it still belongs in
                 the page metadata and the CV. */}
-            <div className="text-[12px] text-white/35">
-              © {new Date().getFullYear()} {profile.name} · Marketing &amp; AI
-              Consultancy
-            </div>
-            <Presence className="hidden sm:inline-flex" />
+            © {new Date().getFullYear()} {profile.name} · Marketing &amp; AI
+            Consultancy
           </Reveal>
         </div>
       )}

@@ -65,9 +65,14 @@ export default function App() {
     [],
   );
 
-  const handleActive = useCallback((id) => {
-    if (id) setActive(id);
-  }, []);
+  /*
+    SceneLayer only knows about the sections that own a background scene, and
+    the hero owns none, so it reports `null` whenever nothing else is on
+    screen. That null IS the hero. Discarding it left the nav and the rail
+    stuck on whichever section was last lit, so scrolling back to the top (or
+    clicking Home) still read "Sectors".
+  */
+  const handleActive = useCallback((id) => setActive(id || 'hero'), []);
 
   return (
     <div className="noise relative min-h-screen bg-ink-950">

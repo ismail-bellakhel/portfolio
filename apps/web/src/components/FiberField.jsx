@@ -37,7 +37,7 @@ const MOBILE_STRANDS = 8;
   also widen the gaps in the bundle; this thins the traffic while leaving the
   spread across the viewport exactly as it was.
 */
-const LIGHT_DENSITY = 0.9;
+const LIGHT_DENSITY = 0.574;
 
 /*
   A phone shows the same traffic in a third of the width, so the bundle reads
