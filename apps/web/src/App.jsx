@@ -11,6 +11,7 @@ import Cases from '@/sections/Cases';
 import Projects from '@/sections/Projects';
 import Stack from '@/sections/Stack';
 import Roles from '@/sections/Roles';
+import Assessment from '@/sections/Assessment';
 import Contact from '@/sections/Contact';
 import {
   sectors as sectorData,
@@ -31,6 +32,7 @@ const TINTS = {
   projects: { r: 167, g: 139, b: 250 },
   stack: { r: 56, g: 189, b: 248 },
   roles: { r: 129, g: 140, b: 248 },
+  assessment: { r: 52, g: 211, b: 153 },
   contact: { r: 96, g: 165, b: 250 },
 };
 
@@ -97,6 +99,7 @@ export default function App() {
         <Projects />
         <Stack />
         <Roles />
+        <Assessment />
         <Contact />
       </main>
     </div>

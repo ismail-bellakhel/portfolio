@@ -10,6 +10,7 @@ import {
   contactScene,
   sphereScene,
 } from './scenes';
+import { brainScene } from './brain';
 
 /*
   SceneLayer renders every section's background motif onto ONE canvas and
@@ -33,6 +34,7 @@ export default function SceneLayer({ stackLabels = [], sectorLabels = [], onActi
       ['projects', projectsScene()],
       ['stack', stackScene(stackLabels)],
       ['roles', radarScene()],
+      ['assessment', brainScene()],
       ['contact', contactScene()],
     ],
     [stackLabels, sectorLabels],

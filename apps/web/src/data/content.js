@@ -582,6 +582,255 @@ export const roleGroups = {
   },
 };
 
+/*
+  Alva Labs assessments.
+
+  Everything here is read straight off the two PDF reports. Scores are Alva's
+  own 1-10 standard scale, where 5 and 6 are the population average, and the
+  percentile bands are quoted in Alva's wording rather than converted, because
+  a band is not a point and rounding it to one would overstate the precision.
+*/
+export const assessment = {
+  provider: 'Alva Labs',
+  logic: {
+    title: 'Logical ability',
+    score: 9,
+    band: 'Above average',
+    percentile: '93rd to 98th percentile',
+    blurb:
+      "Alva's logic test measures how efficiently you process complex information and draw accurate conclusions from it.",
+    /*
+      Every task answered, by difficulty.
+
+      The test is adaptive: it keeps raising the difficulty until you start
+      missing, so the shape of this is the result. Solved tasks sit below the
+      score and missed ones above it, and where the two meet is the score.
+      Reporting it this way rather than as a lone number is the honest version,
+      since it shows the four misses at difficulty 10 as well as the hits.
+    */
+    tasks: [
+      { d: 1, ok: 1, miss: 0 },
+      { d: 2, ok: 1, miss: 0 },
+      { d: 4, ok: 1, miss: 0 },
+      { d: 5, ok: 1, miss: 0 },
+      { d: 6, ok: 1, miss: 0 },
+      { d: 7, ok: 2, miss: 1 },
+      { d: 8, ok: 2, miss: 1 },
+      { d: 9, ok: 2, miss: 0 },
+      { d: 10, ok: 2, miss: 4 },
+    ],
+  },
+  personality: {
+    title: 'Five Factor profile',
+    blurb:
+      "Alva's personality test is built on the Five Factor model, the most validated framework for quantifying personality.",
+    factors: [
+      {
+        key: 'agreeableness',
+        name: 'Agreeableness',
+        score: 9,
+        label: 'Very Friendly',
+        percentile: '93rd to 98th percentile',
+        low: 'Detached',
+        high: 'Friendly',
+        tint: '#60a5fa',
+        summary:
+          'A markedly empathetic, friendly style when working with others, with a strong tendency to trust people and their intentions, which makes collaboration easy. Warm and consensus-seeking, and therefore reluctant to force a conflict.',
+        facets: [
+          {
+            name: 'Compassion',
+            label: 'Soft-hearted',
+            score: 8,
+            percentile: '84th to 93rd',
+            low: 'Indifferent',
+            high: 'Soft-hearted',
+          },
+          {
+            name: 'Politeness',
+            label: 'Polite',
+            score: 7,
+            percentile: '69th to 84th',
+            low: 'Forthright',
+            high: 'Polite',
+          },
+          {
+            name: 'Trust',
+            label: 'Very Trusting',
+            score: 10,
+            percentile: '98th and above',
+            low: 'Sceptical',
+            high: 'Trusting',
+          },
+        ],
+      },
+      {
+        key: 'conscientiousness',
+        name: 'Conscientiousness',
+        score: 10,
+        label: 'Very Diligent',
+        percentile: '98th percentile and above',
+        low: 'Relaxed',
+        high: 'Diligent',
+        tint: '#34d399',
+        summary:
+          'A very strong focus on achievement and responsibility. Works hard to reach goals and exceed expectations, with very high self-discipline and a clear preference for working in a structured way at a high tempo.',
+        facets: [
+          {
+            name: 'Goal-striving',
+            label: 'Industrious',
+            score: 8,
+            percentile: '84th to 93rd',
+            low: 'Easy-going',
+            high: 'Industrious',
+          },
+          {
+            name: 'Carefulness',
+            label: 'Very Careful',
+            score: 9,
+            percentile: '93rd to 98th',
+            low: 'Spontaneous',
+            high: 'Careful',
+          },
+          {
+            name: 'Orderliness',
+            label: 'Organized',
+            score: 8,
+            percentile: '84th to 93rd',
+            low: 'Unstructured',
+            high: 'Organized',
+          },
+        ],
+      },
+      {
+        key: 'extraversion',
+        name: 'Extraversion',
+        score: 10,
+        label: 'Very Outgoing',
+        percentile: '98th percentile and above',
+        low: 'Reserved',
+        high: 'Outgoing',
+        tint: '#a78bfa',
+        summary:
+          'Markedly outgoing and sociable with a very high energy level. Comfortable holding the social space, drawn to frequent discussion and a high level of activity, with a strong tendency to take the lead and put a view forward.',
+        facets: [
+          {
+            name: 'Assertiveness',
+            label: 'Very Assertive',
+            score: 9,
+            percentile: '93rd to 98th',
+            low: 'Accommodative',
+            high: 'Assertive',
+          },
+          {
+            name: 'Sociability',
+            label: 'Very Sociable',
+            score: 9,
+            percentile: '93rd to 98th',
+            low: 'Solitary',
+            high: 'Sociable',
+          },
+          {
+            name: 'Energy level',
+            label: 'Very Energetic',
+            score: 10,
+            percentile: '98th and above',
+            low: 'Low-key',
+            high: 'Energetic',
+          },
+        ],
+      },
+      {
+        key: 'stability',
+        name: 'Emotional Stability',
+        score: 10,
+        label: 'Very Resilient',
+        percentile: '98th percentile and above',
+        low: 'Sensitive',
+        high: 'Resilient',
+        tint: '#22d3ee',
+        summary:
+          'A markedly even temper and a strong tendency to stay calm and stable. Largely unshaken by what is happening around them, so they stay effective under high pressure, and resilient and optimistic after a setback.',
+        facets: [
+          {
+            name: 'Optimism',
+            label: 'Very Carefree',
+            score: 10,
+            percentile: '98th and above',
+            low: 'Heavy-hearted',
+            high: 'Carefree',
+          },
+          {
+            name: 'Stability',
+            label: 'Very Even-tempered',
+            score: 10,
+            percentile: '98th and above',
+            low: 'Hot-tempered',
+            high: 'Even-tempered',
+          },
+          {
+            name: 'Stress tolerance',
+            label: 'Very Composed',
+            score: 9,
+            percentile: '93rd to 98th',
+            low: 'Concerned',
+            high: 'Composed',
+          },
+        ],
+      },
+      {
+        key: 'openness',
+        name: 'Openness to Experience',
+        score: 10,
+        label: 'Very Innovative',
+        percentile: '98th percentile and above',
+        low: 'Conventional',
+        high: 'Innovative',
+        tint: '#818cf8',
+        summary:
+          'A strong interest in new impressions and experiences. Intellectual and learning-oriented, motivated by abstract problems, very open to change and drawn to finding new, creative solutions.',
+        facets: [
+          {
+            name: 'Curiosity',
+            label: 'Very Curious',
+            score: 9,
+            percentile: '93rd to 98th',
+            low: 'Down-to-earth',
+            high: 'Curious',
+          },
+          {
+            name: 'Aesthetic orientation',
+            label: 'Very Artistic',
+            score: 10,
+            percentile: '98th and above',
+            low: 'Concrete',
+            high: 'Artistic',
+          },
+          {
+            name: 'Change orientation',
+            label: 'Change-oriented',
+            score: 7,
+            percentile: '69th to 84th',
+            low: 'Conservative',
+            high: 'Change-oriented',
+          },
+        ],
+      },
+    ],
+    strengths: [
+      'Highly productive and able to work at a high tempo',
+      'Determined and goal-oriented even in the face of difficulty',
+      'Spreads enthusiasm and is seldom beaten down by setbacks',
+    ],
+    challenges: [
+      'Could come across as pushy when wanting things done',
+      'May overlook the need for rest due to high ambitions',
+      'May sometimes overlook problems due to their optimistic view',
+    ],
+    drivers: ['Creativity', 'Relationships', 'Autonomy'],
+    culture: ['Team-oriented', 'Energetic', 'Decisive'],
+  },
+};
+
 export const writing = {
   title: 'Writing & Industry Analysis',
   description:
@@ -701,5 +950,6 @@ export const sections = [
   { id: 'projects', label: 'Projects' },
   { id: 'stack', label: 'Stack' },
   { id: 'roles', label: 'Roles' },
+  { id: 'assessment', label: 'Alva' },
   { id: 'contact', label: 'Contact' },
 ];
