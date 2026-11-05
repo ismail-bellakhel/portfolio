@@ -42,11 +42,14 @@ export const markets = [
   { code: 'us', name: 'United States' },
 ];
 
+// Levels follow the CV. Arabic is not printed there but is spoken natively,
+// so it stays on the site.
 export const languages = [
   { name: 'English', level: 'C2' },
   { name: 'French', level: 'Native' },
-  { name: 'Swedish', level: 'B2' },
-  { name: 'Norwegian', level: 'B1' },
+  { name: 'Arabic', level: 'Native' },
+  { name: 'Swedish', level: 'B1' },
+  { name: 'Norwegian', level: 'A2' },
 ];
 
 // Work experience. `logo` is a locally hosted brand mark; `domain` is the
