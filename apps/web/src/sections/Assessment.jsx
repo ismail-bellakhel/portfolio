@@ -87,11 +87,19 @@ function Bell({ score, tint, h = 54, delay = 0, compact = false }) {
     marker is a slice of the curve rather than a dot: a circle would be drawn
     as an ellipse once the horizontal scale is 1.5x the vertical.
 
-    Nothing here is animated with a CSS transform. Everything is opacity or
-    pathLength, both of which every engine draws the same way. Transforms on
-    SVG children need `transform-box: fill-box`, which Safari wants prefixed
-    and which framer-motion does not prefix, so a scaled child silently
-    vanishes there.
+    Everything here animates on opacity, and only opacity.
+
+    Not a CSS transform: SVG children need `transform-box: fill-box`, which
+    Safari wants prefixed and framer-motion emits unprefixed, so a scaled
+    child is silently never painted there.
+
+    Not `pathLength` either, which is the subtler one. framer-motion draws a
+    path by setting `pathLength="1"` with `stroke-dasharray: 1 1`, and the
+    browser measures that dash against the path's length in user units while
+    `non-scaling-stroke` makes it stroke in screen units. The viewBox above is
+    scaled non-uniformly, so the dash ends up covering only 1/scale of the
+    path and the stroke stops short: 75% across on this chart, 51% on the
+    narrower Five Factor rows, which is why their caps looked snapped off.
   */
   return (
     <svg
@@ -147,8 +155,8 @@ function Bell({ score, tint, h = 54, delay = 0, compact = false }) {
         stroke={tint}
         strokeWidth="1.5"
         vectorEffect="non-scaling-stroke"
-        initial={reduce ? false : { pathLength: 0 }}
-        whileInView={{ pathLength: 1 }}
+        initial={reduce ? false : { opacity: 0 }}
+        whileInView={{ opacity: 1 }}
         viewport={inView}
         transition={{ duration: 0.7, delay: delay + 0.1, ease: EASE }}
       />
@@ -159,8 +167,8 @@ function Bell({ score, tint, h = 54, delay = 0, compact = false }) {
         strokeWidth="2"
         strokeLinecap="round"
         vectorEffect="non-scaling-stroke"
-        initial={reduce ? false : { pathLength: 0, opacity: 0 }}
-        whileInView={{ pathLength: 1, opacity: 1 }}
+        initial={reduce ? false : { opacity: 0 }}
+        whileInView={{ opacity: 1 }}
         viewport={inView}
         transition={{ duration: 0.5, delay: delay + 0.4, ease: EASE }}
         style={{ filter: `drop-shadow(0 0 6px ${tint})` }}
