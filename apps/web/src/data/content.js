@@ -6,10 +6,11 @@ export const profile = {
   role: 'Technical Marketing Manager',
   tagline: 'Growth · Analytics · AI',
   email: 'ismail.bellakhel@gmail.com',
-  // Two reachable numbers. The Norwegian one is the one printed on the CV.
+  // Two reachable numbers. The Swedish one is the one printed on the CV, so
+  // it leads here too.
   phones: [
-    { label: 'Phone (NO)', value: '+47 465 98 348' },
     { label: 'Phone (SE)', value: '+46 76 234 66 69' },
+    { label: 'Phone (NO)', value: '+47 465 98 348' },
   ],
   linkedin: 'https://www.linkedin.com/in/ismailbellakhel/',
   github: 'https://github.com/ismail-bellakhel',
@@ -18,7 +19,7 @@ export const profile = {
   summary:
     'I connect marketing strategy to measurement, automation and AI, building the systems that turn raw signal into commercial decisions.',
   longSummary:
-    '15+ years driving growth through analytics, SEO, MarTech, experimentation and AI. I build measurement frameworks, lead cross-functional initiatives, and translate complex data into commercial decisions across Norway, Sweden, France, Belgium, Morocco, the UAE and Canada.',
+    '15+ years across digital growth, analytics and commercial strategy. I build and integrate tracking, data pipelines and CRM systems to improve measurement and automate workflows, working with marketing, commercial and technical teams to turn data into decisions across Norway, Sweden, France, Belgium, Morocco, the UAE and Canada.',
 };
 
 // Headline numbers for the hero ticker.
@@ -44,7 +45,6 @@ export const markets = [
 export const languages = [
   { name: 'English', level: 'C2' },
   { name: 'French', level: 'Native' },
-  { name: 'Arabic', level: 'Native' },
   { name: 'Swedish', level: 'B2' },
   { name: 'Norwegian', level: 'B1' },
 ];
@@ -67,8 +67,8 @@ export const experience = [
     highlights: [
       'Grew Google Discover traffic by 161% through Core Web Vitals improvements and AI-enabled workflows to audit, test and monitor deployments, scaling DagensPS to 1M+ weekly readers and contributing to its 2024 Swedish SEO Award.',
       'Improved consent performance (+12% opt-ins, −18% opt-outs), technical SEO, UX and advertising operations, contributing to 125% YoY advertising revenue growth.',
-      'Built GA4/GTM/server-side GTM measurement frameworks and automated Python, SQL and API data pipelines for attribution, audience intelligence and executive reporting.',
-      'Improved native campaign delivery by 15% through A/B testing of advertising placements, display timing, content and design.',
+      'Used pre/post analysis, A/B tests, attribution and MMM to assess programmatic and native advertising across social media, newsletters, affiliates and websites. Native ad tests improved delivery by 15%.',
+      'Improved first-party tracking by standardising events in data layers and using server-side tracking, Google Analytics and Google Tag Manager, validating the data and comparing campaign performance in SQL.',
     ],
     stack: ['ga4', 'googletagmanager', 'googlebigquery', 'python', 'looker'],
   },
@@ -140,9 +140,8 @@ export const experience = [
     period: 'Apr 2014 to Apr 2019',
     sector: 'Telecommunications',
     summary:
-      'Combined sales and market analysis, competitive intelligence and veille commerciale for French telecommunications, supporting product launch coordination, market introduction and strategic commercial decisions.',
+      'Delivered market analysis, competitive intelligence and veille commerciale for French telecommunications, supporting product launch coordination, market introduction and strategic commercial decisions.',
     highlights: [
-      'Sold telecom offers directly to customers, then fed what converted on the floor back into competitive and pricing analysis.',
       'Analysed competitors, commercial offers, market trends and positioning, translating complex market data into actionable insight for stakeholders.',
       'Consolidated market research, competitor benchmarking and CRM data into SQL, Excel and Power BI reporting for continuous market monitoring.',
     ],
@@ -211,7 +210,7 @@ export const sectors = [
     short: 'Telecom',
     icon: 'RadioTower',
     description:
-      'Direct sales, competitive intelligence, CRM data, market benchmarking and executive reporting for the French market.',
+      'Competitive intelligence, CRM data, market benchmarking and executive reporting for the French market.',
     metric: '5 years insight',
   },
   {
@@ -344,8 +343,8 @@ export const cases = [
     suffix: ' yrs',
     company: 'Concentrix',
     description:
-      'Sold French telecom offers and turned what converted into competitor, pricing and positioning analysis for commercial decisions.',
-    tags: ['Sales', 'Competitive Intel'],
+      'Ran competitor, pricing and positioning analysis for French telecom, turning market data into commercial decisions.',
+    tags: ['Market Analysis', 'Competitive Intel'],
   },
 ];
 
