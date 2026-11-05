@@ -142,7 +142,8 @@ function ProjectCard({ project, progress, depth, delay, featured }) {
 
 export default function Projects() {
   const featured = projects.filter((p) => p.featured);
-  const rest = projects.filter((p) => !p.featured);
+  const closing = projects.filter((p) => p.closing);
+  const rest = projects.filter((p) => !p.featured && !p.closing);
 
   return (
     <Section id="projects">
@@ -184,6 +185,17 @@ export default function Projects() {
                 progress={progress}
                 depth={CARD_DEPTH}
                 delay={(i % 3) * 0.05}
+              />
+            ))}
+
+            {closing.map((p) => (
+              <ProjectCard
+                key={p.slug}
+                project={p}
+                progress={progress}
+                depth={24}
+                delay={0.06}
+                featured
               />
             ))}
           </div>

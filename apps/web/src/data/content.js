@@ -433,6 +433,24 @@ export const projects = [
     stack: ['react', 'typescript', 'tailwindcss', 'vite'],
     tags: ['Freelance', 'AI systems', 'Positioning'],
   },
+  {
+    slug: 'pov-studio',
+    name: 'POV Studio',
+    kicker: 'Concept · 3D capture & digital twins',
+    summary:
+      'A scroll-led flight through twelve Oslo locations, each one introducing a capture service.',
+    description:
+      'A site concept for an Oslo studio doing drone capture, LiDAR scanning, 360° tours and digital twins. The scroll flies through twelve real locations, switching scan treatment at each stop, then lands on a product page and a reporting dashboard so the capture work ties back to discovery.',
+    image: '/projects/pov-studio.jpg',
+    live: 'https://pov-studio-five.vercel.app/',
+    repo: 'https://github.com/ismail-bellakhel/pov-studio-showcase',
+    liveLabel: 'Open the demo',
+    stack: ['react', 'typescript', 'threedotjs', 'vite'],
+    tags: ['Concept', '3D capture', 'Motion'],
+    // Gets the wide treatment like the two at the top, but closes the section
+    // instead of opening it, so the row of three is not left with a gap.
+    closing: true,
+  },
 ];
 
 // Technical stack. `slug` maps to a real brand logo, `fallback` to a lucide icon.
