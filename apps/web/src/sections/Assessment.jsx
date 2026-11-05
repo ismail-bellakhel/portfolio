@@ -227,8 +227,14 @@ function TaskPlot({ tasks, score, delay = 0 }) {
         strokeWidth="1"
       />
 
-      {/* The dots pop by animating `r`, not a scale: `r` is a plain SVG
-          attribute, so it needs no CSS transform on an SVG child. */}
+      {/*
+        Opacity only, and deliberately so. Animating the circle's own `r`
+        leaves every dot stuck at zero in Chrome: Chrome exposes `r` as a CSS
+        property and WebKit does not, so the two engines take different code
+        paths for it and only one arrives. Opacity is the one channel both
+        engines animate identically here, and the stagger carries the sense
+        of arrival on its own.
+      */}
       {dots.map((dot, i) => (
         <motion.circle
           key={dot.key}
@@ -236,16 +242,10 @@ function TaskPlot({ tasks, score, delay = 0 }) {
           cy={dot.y}
           r={4}
           fill={dot.ok ? '#34d399' : '#fb923c'}
-          fillOpacity={dot.ok ? 0.85 : 0.75}
-          initial={reduce ? false : { r: 0, opacity: 0 }}
-          whileInView={{ r: 4, opacity: 1 }}
+          initial={reduce ? false : { opacity: 0 }}
+          whileInView={{ opacity: dot.ok ? 0.85 : 0.75 }}
           viewport={{ once: true, margin: '-40px 0px' }}
-          transition={{
-            type: 'spring',
-            stiffness: 340,
-            damping: 24,
-            delay: delay + 0.15 + i * 0.035,
-          }}
+          transition={{ duration: 0.4, delay: delay + 0.15 + i * 0.035, ease: EASE }}
         />
       ))}
 
