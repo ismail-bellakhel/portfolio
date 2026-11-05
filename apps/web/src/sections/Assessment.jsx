@@ -37,32 +37,37 @@ const BELL_W = 300;
 
 const gauss = (x) => Math.exp(-((x - MEAN) ** 2) / (2 * SIGMA * SIGMA));
 
-/* One sample per 2px of width, which is fine enough that the silhouette
-   reads as a curve and coarse enough to stay a short path. */
-const curvePath = (h) => {
-  const steps = BELL_W / 2;
-  let d = `M 0 ${h}`;
+/* Every path in this chart is the same curve read at different spans, so they
+   all come from one sampler and cannot drift apart. `x` is in viewBox units,
+   the scale position is 1-10 across that width. */
+const curveY = (x, h) => h - gauss(0.5 + (x / BELL_W) * 10) * (h - 2);
+
+const sample = (x0, x1, h, steps) => {
+  const pts = [];
   for (let i = 0; i <= steps; i++) {
-    const x = (i / steps) * BELL_W;
-    const s = 0.5 + (x / BELL_W) * 10;
-    d += ` L ${x.toFixed(1)} ${(h - gauss(s) * (h - 2)).toFixed(1)}`;
+    const x = x0 + ((x1 - x0) * i) / steps;
+    pts.push(`${x.toFixed(1)} ${curveY(x, h).toFixed(1)}`);
   }
-  return `${d} L ${BELL_W} ${h} Z`;
+  return pts.join(' L ');
 };
 
-/* The cap sitting on the scored decile. It is a slice of the same curve, not
-   a chord across it: a flat cap on a sloping curve reads as a mistake. */
-const capPath = (score, h) => {
-  const bw = BELL_W / 10;
-  const x0 = (score - 1) * bw;
-  let d = '';
-  for (let i = 0; i <= 12; i++) {
-    const x = x0 + (i / 12) * bw;
-    const s = 0.5 + (x / BELL_W) * 10;
-    d += `${i ? ' L' : 'M'} ${x.toFixed(1)} ${(h - gauss(s) * (h - 2)).toFixed(1)}`;
-  }
-  return d;
-};
+const DECILE = BELL_W / 10;
+
+/* 150 samples: fine enough to read as a curve, short enough to stay cheap. */
+const curvePath = (h) => `M 0 ${h} L ${sample(0, BELL_W, h, 150)} L ${BELL_W} ${h} Z`;
+
+/* The scored decile, as its own slice of the curve closed down to the
+   baseline. It used to be a rectangle clipped to the curve and grown with a
+   CSS scaleY, which Safari drops: a transformed child of a clipped <g> is
+   not painted at all there. Cutting the real shape needs neither the clip
+   nor the transform, and the band follows the curve exactly rather than
+   approximately. */
+const bandPath = (score, h) =>
+  `M ${(score - 1) * DECILE} ${h} L ${sample((score - 1) * DECILE, score * DECILE, h, 12)} L ${score * DECILE} ${h} Z`;
+
+/* Just the lid of that slice. A flat cap on a sloping curve reads as a
+   mistake, so the marker is curved too. */
+const capPath = (score, h) => `M ${sample((score - 1) * DECILE, score * DECILE, h, 12)}`;
 
 /**
  * A scored normal distribution. `score` is 1-10; its decile is cut out of the
@@ -71,10 +76,8 @@ const capPath = (score, h) => {
  */
 function Bell({ score, tint, h = 54, delay = 0, compact = false }) {
   const reduce = useReducedMotion();
-  const id = `bell-${tint.slice(1)}-${score}-${h}`;
-  const bw = BELL_W / 10;
-  const bx = (score - 1) * bw;
-  const peak = h - gauss(score) * (h - 2);
+  const mid = (score - 0.5) * DECILE;
+  const inView = { once: true, margin: '-40px 0px' };
 
   /*
     The curve stretches to the full width of its row but keeps a fixed pixel
@@ -83,6 +86,12 @@ function Bell({ score, tint, h = 54, delay = 0, compact = false }) {
     is scaled non-uniformly, so every stroke here is non-scaling and the peak
     marker is a slice of the curve rather than a dot: a circle would be drawn
     as an ellipse once the horizontal scale is 1.5x the vertical.
+
+    Nothing here is animated with a CSS transform. Everything is opacity or
+    pathLength, both of which every engine draws the same way. Transforms on
+    SVG children need `transform-box: fill-box`, which Safari wants prefixed
+    and which framer-motion does not prefix, so a scaled child silently
+    vanishes there.
   */
   return (
     <svg
@@ -92,53 +101,34 @@ function Bell({ score, tint, h = 54, delay = 0, compact = false }) {
       className="w-full"
       style={{ height: h + 1 }}
     >
-      <defs>
-        <clipPath id={id}>
-          <path d={curvePath(h)} />
-        </clipPath>
-      </defs>
-
       <path d={curvePath(h)} fill="rgba(255,255,255,0.055)" />
 
-      {/* Decile gridlines, drawn inside the curve so the shape stays readable
-          as a distribution and the lit band has something to be measured
-          against. */}
+      {/* Decile gridlines, each stopping at the curve so the shape stays
+          readable as a distribution and the lit band has something to be
+          measured against. */}
       {!compact &&
         Array.from({ length: 9 }, (_, i) => (
           <line
             key={i}
-            x1={(i + 1) * bw}
-            x2={(i + 1) * bw}
-            y1="0"
+            x1={(i + 1) * DECILE}
+            x2={(i + 1) * DECILE}
+            y1={curveY((i + 1) * DECILE, h)}
             y2={h}
             stroke="rgba(255,255,255,0.07)"
             strokeWidth="1"
             vectorEffect="non-scaling-stroke"
-            clipPath={`url(#${id})`}
           />
         ))}
 
-      <motion.g
-        clipPath={`url(#${id})`}
+      <motion.path
+        d={bandPath(score, h)}
+        fill={tint}
+        fillOpacity="0.55"
         initial={reduce ? false : { opacity: 0 }}
         whileInView={{ opacity: 1 }}
-        viewport={{ once: true, margin: '-40px 0px' }}
-        transition={{ duration: 0.5, delay, ease: EASE }}
-      >
-        <motion.rect
-          x={bx}
-          width={bw}
-          y="0"
-          height={h}
-          fill={tint}
-          fillOpacity="0.55"
-          initial={reduce ? false : { scaleY: 0 }}
-          whileInView={{ scaleY: 1 }}
-          viewport={{ once: true, margin: '-40px 0px' }}
-          transition={{ duration: 0.8, delay, ease: EASE }}
-          style={{ originY: 1, originX: 0 }}
-        />
-      </motion.g>
+        viewport={inView}
+        transition={{ duration: 0.6, delay, ease: EASE }}
+      />
 
       <path
         d={curvePath(h)}
@@ -150,16 +140,16 @@ function Bell({ score, tint, h = 54, delay = 0, compact = false }) {
 
       {/* The mark: a stem up the scored decile's centre, capped at the curve. */}
       <motion.line
-        x1={bx + bw / 2}
-        x2={bx + bw / 2}
+        x1={mid}
+        x2={mid}
         y1={h}
-        y2={peak}
+        y2={curveY(mid, h)}
         stroke={tint}
         strokeWidth="1.5"
         vectorEffect="non-scaling-stroke"
         initial={reduce ? false : { pathLength: 0 }}
         whileInView={{ pathLength: 1 }}
-        viewport={{ once: true, margin: '-40px 0px' }}
+        viewport={inView}
         transition={{ duration: 0.7, delay: delay + 0.1, ease: EASE }}
       />
       <motion.path
@@ -169,10 +159,10 @@ function Bell({ score, tint, h = 54, delay = 0, compact = false }) {
         strokeWidth="2"
         strokeLinecap="round"
         vectorEffect="non-scaling-stroke"
-        initial={reduce ? false : { opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true, margin: '-40px 0px' }}
-        transition={{ duration: 0.4, delay: delay + 0.45, ease: EASE }}
+        initial={reduce ? false : { pathLength: 0, opacity: 0 }}
+        whileInView={{ pathLength: 1, opacity: 1 }}
+        viewport={inView}
+        transition={{ duration: 0.5, delay: delay + 0.4, ease: EASE }}
         style={{ filter: `drop-shadow(0 0 6px ${tint})` }}
       />
     </svg>
@@ -237,16 +227,18 @@ function TaskPlot({ tasks, score, delay = 0 }) {
         strokeWidth="1"
       />
 
+      {/* The dots pop by animating `r`, not a scale: `r` is a plain SVG
+          attribute, so it needs no CSS transform on an SVG child. */}
       {dots.map((dot, i) => (
         <motion.circle
           key={dot.key}
           cx={x(dot.d)}
           cy={dot.y}
-          r="4"
+          r={4}
           fill={dot.ok ? '#34d399' : '#fb923c'}
           fillOpacity={dot.ok ? 0.85 : 0.75}
-          initial={reduce ? false : { scale: 0, opacity: 0 }}
-          whileInView={{ scale: 1, opacity: 1 }}
+          initial={reduce ? false : { r: 0, opacity: 0 }}
+          whileInView={{ r: 4, opacity: 1 }}
           viewport={{ once: true, margin: '-40px 0px' }}
           transition={{
             type: 'spring',
