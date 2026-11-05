@@ -44,8 +44,24 @@ export default function Nav({ active }) {
     };
   }, [menu]);
 
+  /*
+    Lenis has to be running again before the scroll is issued, which is why
+    this restarts it by hand instead of leaving that to the effect above.
+
+    The sheet pins the page by stopping Lenis, and `setMenu(false)` only
+    schedules the restart: React runs the cleanup after this function has
+    already returned. Lenis drops a scrollTo outright while stopped, and
+    passing `force` does not help either, because the cleanup then calls
+    `start()`, which resets the instance and cancels the animation that was
+    just forced. Either way the sheet closed and the page stayed where it
+    was, so every shortcut on a phone did nothing.
+
+    Starting it here first makes the later cleanup a no-op, since `start()`
+    returns early when the instance is already running.
+  */
   const go = (id) => {
     setMenu(false);
+    window.__lenis?.start();
     scrollToId(id);
   };
 

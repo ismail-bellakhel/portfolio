@@ -219,7 +219,17 @@ export default function Roles() {
                 </span>
               </div>
 
-              <motion.ul key={active} className="space-y-2.5 sm:min-h-[190px]">
+              {/*
+                The reserved height has to apply on phones too, not just from
+                `sm` up. The groups hold between one and four roles and this
+                list cycles itself every 3.2s, so with no minimum the card
+                breathed by 151px on a loop. Everything below it moved with
+                it, which landed the Alva nav shortcut ~100px off whenever a
+                cycle fired mid-scroll. 212px is the tallest the list gets at
+                320px wide, where a four-role group wraps a title; 190px is
+                enough once the card is wider.
+              */}
+              <motion.ul key={active} className="min-h-[212px] space-y-2.5 sm:min-h-[190px]">
                 {group.roles.map((role, i) => (
                   <motion.li
                     key={role}
