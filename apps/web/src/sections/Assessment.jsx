@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { motion, useReducedMotion } from 'framer-motion';
+import { useRef, useState } from 'react';
+import { motion, useInView, useReducedMotion } from 'framer-motion';
 import { Check, Minus, Plus } from 'lucide-react';
 import {
   CARD_DEPTH,
@@ -188,6 +188,27 @@ function Bell({ score, tint, h = 54, delay = 0, compact = false }) {
  */
 function TaskPlot({ tasks, score, delay = 0 }) {
   const reduce = useReducedMotion();
+
+  /*
+    One observer on the <svg>, rather than `whileInView` on each shape.
+
+    Safari gives every *child* of an SVG a zero-size box when it is handed to
+    an IntersectionObserver. A <path> still reports as intersecting, which is
+    why the bell curves above animate correctly, but a <circle> and a <rect>
+    report `isIntersecting: false` forever, so `whileInView` never fired and
+    this whole chart stayed at opacity 0 in Safari while being fine in Chrome.
+    Measured in Safari 26.5: observing a dot gives ratio 0 and a 0x0 box,
+    observing the <svg> that holds it gives ratio 1 and its real 400x188 box.
+
+    The <svg> is a replaced element with a genuine layout box, so observing it
+    works everywhere. Note this is the element itself and not a new wrapper:
+    an extra wrapper animating opacity inside a glass panel would promote the
+    panel's layer and turn it black.
+  */
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, margin: '-40px 0px' });
+  const shown = reduce || inView;
+
   const W = 320;
   const H = 150;
   const mid = 84;
@@ -210,7 +231,7 @@ function TaskPlot({ tasks, score, delay = 0 }) {
   }
 
   return (
-    <svg viewBox={`0 0 ${W} ${H}`} aria-hidden="true" className="w-full">
+    <svg ref={ref} viewBox={`0 0 ${W} ${H}`} aria-hidden="true" className="w-full">
       {/* The scored difficulty, as a band rather than a line: the result is a
           range on this axis, not a point on it. */}
       <motion.rect
@@ -221,8 +242,7 @@ function TaskPlot({ tasks, score, delay = 0 }) {
         rx="11"
         fill="rgba(52,211,153,0.07)"
         initial={reduce ? false : { opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true, margin: '-40px 0px' }}
+        animate={{ opacity: shown ? 1 : 0 }}
         transition={{ duration: 0.8, delay, ease: EASE }}
       />
 
@@ -236,12 +256,10 @@ function TaskPlot({ tasks, score, delay = 0 }) {
       />
 
       {/*
-        Opacity only, and deliberately so. Animating the circle's own `r`
-        leaves every dot stuck at zero in Chrome: Chrome exposes `r` as a CSS
-        property and WebKit does not, so the two engines take different code
-        paths for it and only one arrives. Opacity is the one channel both
-        engines animate identically here, and the stagger carries the sense
-        of arrival on its own.
+        Opacity only, and deliberately so. `r` is exposed as a CSS property in
+        Chrome but not in WebKit, so framer-motion writes `style.r` and the two
+        engines take different paths for the same animation. The stagger
+        carries the sense of arrival on its own.
       */}
       {dots.map((dot, i) => (
         <motion.circle
@@ -251,8 +269,7 @@ function TaskPlot({ tasks, score, delay = 0 }) {
           r={4}
           fill={dot.ok ? '#34d399' : '#fb923c'}
           initial={reduce ? false : { opacity: 0 }}
-          whileInView={{ opacity: dot.ok ? 0.85 : 0.75 }}
-          viewport={{ once: true, margin: '-40px 0px' }}
+          animate={{ opacity: shown ? (dot.ok ? 0.85 : 0.75) : 0 }}
           transition={{ duration: 0.4, delay: delay + 0.15 + i * 0.035, ease: EASE }}
         />
       ))}
