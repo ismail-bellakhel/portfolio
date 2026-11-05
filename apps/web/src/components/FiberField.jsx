@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { clamp, clamp01, lerp, seeded } from '@/lib/utils';
-import { contactFocus } from '@/components/scenes';
+import { contactFocus, coreFeed } from '@/components/scenes';
 
 /*
   FiberField
@@ -59,9 +59,13 @@ const MOBILE_LIGHT_DENSITY = LIGHT_DENSITY * 0.9;
 
 /*
   Extra traffic carried by the strands in the right-hand half of the width,
-  where the page has no copy for the field to compete with.
+  where the page has no copy for the field to compete with. This ramps from
+  nothing at the centre to its full value at the right edge, rather than
+  switching on as a step at the halfway mark. A step gave the outermost
+  strands, the ones over the empty gutter by the rail, exactly the same rate
+  as the ones just right of the headline, so the edge stayed dark.
 */
-const RIGHT_BIAS = 1.188;
+const RIGHT_BIAS = 1.55;
 
 /*
   How long a packet spends igniting, in seconds. It does not travel during this
@@ -172,9 +176,11 @@ function makeStrands(count, w, h, density) {
       The right-hand half of the page is the empty half: the copy, the
       headline and the figures all sit left. The strands over there carry a
       little more traffic so the weight of the field balances the weight of
-      the text, rather than both piling up on the same side.
+      the text, rather than both piling up on the same side. The further
+      right a strand sits, the emptier the page behind it, so the further it
+      is lifted.
     */
-    const bias = slot > 0.5 ? RIGHT_BIAS : 1;
+    const bias = 1 + (RIGHT_BIAS - 1) * clamp01((slot - 0.5) / 0.5);
 
     strands.push({
       x,
@@ -297,8 +303,7 @@ export default function FiberField({ tint, signals = [], intensity = 1 }) {
         Seed the viewport so the very first frame already carries signals.
         At this density a strand spawns roughly every sixteen seconds, so an
         unseeded field starts empty and fills in slowly, which reads as broken
-        rather than calm. The hero is also the one section with no scene of its
-        own behind it, so it would otherwise open on nothing at all.
+        rather than calm.
 
         They all start unlit and staggered, so what the page opens on is the
         signals themselves fading up one after another, and only then falling.
@@ -393,6 +398,15 @@ export default function FiberField({ tint, signals = [], intensity = 1 }) {
       converge += (targetConverge - converge) * clamp01(dt * 2.6);
 
       /*
+        The charge bleeds off here rather than in the sphere that reads it.
+        This loop runs on every frame of the page's life; the sphere's only
+        runs while it is on screen, so leaving the decay there would park
+        the charge at whatever it held when you scrolled away and hand it
+        back at that level whenever you came back.
+      */
+      coreFeed.charge *= Math.exp(-dt * 0.9);
+
+      /*
         Text belongs to the hero and nowhere else. Below it every section has
         its own copy and its own scene, and a second layer of floating words
         behind them is noise. The gate rides the hero's own bottom edge, so
@@ -440,7 +454,14 @@ export default function FiberField({ tint, signals = [], intensity = 1 }) {
         // --- spawn packets ---
         s.nextSpawn -= dt * (1 + energy * 3.2);
         if (s.nextSpawn <= 0) {
-          s.nextSpawn = (1.1 + Math.random() * 3.4) / (density * s.bias);
+          /*
+            Same average wait as a 1.1-to-4.5 range, but a quarter of the
+            spread. The wide range was not adding life, it was handing the
+            occasional strand a dead spell four times longer than its
+            neighbour's, and a few of those landing together is what left
+            whole stretches of the page unlit.
+          */
+          s.nextSpawn = (2.2 + Math.random() * 1.2) / (density * s.bias);
           if (s.packets.length < 4) {
             // Born just inside the top edge rather than well above it, so the
             // ignition is actually seen. A packet that forms off screen and
@@ -481,6 +502,15 @@ export default function FiberField({ tint, signals = [], intensity = 1 }) {
           if (merging) {
             p.y = warp.cy;
             p.absorb = clamp01(p.absorb + dt * 2.4);
+            /*
+              Hand the arrival to the sphere sitting on this point. The
+              charge is topped up over the whole of the absorption rather
+              than banked in one go when the packet dies, so what the core
+              shows is the light going into it, not a flash afterwards.
+              Scaled by the packet's own brightness, so a strong signal
+              counts for more than a faint one.
+            */
+            coreFeed.charge = clamp01(coreFeed.charge + dt * 2.4 * p.bright);
           }
 
           // Arriving light retracts into the point rather than just fading, so
