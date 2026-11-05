@@ -83,8 +83,15 @@ body {
 .glass {
   position: relative;
   background: var(--glass-bg);
+  /*
+    Prefix NOT written by hand. The minifier treats `-webkit-backdrop-filter`
+    and `backdrop-filter` as one property and keeps only the last of the pair,
+    so hand-writing both silently shipped a build with the standard property
+    stripped. Chrome does not accept the webkit alias, so every panel on the
+    site lost its blur in production while looking correct in dev. Autoprefixer
+    runs on this file and emits the pair in the order that survives.
+  */
   backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
   border-radius: var(--radius);
   box-shadow: var(--glass-specular), var(--glass-drop);
   isolation: isolate;
@@ -174,7 +181,6 @@ body {
     linear-gradient(rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.055)),
     rgba(12, 15, 24, 0.4);
   backdrop-filter: blur(18px) saturate(1.5);
-  -webkit-backdrop-filter: blur(18px) saturate(1.5);
   border: 1px solid rgba(255, 255, 255, 0.09);
   box-shadow:
     inset 0 1px 0 0 rgba(255, 255, 255, 0.13),
