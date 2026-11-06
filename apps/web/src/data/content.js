@@ -150,6 +150,29 @@ export const experience = [
     ],
     stack: ['microsoftsqlserver', 'powerbi', 'microsoftexcel'],
   },
+  {
+    company: 'Concentrix',
+    domain: 'concentrix.com',
+    logo: '/companies/concentrix.png',
+    role: 'B2B Sales Specialist',
+    location: 'Paris',
+    // Year granularity only: this role predates the CV, which starts at the
+    // Market Insight Specialist post above.
+    start: '2010',
+    end: '2014',
+    period: '2010 to 2014',
+    sector: 'SaaS & Accounting Software',
+    summary:
+      'Drove outbound sales for a SaaS accounting software provider, targeting financial services firms and business finance teams. Combined account segmentation with consultative selling to connect software capabilities to accounting needs and purchasing priorities.',
+    highlights: [
+      'Segmented accounts by industry, company size and lifecycle stage to prioritise prospects and develop targeted outreach strategies.',
+      'Tailored sales conversations to financial decision-makers, exploring accounting workflows, operational challenges and software requirements.',
+      "Used CRM insights to track opportunities, address objections and adapt follow-up to each account's buying stage.",
+    ],
+    // No named tooling given for this role, and the logo strip is skipped
+    // rather than filled with a guess.
+    stack: [],
+  },
 ];
 
 export const education = {

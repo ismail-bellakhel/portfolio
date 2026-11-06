@@ -9,6 +9,7 @@ import {
 } from '@/components/primitives';
 import { CompanyLogo, ToolLogo } from '@/components/Logo';
 import { education, experience, languages } from '@/data/content';
+import { cn } from '@/lib/utils';
 
 /*
   A vertical timeline whose connecting line draws itself as you scroll.
@@ -94,7 +95,12 @@ export default function Experience() {
 
                     <p className="mb-5 text-[14px] leading-relaxed text-muted">{job.summary}</p>
 
-                    <ul className="mb-6 space-y-2.5">
+                    <ul
+                      className={cn(
+                        'space-y-2.5',
+                        job.stack.length > 0 && 'mb-6',
+                      )}
+                    >
                       {job.highlights.map((hl) => (
                         <li key={hl} className="flex gap-3 text-[13.5px] leading-relaxed text-white/65">
                           <span className="mt-[7px] h-1 w-1 shrink-0 rounded-full bg-glow-cyan/70" />
@@ -103,17 +109,21 @@ export default function Experience() {
                       ))}
                     </ul>
 
-                    {/* Real tool logos for the stack used in this role */}
-                    <div className="flex flex-wrap items-center gap-2">
-                      {job.stack.map((slug) => (
-                        <span
-                          key={slug}
-                          className="group flex h-8 w-8 items-center justify-center rounded-lg bg-white/[0.05] ring-1 ring-white/[0.07]"
-                        >
-                          <ToolLogo slug={slug} size={15} className="logo-mono" />
-                        </span>
-                      ))}
-                    </div>
+                    {/* Real tool logos for the stack used in this role. Roles
+                        with no named tooling skip the strip entirely, rather
+                        than leaving its margin behind as a gap. */}
+                    {job.stack.length > 0 && (
+                      <div className="flex flex-wrap items-center gap-2">
+                        {job.stack.map((slug) => (
+                          <span
+                            key={slug}
+                            className="group flex h-8 w-8 items-center justify-center rounded-lg bg-white/[0.05] ring-1 ring-white/[0.07]"
+                          >
+                            <ToolLogo slug={slug} size={15} className="logo-mono" />
+                          </span>
+                        ))}
+                      </div>
+                    )}
                   </GlassCard>
                 </div>
               ))}
