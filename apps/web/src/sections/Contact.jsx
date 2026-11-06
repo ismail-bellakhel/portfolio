@@ -107,8 +107,6 @@ export default function Contact() {
             </GlassCard>
           </div>
 
-          {/* Footer. The visit counter lives in the hero only; a second one
-              down here was the same number twice on one page. */}
           <Reveal
             delay={0.1}
             className="mt-16 border-t border-white/[0.07] pt-9 text-center text-[12px] text-white/35"
@@ -116,8 +114,8 @@ export default function Contact() {
             {/* The closing signature, matching the line that opens the hero.
                 Not profile.role: that is the job title and it still belongs in
                 the page metadata and the CV. */}
-            © {new Date().getFullYear()} {profile.name} · Marketing &amp; AI
-            Consultancy
+            © {new Date().getFullYear()} {profile.name} · Marketing Technology
+            &amp; AI Consultancy
           </Reveal>
         </div>
       )}

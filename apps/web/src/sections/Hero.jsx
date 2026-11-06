@@ -2,7 +2,6 @@ import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion
 import { ArrowDown } from 'lucide-react';
 import { Counter, Reveal, RevealText } from '@/components/primitives';
 import { Flag } from '@/components/Logo';
-import Presence from '@/components/Presence';
 import { headline, markets, profile } from '@/data/content';
 
 const HEADLINE = [
@@ -26,16 +25,9 @@ export default function Hero() {
     >
       <div className="mx-auto w-full max-w-6xl">
         <motion.div style={reduce ? undefined : { y }}>
-          {/* Visit count. Renders nothing until a real data source exists, and
-              nothing at all on a phone, where the screen is better spent on
-              the statement than on a counter. */}
-          <Reveal className="mb-8 hidden flex-wrap items-center gap-3 empty:mb-0 sm:flex">
-            <Presence />
-          </Reveal>
-
-          {/* Marketing & AI Consultancy. Also repeated in the footer. */}
+          {/* Marketing Technology & AI Consultancy. Also repeated in the footer. */}
           <Reveal delay={0.05} className="eyebrow mb-6">
-            Marketing &amp; AI Consultancy
+            Marketing Technology &amp; AI Consultancy
           </Reveal>
 
           {/* The statement. The word counter runs across all three lines, so

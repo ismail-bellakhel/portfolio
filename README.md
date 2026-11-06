@@ -39,7 +39,7 @@ npm run build    # outputs to apps/web/dist/
 
 ### Portfolio visits and presence (Cloudflare Pages)
 
-The hero's visit count and online status use a Cloudflare Pages Function in `functions/api/portfolio-status.js` with an Upstash Redis database. Configure these encrypted runtime variables in **Workers & Pages → your project → Settings → Variables and Secrets**:
+A Cloudflare Pages Function in `functions/api/portfolio-status.js` tracks visits and owner presence in an Upstash Redis database. Nothing on the site displays these numbers: the hero's visit counter was removed, so the endpoint now only records. Configure these encrypted runtime variables in **Workers & Pages → your project → Settings → Variables and Secrets**:
 
 - `UPSTASH_REDIS_REST_URL`
 - `UPSTASH_REDIS_REST_TOKEN`

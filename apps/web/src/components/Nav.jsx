@@ -111,9 +111,13 @@ export default function Nav({ active }) {
             onClick={() => scrollToId('hero')}
             className="group flex items-center gap-2.5 text-left"
           >
+            {/* Two beats then a rest, from the keyframes in tailwind.config.js.
+                The ring and the dot run on one shared period so they pulse
+                together. Both transforms sit on children of the glass bar, so
+                neither promotes the bar's own layer. */}
             <span className="relative flex h-2 w-2">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-glow-mint opacity-70" />
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-glow-mint" />
+              <span className="absolute inline-flex h-full w-full animate-heartring rounded-full bg-glow-mint" />
+              <span className="relative inline-flex h-2 w-2 animate-heartdot rounded-full bg-glow-mint" />
             </span>
             <span className="text-[13px] font-semibold tracking-tight text-white/90">
               {profile.name}
