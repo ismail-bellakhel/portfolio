@@ -32,6 +32,12 @@ const SIMPLE_ICONS = 'https://cdn.simpleicons.org';
   the per-role strips in Experience pick it up, since those pass a bare slug.
 */
 const SELF_HOSTED = {
+  /*
+    Ahrefs' own favicon.svg, recoloured from its brand orange. Not Wikimedia's
+    Ahrefslogo.png, which is a wordmark on a solid blue field: 0% transparent
+    pixels, so the mono filter flattens figure and ground into one grey block.
+  */
+  ahrefs: '/tools/ahrefs.svg',
   amplitude: '/tools/amplitude.svg',
   linkedin: '/tools/linkedin.svg',
   microsoftexcel: '/tools/excel.svg',
