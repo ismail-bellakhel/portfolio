@@ -146,7 +146,8 @@ export const experience = [
       'Delivered market analysis, competitive intelligence and veille commerciale for French telecommunications, supporting product launch coordination, market introduction and strategic commercial decisions.',
     highlights: [
       'Analysed competitors, commercial offers, market trends and positioning, translating complex market data into actionable insight for stakeholders.',
-      'Consolidated market research, competitor benchmarking and CRM data into SQL, Excel and Power BI reporting for continuous market monitoring.',
+      'Collected and transformed competitive intelligence, product benchmarks and Salesforce customer and sales data into advanced segments by product, customer interactions and lifecycle stage.',
+      'Partnered with developers to deliver these datasets through a telecom benchmarking and forecasting tool, enabling leadership to inform product launches and sales, service and operations teams to assess customer needs and competing offers.',
     ],
     stack: ['microsoftsqlserver', 'powerbi', 'microsoftexcel'],
   },
