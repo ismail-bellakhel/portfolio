@@ -522,6 +522,10 @@ export const stack = [
       { name: 'Google Ads', slug: 'googleads', fallback: 'Target' },
       { name: 'Meta Ads', slug: 'meta', fallback: 'Target' },
       { name: 'LinkedIn Ads', slug: 'linkedin', fallback: 'Target' },
+      // Header bidding. No usable mark exists: Simple Icons has no slug, and
+      // both the official SVG and the GitHub avatar are wide wordmarks that
+      // letterbox to an illegible sliver in a 15px slot.
+      { name: 'Prebid', fallback: 'Gavel' },
     ],
   },
   {
