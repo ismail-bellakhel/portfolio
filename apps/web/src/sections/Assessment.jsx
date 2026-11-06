@@ -290,15 +290,14 @@ function TaskPlot({ tasks, score, delay = 0 }) {
 }
 
 /*
-  The selected row carries the trait's own colour, as a faint wash and a
-  hairline border.
+  Nothing is selected until the reader selects it, so on load no row is
+  highlighted at all. A row lit by default reads as a hover frame stuck on a
+  row nobody is pointing at, which is exactly how it looked when this card
+  opened with Conscientiousness already chosen.
 
-  It used to be `bg-white/[0.07]` against a `bg-white/[0.035]` hover, the same
-  grey in two strengths, so the row that happens to be selected on load read as
-  a hover frame stuck on a row nobody was pointing at. Tinting it ties the row
-  to the dot in this card's header and to the lit band in its own curve, both
-  of which already use `factor.tint`, so the highlight says "this is the trait
-  being shown below" rather than "the cursor is here".
+  Once a row is picked it carries that trait's own colour rather than more
+  grey, tying it to the dot in the card header and to the lit band in its own
+  curve, both of which already use `factor.tint`.
 
   A background and a border only. No transform or opacity on this button: it
   sits inside a glass panel and either would promote the panel's layer.
@@ -386,7 +385,9 @@ function ListCard({ title, items, icon: Icon, tint, progress, delay }) {
 
 export default function Assessment() {
   const { logic, personality, provider } = assessment;
-  const [active, setActive] = useState(personality.factors[1].key);
+
+  // Null until the reader picks a trait: see the note on FactorRow.
+  const [active, setActive] = useState(null);
   const factor = personality.factors.find((f) => f.key === active);
 
   return (
@@ -464,8 +465,11 @@ export default function Assessment() {
             >
               <div className="mb-5 flex items-center gap-3">
                 <span
-                  className="h-2.5 w-2.5 rounded-full"
-                  style={{ background: factor.tint, boxShadow: `0 0 12px ${factor.tint}` }}
+                  className="h-2.5 w-2.5 rounded-full transition-colors duration-500"
+                  style={{
+                    background: factor ? factor.tint : 'rgba(255,255,255,0.3)',
+                    boxShadow: factor ? `0 0 12px ${factor.tint}` : 'none',
+                  }}
                 />
                 <span className="font-mono text-[10.5px] uppercase tracking-[0.18em] text-white/60">
                   {personality.title}
@@ -487,8 +491,11 @@ export default function Assessment() {
                 ))}
               </div>
 
-              {/* Detail for the selected trait. Keyed so the copy and the three
-                  facet curves re-run their entrance on every swap. */}
+              {/* Detail for the selected trait. Absent until one is picked,
+                  since there is no trait to describe before then. Keyed so the
+                  copy and the three facet curves re-run their entrance on
+                  every swap. */}
+              {factor && (
               <motion.div
                 key={active}
                 initial={{ opacity: 0, y: 8 }}
@@ -541,6 +548,7 @@ export default function Assessment() {
                   ))}
                 </div>
               </motion.div>
+              )}
             </GlassCard>
           </div>
 
