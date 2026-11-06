@@ -21,19 +21,36 @@ import { cn } from '@/lib/utils';
 
 const SIMPLE_ICONS = 'https://cdn.simpleicons.org';
 
+/*
+  Simple Icons removes a mark when the trademark holder asks it to. The CDN
+  then 404s and `ToolLogo` quietly swaps in a generic lucide glyph, so the
+  failure is invisible in review: Salesforce rendered as a "users" outline and
+  three Microsoft tools as plain boxes for weeks before anyone noticed.
+
+  Slugs listed here resolve to a self-hosted file instead of the CDN. Keeping
+  the override here rather than in content.js means both the Stack rows and
+  the per-role strips in Experience pick it up, since those pass a bare slug.
+*/
+const SELF_HOSTED = {
+  linkedin: '/tools/linkedin.svg',
+  microsoftexcel: '/tools/excel.svg',
+  microsoftsqlserver: '/tools/sqlserver.svg',
+  openai: '/tools/openai.svg',
+  powerbi: '/tools/powerbi.svg',
+  salesforce: '/tools/salesforce.svg',
+};
+
 /**
  * A technology / tool logo.
  *
- * `logo` is a self-hosted path and wins over `slug` when both are given.
- * Simple Icons drops marks when a trademark holder asks, and when it does the
- * CDN 404s and the tool quietly renders as a generic glyph instead: that is
- * how Salesforce ended up shown as a lucide "users" outline. Anything the CDN
- * no longer carries belongs in /public/tools.
+ * Resolution order: an explicit `logo` path, then the self-hosted override for
+ * the slug, then the Simple Icons CDN.
  */
 export function ToolLogo({ logo, slug, name, fallback = 'Box', size = 18, className }) {
   const [failed, setFailed] = useState(false);
   const Fallback = icon(fallback);
-  const src = logo || (slug ? `${SIMPLE_ICONS}/${slug}/white` : null);
+  const src =
+    logo || SELF_HOSTED[slug] || (slug ? `${SIMPLE_ICONS}/${slug}/white` : null);
 
   if (failed || !src) {
     return (

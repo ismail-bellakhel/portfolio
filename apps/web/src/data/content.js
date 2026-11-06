@@ -73,7 +73,7 @@ export const experience = [
       'Used pre/post analysis, A/B tests, attribution and MMM to assess programmatic and native advertising across social media, newsletters, affiliates and websites. Native ad tests improved delivery by 15%.',
       'Improved first-party tracking by standardising events in data layers and using server-side tracking, Google Analytics and Google Tag Manager, validating the data and comparing campaign performance in SQL.',
     ],
-    stack: ['ga4', 'googletagmanager', 'googlebigquery', 'python', 'looker'],
+    stack: ['googleanalytics', 'googletagmanager', 'googlebigquery', 'python', 'looker'],
   },
   {
     company: 'HusmanHagberg',
@@ -92,7 +92,7 @@ export const experience = [
       'Built automated GA4/SQL dashboards in Looker Studio, consolidating ROAS, CAC, CPL, conversion rates and lead quality to support performance measurement and budget allocation.',
       'Optimised acquisition funnels through SEO-driven content, landing page improvements, A/B testing and CRM-based lead nurturing to strengthen conversion performance.',
     ],
-    stack: ['googleads', 'meta', 'ga4', 'looker'],
+    stack: ['googleads', 'meta', 'googleanalytics', 'looker'],
   },
   {
     company: 'Life Fitness',
@@ -533,13 +533,7 @@ export const stack = [
     icon: 'Workflow',
     tools: [
       { name: 'HubSpot', slug: 'hubspot', fallback: 'Users' },
-      // Self-hosted: Simple Icons dropped Salesforce, so the CDN slug 404s
-      // and the row silently fell back to a generic lucide glyph.
-      {
-        name: 'Salesforce Data 360',
-        logo: '/tools/salesforce.svg',
-        fallback: 'Users',
-      },
+      { name: 'Salesforce Data 360', slug: 'salesforce', fallback: 'Users' },
       { name: 'Zapier', slug: 'zapier', fallback: 'Workflow' },
       { name: 'n8n', slug: 'n8n', fallback: 'Workflow' },
     ],
