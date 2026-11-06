@@ -47,7 +47,9 @@ export default function Stack() {
                         className="group/row flex items-center gap-3 rounded-xl bg-white/[0.03] px-2.5 py-2 ring-1 ring-white/[0.05] transition-colors duration-300 hover:bg-white/[0.07]"
                       >
                         <ToolLogo
+                          logo={tool.logo}
                           slug={tool.slug}
+                          name={tool.name}
                           fallback={tool.fallback}
                           size={16}
                           className="logo-mono shrink-0"

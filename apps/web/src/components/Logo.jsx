@@ -21,12 +21,21 @@ import { cn } from '@/lib/utils';
 
 const SIMPLE_ICONS = 'https://cdn.simpleicons.org';
 
-/** A technology / tool logo. */
-export function ToolLogo({ slug, name, fallback = 'Box', size = 18, className }) {
+/**
+ * A technology / tool logo.
+ *
+ * `logo` is a self-hosted path and wins over `slug` when both are given.
+ * Simple Icons drops marks when a trademark holder asks, and when it does the
+ * CDN 404s and the tool quietly renders as a generic glyph instead: that is
+ * how Salesforce ended up shown as a lucide "users" outline. Anything the CDN
+ * no longer carries belongs in /public/tools.
+ */
+export function ToolLogo({ logo, slug, name, fallback = 'Box', size = 18, className }) {
   const [failed, setFailed] = useState(false);
   const Fallback = icon(fallback);
+  const src = logo || (slug ? `${SIMPLE_ICONS}/${slug}/white` : null);
 
-  if (failed || !slug) {
+  if (failed || !src) {
     return (
       <Fallback
         className={cn('text-white/70', className)}
@@ -38,7 +47,7 @@ export function ToolLogo({ slug, name, fallback = 'Box', size = 18, className })
 
   return (
     <img
-      src={`${SIMPLE_ICONS}/${slug}/white`}
+      src={src}
       alt={name ? `${name} logo` : ''}
       width={size}
       height={size}

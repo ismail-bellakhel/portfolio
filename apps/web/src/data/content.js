@@ -509,7 +509,13 @@ export const stack = [
     icon: 'Workflow',
     tools: [
       { name: 'HubSpot', slug: 'hubspot', fallback: 'Users' },
-      { name: 'Salesforce', slug: 'salesforce', fallback: 'Users' },
+      // Self-hosted: Simple Icons dropped Salesforce, so the CDN slug 404s
+      // and the row silently fell back to a generic lucide glyph.
+      {
+        name: 'Salesforce Data 360',
+        logo: '/tools/salesforce.svg',
+        fallback: 'Users',
+      },
       { name: 'Zapier', slug: 'zapier', fallback: 'Workflow' },
       { name: 'n8n', slug: 'n8n', fallback: 'Workflow' },
     ],
