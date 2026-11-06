@@ -555,10 +555,11 @@ export const stack = [
       { name: 'Optimizely', slug: 'optimizely', fallback: 'FlaskConical' },
       { name: 'Hotjar', slug: 'hotjar', fallback: 'MousePointerClick' },
       { name: 'Mixpanel', slug: 'mixpanel', fallback: 'LineChart' },
+      { name: 'Amplitude', slug: 'amplitude', fallback: 'LineChart' },
     ],
   },
   {
-    title: 'Data Governance & Visualisation',
+    title: 'Data Platforms & Visualisation',
     icon: 'BarChart3',
     tools: [
       { name: 'Snowflake', slug: 'snowflake', fallback: 'Database' },

@@ -32,6 +32,7 @@ const SIMPLE_ICONS = 'https://cdn.simpleicons.org';
   the per-role strips in Experience pick it up, since those pass a bare slug.
 */
 const SELF_HOSTED = {
+  amplitude: '/tools/amplitude.svg',
   linkedin: '/tools/linkedin.svg',
   microsoftexcel: '/tools/excel.svg',
   microsoftsqlserver: '/tools/sqlserver.svg',
