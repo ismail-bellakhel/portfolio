@@ -112,11 +112,14 @@ export default function Nav({ active }) {
             className="group flex items-center gap-2.5 text-left"
           >
             {/* Two beats then a rest, from the keyframes in tailwind.config.js.
-                The ring and the dot run on one shared period so they pulse
-                together. Both transforms sit on children of the glass bar, so
-                neither promotes the bar's own layer. */}
+                One ring per beat, since a single ring cannot expand twice in a
+                cycle without visibly snapping back between them. The second
+                carries its own 340ms delay. All three share the 2.2s period so
+                they stay locked together, and all three transforms sit on
+                children of the glass bar, so none promotes the bar's layer. */}
             <span className="relative flex h-2 w-2">
               <span className="absolute inline-flex h-full w-full animate-heartring rounded-full bg-glow-mint" />
+              <span className="absolute inline-flex h-full w-full animate-heartring-soft rounded-full bg-glow-mint" />
               <span className="relative inline-flex h-2 w-2 animate-heartdot rounded-full bg-glow-mint" />
             </span>
             <span className="text-[13px] font-semibold tracking-tight text-white/90">

@@ -289,15 +289,37 @@ function TaskPlot({ tasks, score, delay = 0 }) {
   );
 }
 
+/*
+  The selected row carries the trait's own colour, as a faint wash and a
+  hairline border.
+
+  It used to be `bg-white/[0.07]` against a `bg-white/[0.035]` hover, the same
+  grey in two strengths, so the row that happens to be selected on load read as
+  a hover frame stuck on a row nobody was pointing at. Tinting it ties the row
+  to the dot in this card's header and to the lit band in its own curve, both
+  of which already use `factor.tint`, so the highlight says "this is the trait
+  being shown below" rather than "the cursor is here".
+
+  A background and a border only. No transform or opacity on this button: it
+  sits inside a glass panel and either would promote the panel's layer.
+*/
 function FactorRow({ factor, on, onSelect, delay }) {
   return (
     <button
       type="button"
       onClick={onSelect}
       aria-pressed={on}
+      style={
+        on
+          ? {
+              background: `${factor.tint}14`,
+              boxShadow: `inset 0 0 0 1px ${factor.tint}3d`,
+            }
+          : undefined
+      }
       className={cn(
         'w-full rounded-2xl px-3.5 pb-2 pt-3 text-left transition-colors duration-300',
-        on ? 'bg-white/[0.07]' : 'hover:bg-white/[0.035]',
+        !on && 'hover:bg-white/[0.035]',
       )}
     >
       <div className="mb-1.5 flex items-baseline gap-3">
