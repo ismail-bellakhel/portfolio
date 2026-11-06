@@ -54,7 +54,10 @@ export default function Experience() {
 
             <div className="space-y-5">
               {experience.map((job, i) => (
-                <div key={job.company} className="relative md:pl-20">
+                // Company alone is not unique: there are two Concentrix
+                // roles. Pairing it with the role keeps each card's identity
+                // stable across re-renders.
+                <div key={`${job.company}-${job.role}`} className="relative md:pl-20">
                   {/* Node */}
                   <Reveal
                     y={0}
