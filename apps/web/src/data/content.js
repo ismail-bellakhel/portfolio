@@ -143,7 +143,7 @@ export const experience = [
     period: 'Apr 2014 to Apr 2019',
     sector: 'Telecommunications',
     summary:
-      'Delivered market analysis, competitive intelligence and veille commerciale for French telecommunications, supporting product launch coordination, market introduction and strategic commercial decisions.',
+      'Integrated competitive intelligence and Salesforce customer data into telecom benchmarking and forecasting workflows, applying product, interaction and lifecycle segmentation to support market entry, product launches and commercial decisions.',
     highlights: [
       'Analysed competitors, commercial offers, market trends and positioning, translating complex market data into actionable insight for stakeholders.',
       'Collected and transformed competitive intelligence, product benchmarks and Salesforce customer and sales data into advanced segments by product, customer interactions and lifecycle stage.',
