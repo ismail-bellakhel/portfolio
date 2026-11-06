@@ -67,8 +67,21 @@ function ProjectCard({ project, progress, depth, delay, featured }) {
         <Shot project={project} />
 
         <div className={cn('flex flex-col', project.image && !featured && 'pt-5')}>
-          <div className="mb-3 font-mono text-[10.5px] uppercase tracking-[0.16em] text-glow-violet/80">
-            {project.kicker}
+          <div className="mb-3 flex flex-wrap items-center gap-x-2.5 gap-y-1.5">
+            <span className="font-mono text-[10.5px] uppercase tracking-[0.16em] text-glow-violet/80">
+              {project.kicker}
+            </span>
+
+            {/* Set when the project is unfinished as a whole, not merely
+                unreleased, so the card does not read as shipped work. The
+                dot is static: this card sits on glass, and an animated
+                ancestor would promote the panel's layer. */}
+            {project.status && (
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-glow-amber/[0.12] px-2 py-0.5 text-[10.5px] font-medium text-glow-amber ring-1 ring-glow-amber/25">
+                <span className="h-1.5 w-1.5 rounded-full bg-glow-amber" />
+                {project.status}
+              </span>
+            )}
           </div>
 
           <h3

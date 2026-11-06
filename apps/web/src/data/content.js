@@ -378,19 +378,24 @@ export const cases = [
 // Projects, from the public GitHub showcase repositories.
 export const projects = [
   {
-    slug: 'growth-intelligence',
-    name: 'Growth Intelligence',
-    kicker: 'Product · Designed & built',
+    // `live` is the alpha deployment, NOT pov-agency-site.vercel.app. That
+    // subdomain resolves to an unrelated agency, so it must never be linked.
+    slug: 'pov-agency',
+    name: 'POV Agency',
+    kicker: 'Freelance venture · AI systems',
     summary:
-      'A workspace that connects growth evidence, performance review, experiment planning and reporting in one place.',
+      'An AI agency practice packaging marketing and customer-service automation into systems clients can actually run.',
     description:
-      'Command Center, SEO/GEO/AEO review, paid campaigns, pipeline & attribution, a Growth Lab for experiments, drag-to-organise BI reports, signals & alerts, automations and integrations. The public walkthrough runs the real interface against an empty example workspace so metrics stay honest rather than invented.',
-    image: '/projects/growth-intelligence.jpg',
-    live: 'https://ismail-bellakhel.github.io/growth-intelligence-showcase/',
-    repo: 'https://github.com/ismail-bellakhel/growth-intelligence-showcase',
-    liveLabel: 'Open app preview',
-    stack: ['react', 'typescript', 'tailwindcss', 'googlebigquery', 'python'],
-    tags: ['Product design', 'Growth tooling', 'BI'],
+      'Positioning, offer design and the site itself: AI systems for marketing and customer service, from conversational support to content and reporting workflows, with interactive demos in the public showcase. The venture is still in development as a whole, so the offer, the site and the demos are all being built out and the link opens an alpha build.',
+    image: '/projects/pov-agency.jpg',
+    live: 'https://pov-agency-site-alpha.vercel.app/',
+    repo: 'https://github.com/ismail-bellakhel/pov-agency-showcase',
+    liveLabel: 'Open the alpha',
+    stack: ['react', 'typescript', 'tailwindcss', 'vite'],
+    tags: ['Freelance', 'AI systems', 'Positioning'],
+    // The venture as a whole is unfinished: the offer, the site and the
+    // demos are all still moving, and `live` points at an alpha build.
+    status: 'In development',
     featured: true,
   },
   {
@@ -443,21 +448,19 @@ export const projects = [
     tags: ['Concept', 'Motion', 'i18n'],
   },
   {
-    // `live` is the alpha deployment, NOT pov-agency-site.vercel.app. That
-    // subdomain resolves to an unrelated agency, so it must never be linked.
-    slug: 'pov-agency',
-    name: 'POV Agency',
-    kicker: 'Freelance venture · AI systems',
+    slug: 'growth-intelligence',
+    name: 'Growth Intelligence',
+    kicker: 'Product · Designed & built',
     summary:
-      'An AI agency practice packaging marketing and customer-service automation into systems clients can actually run.',
+      'A workspace that connects growth evidence, performance review, experiment planning and reporting in one place.',
     description:
-      'Positioning, offer design and the site itself: AI systems for marketing and customer service, from conversational support to content and reporting workflows, with interactive demos in the public showcase.',
-    image: '/projects/pov-agency.jpg',
-    live: 'https://pov-agency-site-alpha.vercel.app/',
-    repo: 'https://github.com/ismail-bellakhel/pov-agency-showcase',
-    liveLabel: 'Open the site',
-    stack: ['react', 'typescript', 'tailwindcss', 'vite'],
-    tags: ['Freelance', 'AI systems', 'Positioning'],
+      'Command Center, SEO/GEO/AEO review, paid campaigns, pipeline & attribution, a Growth Lab for experiments, drag-to-organise BI reports, signals & alerts, automations and integrations. The public walkthrough runs the real interface against an empty example workspace so metrics stay honest rather than invented.',
+    image: '/projects/growth-intelligence.jpg',
+    live: 'https://ismail-bellakhel.github.io/growth-intelligence-showcase/',
+    repo: 'https://github.com/ismail-bellakhel/growth-intelligence-showcase',
+    liveLabel: 'Open app preview',
+    stack: ['react', 'typescript', 'tailwindcss', 'googlebigquery', 'python'],
+    tags: ['Product design', 'Growth tooling', 'BI'],
   },
   {
     slug: 'pov-studio',
