@@ -28,6 +28,7 @@ import {
   Sparkles,
   Target,
   Users,
+  Webhook,
   Workflow,
 } from 'lucide-react';
 
@@ -53,6 +54,7 @@ const ICONS = {
   Sparkles,
   Target,
   Users,
+  Webhook,
   Workflow,
 };
 

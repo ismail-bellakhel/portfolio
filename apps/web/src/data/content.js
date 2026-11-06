@@ -68,10 +68,10 @@ export const experience = [
     summary:
       'Led a data-driven audience growth and monetisation strategy across Nordic publishing brands, integrating SEO/GEO, analytics, AdTech, experimentation and AI-enabled workflows to drive organic acquisition, advertising revenue and commercial performance. Reported to the COO, CEO and CMO.',
     highlights: [
-      'Grew Google Discover traffic by 161% through Core Web Vitals improvements and AI-enabled workflows to audit, test and monitor deployments, scaling DagensPS to 1M+ weekly readers and contributing to its 2024 Swedish SEO Award.',
+      'Grew Google Discover traffic by 161% through Core Web Vitals improvements and Python analysis of crawl, indexing and page structure data, scaling DagensPS to 1M+ weekly readers and contributing to its 2024 Swedish SEO Award.',
       'Improved consent performance (+12% opt-ins, −18% opt-outs), technical SEO, UX and advertising operations, contributing to 125% YoY advertising revenue growth.',
       'Used pre/post analysis, A/B tests, attribution and MMM to assess programmatic and native advertising across social media, newsletters, affiliates and websites. Native ad tests improved delivery by 15%.',
-      'Improved first-party tracking by standardising events in data layers and using server-side tracking, Google Analytics and Google Tag Manager, validating the data and comparing campaign performance in SQL.',
+      'Improved first-party tracking by standardising data-layer events and implementing sGTM and GA4, using SQL in BigQuery to validate data and analyse campaign performance and user funnels.',
     ],
     stack: ['googleanalytics', 'googletagmanager', 'googlebigquery', 'python', 'looker'],
   },
@@ -89,7 +89,7 @@ export const experience = [
       'Directed a data-driven, full-funnel performance marketing strategy integrating SEO/GEO, paid acquisition, CRO, CRM automation and experimentation to drive qualified lead generation, optimise customer acquisition costs and maximise marketing ROI.',
     highlights: [
       'Reduced customer acquisition cost by 20% while increasing qualified leads through Google Ads, Meta Ads, audience segmentation and continuous campaign optimisation.',
-      'Built automated GA4/SQL dashboards in Looker Studio, consolidating ROAS, CAC, CPL, conversion rates and lead quality to support performance measurement and budget allocation.',
+      'Automated GA4 data extraction and reporting feeds with Python, transformed acquisition and conversion data using SQL, and delivered Looker Studio dashboards tracking ROAS, CAC, CPL and lead quality to support performance measurement and budget allocation.',
       'Optimised acquisition funnels through SEO-driven content, landing page improvements, A/B testing and CRM-based lead nurturing to strengthen conversion performance.',
     ],
     stack: ['googleads', 'meta', 'googleanalytics', 'looker'],
@@ -511,6 +511,8 @@ export const stack = [
       { name: 'HTML', slug: 'html5', fallback: 'Code2' },
       { name: 'CSS', slug: 'css', fallback: 'Layout' },
       { name: 'JavaScript', slug: 'javascript', fallback: 'Code2' },
+      // Not a product, so there is no logo to resolve: renders the glyph.
+      { name: 'APIs', fallback: 'Webhook' },
     ],
   },
   {
@@ -529,15 +531,16 @@ export const stack = [
       { name: 'Claude', slug: 'anthropic', fallback: 'Bot' },
       { name: 'ChatGPT', slug: 'openai', fallback: 'Bot' },
       { name: 'Gemini', slug: 'googlegemini', fallback: 'Bot' },
+      { name: 'MCP', slug: 'modelcontextprotocol', fallback: 'Bot' },
     ],
   },
   {
-    title: 'CRM & Automation',
+    title: 'CRM, CDP & Automation',
     icon: 'Workflow',
     tools: [
       { name: 'HubSpot', slug: 'hubspot', fallback: 'Users' },
       { name: 'Salesforce Data 360', slug: 'salesforce', fallback: 'Users' },
-      { name: 'Zapier', slug: 'zapier', fallback: 'Workflow' },
+      { name: 'Python', slug: 'python', fallback: 'Code2' },
       { name: 'n8n', slug: 'n8n', fallback: 'Workflow' },
     ],
   },
@@ -551,12 +554,13 @@ export const stack = [
     ],
   },
   {
-    title: 'BI & Data Visualisation',
+    title: 'Data Governance & Visualisation',
     icon: 'BarChart3',
     tools: [
-      { name: 'Looker Studio', slug: 'looker', fallback: 'LineChart' },
+      { name: 'Snowflake', slug: 'snowflake', fallback: 'Database' },
       { name: 'Power BI', slug: 'powerbi', fallback: 'BarChart3' },
       { name: 'Tableau', slug: 'tableau', fallback: 'BarChart3' },
+      { name: 'Looker', slug: 'looker', fallback: 'LineChart' },
     ],
   },
 ];
