@@ -37,8 +37,17 @@ const SELF_HOSTED = {
   microsoftexcel: '/tools/excel.svg',
   microsoftsqlserver: '/tools/sqlserver.svg',
   openai: '/tools/openai.svg',
+  optimizely: '/tools/optimizely.svg',
   powerbi: '/tools/powerbi.svg',
   salesforce: '/tools/salesforce.svg',
+  /*
+    Tableau's mark is a sparse grid of thin plus signs. Drawn at its true
+    weight it measures 6% solid ink in the 16px slot against LinkedIn's 68%,
+    so it dissolves into grey dust. The file carries stroke-width 18 on the
+    512 viewBox purely as an optical-size correction: same geometry, enough
+    weight to survive the slot at 80 mean alpha, in line with Optimizely's 75.
+  */
+  tableau: '/tools/tableau.svg',
 };
 
 /**
