@@ -290,24 +290,31 @@ function TaskPlot({ tasks, score, delay = 0 }) {
 }
 
 /*
-  Nothing is selected until the reader selects it, so on load no row is
-  highlighted at all. A row lit by default reads as a hover frame stuck on a
-  row nobody is pointing at, which is exactly how it looked when this card
-  opened with Conscientiousness already chosen.
+  Pointing at a row opens that trait's detail directly underneath it.
 
-  Once a row is picked it carries that trait's own colour rather than more
-  grey, tying it to the dot in the card header and to the lit band in its own
-  curve, both of which already use `factor.tint`.
+  The detail used to sit in one panel below the whole list, so the three facet
+  curves for the trait you picked were drawn far down a tall card, past the
+  bottom of the viewport. You could not see the thing you had just asked for.
 
-  A background and a border only. No transform or opacity on this button: it
-  sits inside a glass panel and either would promote the panel's layer.
+  Hover rather than a selection that persists: on load nothing is lit and
+  nothing is open, so no row reads as a hover frame stuck on a row nobody is
+  pointing at. Touch has no hover, so a tap toggles the same state, and focus
+  opens it for the keyboard.
+
+  Swapping rows barely moves the page, because one detail closes as the next
+  opens and every trait has exactly three facets and a summary within forty
+  characters of its neighbours.
+
+  Background and border only on the row. No transform or opacity on it, since
+  it sits inside a glass panel and either would promote the panel's layer. The
+  detail may animate: it is a descendant of the glass, not an ancestor.
 */
-function FactorRow({ factor, on, onSelect, delay }) {
+function FactorRow({ factor, on, onShow, onHide, onToggle, delay }) {
   return (
-    <button
-      type="button"
-      onClick={onSelect}
-      aria-pressed={on}
+    <div
+      onMouseEnter={onShow}
+      onMouseLeave={onHide}
+      className="rounded-2xl transition-colors duration-300"
       style={
         on
           ? {
@@ -316,34 +323,86 @@ function FactorRow({ factor, on, onSelect, delay }) {
             }
           : undefined
       }
-      className={cn(
-        'w-full rounded-2xl px-3.5 pb-2 pt-3 text-left transition-colors duration-300',
-        !on && 'hover:bg-white/[0.035]',
-      )}
     >
-      <div className="mb-1.5 flex items-baseline gap-3">
-        <span
-          className={cn(
-            'text-[13px] font-medium transition-colors duration-300',
-            on ? 'text-white' : 'text-white/65',
-          )}
+      <button
+        type="button"
+        onClick={onToggle}
+        onFocus={onShow}
+        aria-expanded={on}
+        className="w-full rounded-2xl px-3.5 pb-2 pt-3 text-left"
+      >
+        <div className="mb-1.5 flex items-baseline gap-3">
+          <span
+            className={cn(
+              'text-[13px] font-medium transition-colors duration-300',
+              on ? 'text-white' : 'text-white/65',
+            )}
+          >
+            {factor.name}
+          </span>
+          <span className="ml-auto text-[11.5px] text-white/45">{factor.label}</span>
+          <span
+            className="font-mono text-[12px] font-semibold"
+            style={{ color: factor.tint }}
+          >
+            <Counter to={factor.score} duration={1.3} />
+          </span>
+        </div>
+        <Bell score={factor.score} tint={factor.tint} h={44} delay={delay} />
+        <div className="mt-1 flex justify-between font-mono text-[9px] uppercase tracking-[0.14em] text-white/30">
+          <span>{factor.low}</span>
+          <span>{factor.high}</span>
+        </div>
+      </button>
+
+      {/*
+        Opacity and position only, never height. Animating height from zero
+        would clip these curves while they mount, and a clipped box reads as
+        not intersecting, so the `whileInView` bands inside every Bell would
+        sit at opacity 0 through the open and then pop.
+      */}
+      {on && (
+        <motion.div
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, ease: EASE }}
+          className="px-3.5 pb-4 pt-2"
         >
-          {factor.name}
-        </span>
-        <span className="ml-auto text-[11.5px] text-white/45">{factor.label}</span>
-        <span
-          className="font-mono text-[12px] font-semibold"
-          style={{ color: factor.tint }}
-        >
-          <Counter to={factor.score} duration={1.3} />
-        </span>
-      </div>
-      <Bell score={factor.score} tint={factor.tint} h={44} delay={delay} />
-      <div className="mt-1 flex justify-between font-mono text-[9px] uppercase tracking-[0.14em] text-white/30">
-        <span>{factor.low}</span>
-        <span>{factor.high}</span>
-      </div>
-    </button>
+          <div className="mb-2.5 font-mono text-[10px] uppercase tracking-[0.14em] text-white/40">
+            {factor.percentile}
+          </div>
+          <p className="text-[13px] leading-relaxed text-white/65">{factor.summary}</p>
+
+          <div className="mt-5 grid gap-5 sm:grid-cols-3">
+            {factor.facets.map((facet, i) => (
+              <div key={facet.name}>
+                <div className="mb-1.5 flex items-baseline gap-2">
+                  <span className="text-[11.5px] font-medium text-white/70">
+                    {facet.name}
+                  </span>
+                  <span
+                    className="ml-auto font-mono text-[11px]"
+                    style={{ color: factor.tint }}
+                  >
+                    <Counter to={facet.score} duration={1.1} />
+                  </span>
+                </div>
+                <Bell
+                  score={facet.score}
+                  tint={factor.tint}
+                  h={30}
+                  compact
+                  delay={0.08 + i * 0.07}
+                />
+                <div className="mt-1 font-mono text-[9px] uppercase tracking-[0.12em] text-white/35">
+                  {facet.label}
+                </div>
+              </div>
+            ))}
+          </div>
+        </motion.div>
+      )}
+    </div>
   );
 }
 
@@ -386,7 +445,7 @@ function ListCard({ title, items, icon: Icon, tint, progress, delay }) {
 export default function Assessment() {
   const { logic, personality, provider } = assessment;
 
-  // Null until the reader picks a trait: see the note on FactorRow.
+  // Whichever trait is under the pointer, or was tapped. See FactorRow.
   const [active, setActive] = useState(null);
   const factor = personality.factors.find((f) => f.key === active);
 
@@ -475,7 +534,7 @@ export default function Assessment() {
                   {personality.title}
                 </span>
                 <span className="ml-auto hidden font-mono text-[10px] uppercase tracking-[0.14em] text-white/30 sm:inline">
-                  Select a trait
+                  Hover or tap a trait
                 </span>
               </div>
 
@@ -485,70 +544,14 @@ export default function Assessment() {
                     key={f.key}
                     factor={f}
                     on={f.key === active}
-                    onSelect={() => setActive(f.key)}
+                    onShow={() => setActive(f.key)}
+                    onHide={() => setActive((cur) => (cur === f.key ? null : cur))}
+                    onToggle={() => setActive((cur) => (cur === f.key ? null : f.key))}
                     delay={0.1 + i * 0.055}
                   />
                 ))}
               </div>
 
-              {/* Detail for the selected trait. Absent until one is picked,
-                  since there is no trait to describe before then. Keyed so the
-                  copy and the three facet curves re-run their entrance on
-                  every swap. */}
-              {factor && (
-              <motion.div
-                key={active}
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.45, ease: EASE }}
-                className="mt-6 border-t border-white/[0.07] pt-6"
-              >
-                <div className="mb-5 flex flex-wrap items-center gap-x-3 gap-y-1">
-                  <span className="text-[13px] font-semibold text-white/90">
-                    {factor.label}
-                  </span>
-                  <span className="font-mono text-[10.5px] uppercase tracking-[0.14em] text-white/40">
-                    {factor.percentile}
-                  </span>
-                </div>
-                <p className="text-[13.5px] leading-relaxed text-white/65">
-                  {factor.summary}
-                </p>
-
-                <div className="mt-6 grid gap-5 sm:grid-cols-3">
-                  {factor.facets.map((facet, i) => (
-                    <motion.div
-                      key={facet.name}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.45, delay: 0.1 + i * 0.07, ease: EASE }}
-                    >
-                      <div className="mb-1.5 flex items-baseline gap-2">
-                        <span className="text-[11.5px] font-medium text-white/70">
-                          {facet.name}
-                        </span>
-                        <span
-                          className="ml-auto font-mono text-[11px]"
-                          style={{ color: factor.tint }}
-                        >
-                          <Counter to={facet.score} duration={1.1} />
-                        </span>
-                      </div>
-                      <Bell
-                        score={facet.score}
-                        tint={factor.tint}
-                        h={30}
-                        compact
-                        delay={0.1 + i * 0.07}
-                      />
-                      <div className="mt-1 font-mono text-[9px] uppercase tracking-[0.12em] text-white/35">
-                        {facet.label}
-                      </div>
-                    </motion.div>
-                  ))}
-                </div>
-              </motion.div>
-              )}
             </GlassCard>
           </div>
 
