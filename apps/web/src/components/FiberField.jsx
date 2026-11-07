@@ -74,8 +74,14 @@ const RIGHT_BIAS = 1.55;
   `birth` is allowed to start negative. That is the stagger: a packet seeded
   below zero waits its turn before igniting, which is what makes the first
   frame a cascade of KPIs arriving rather than all of them at once.
+
+  Doubled from 1.15. Every stage below is a fraction of this, so at the old
+  value a signal held for 0.57s and then collapsed over 0.32s, which is under
+  the time it takes to read three or four words. The whole sequence is scaled
+  rather than just the hold, because stretching one stage against the others
+  is what makes a sequence feel padded instead of slower.
 */
-const BIRTH_TIME = 1.15;
+const BIRTH_TIME = 2.3;
 
 /*
   The three stages of ignition, as fractions of BIRTH_TIME. They run in strict

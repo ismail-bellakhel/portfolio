@@ -29,6 +29,34 @@ import { cn } from '@/lib/utils';
 
 const EASE = [0.22, 1, 0.36, 1];
 
+/*
+  The trait expansion reveal, borrowed from the signal text in the hero field.
+
+  There a word resolves by blurring up from a little below its own baseline,
+  and each word waits a beat behind the one before it, so the line reads left
+  to right as it forms instead of appearing whole. FiberField runs that on a
+  0.45 ramp with 0.1 between words; the same roughly four-to-one ratio is kept
+  here, scaled up to DOM-sized timings.
+
+  Blur is a filter, which promotes this element's own layer. That is safe: the
+  glass panel is an ancestor, and only a promoted *ancestor* moves the panel's
+  backdrop onto a different layer and turns it black.
+*/
+const RISE = {
+  hidden: { opacity: 0, y: 7, filter: 'blur(3.5px)' },
+  shown: {
+    opacity: 1,
+    y: 0,
+    filter: 'blur(0px)',
+    transition: { duration: 0.5, ease: EASE },
+  },
+};
+
+const RISE_GROUP = {
+  hidden: {},
+  shown: { transition: { delayChildren: 0.12, staggerChildren: 0.11 } },
+};
+
 /* The scale runs 1-10 and the population average is 5 to 6, so the curve is
    centred between them and spread so that 1 and 10 land in the tails. */
 const MEAN = 5.5;
@@ -74,10 +102,24 @@ const capPath = (score, h) => `M ${sample((score - 1) * DECILE, score * DECILE, 
  * curve and filled with `tint`, so the mark reads as a slice of the population
  * rather than as a bar of its own.
  */
-function Bell({ score, tint, h = 54, delay = 0, compact = false }) {
+function Bell({ score, tint, h = 54, delay = 0, compact = false, shown = false }) {
   const reduce = useReducedMotion();
   const mid = (score - 0.5) * DECILE;
-  const inView = { once: true, margin: '-40px 0px' };
+
+  /*
+    Scrolled into frame is the normal case. `shown` is for the charts inside a
+    trait expansion, which are revealed on demand: the box they sit in is
+    clipped to zero height while it drops open, and an observer reads a clipped
+    box as off screen, so those charts would hold at opacity 0 until the drop
+    finished and only then start. Driving them from the open flag puts them in
+    step with the copy arriving around them.
+  */
+  const reveal = shown
+    ? { animate: { opacity: 1 } }
+    : {
+        whileInView: { opacity: 1 },
+        viewport: { once: true, margin: '-40px 0px' },
+      };
 
   /*
     The curve stretches to the full width of its row but keeps a fixed pixel
@@ -133,8 +175,7 @@ function Bell({ score, tint, h = 54, delay = 0, compact = false }) {
         fill={tint}
         fillOpacity="0.55"
         initial={reduce ? false : { opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={inView}
+        {...reveal}
         transition={{ duration: 0.6, delay, ease: EASE }}
       />
 
@@ -156,8 +197,7 @@ function Bell({ score, tint, h = 54, delay = 0, compact = false }) {
         strokeWidth="1.5"
         vectorEffect="non-scaling-stroke"
         initial={reduce ? false : { opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={inView}
+        {...reveal}
         transition={{ duration: 0.7, delay: delay + 0.1, ease: EASE }}
       />
       <motion.path
@@ -168,8 +208,7 @@ function Bell({ score, tint, h = 54, delay = 0, compact = false }) {
         strokeLinecap="round"
         vectorEffect="non-scaling-stroke"
         initial={reduce ? false : { opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={inView}
+        {...reveal}
         transition={{ duration: 0.5, delay: delay + 0.4, ease: EASE }}
         style={{ filter: `drop-shadow(0 0 6px ${tint})` }}
       />
@@ -310,6 +349,8 @@ function TaskPlot({ tasks, score, delay = 0 }) {
   detail may animate: it is a descendant of the glass, not an ancestor.
 */
 function FactorRow({ factor, on, onShow, onHide, onToggle, delay }) {
+  const reduce = useReducedMotion();
+
   return (
     <div
       onMouseEnter={onShow}
@@ -356,50 +397,71 @@ function FactorRow({ factor, on, onShow, onHide, onToggle, delay }) {
       </button>
 
       {/*
-        Opacity and position only, never height. Animating height from zero
-        would clip these curves while they mount, and a clipped box reads as
-        not intersecting, so the `whileInView` bands inside every Bell would
-        sit at opacity 0 through the open and then pop.
+        Two stages, because the thing that read badly was the layout rather
+        than the fade. Mounting the block grew the row by its full height in a
+        single frame, so everything below it jumped at once while the copy
+        crossfaded in place, and the three curves landed together.
+
+        So the box drops open first, on its own, carrying nothing. Then the
+        lines inside it blur up in order. The charts are driven by `shown`
+        rather than an observer, since the drop clips them to zero height and
+        an observer cannot see out of that.
       */}
       {on && (
         <motion.div
-          initial={{ opacity: 0, y: 6 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, ease: EASE }}
-          className="px-3.5 pb-4 pt-2"
+          initial={reduce ? false : { height: 0 }}
+          animate={{ height: 'auto' }}
+          transition={{ duration: 0.42, ease: EASE }}
+          style={{ overflow: 'hidden' }}
         >
-          <div className="mb-2.5 font-mono text-[10px] uppercase tracking-[0.14em] text-white/40">
-            {factor.percentile}
-          </div>
-          <p className="text-[13px] leading-relaxed text-white/65">{factor.summary}</p>
+          <motion.div
+            variants={RISE_GROUP}
+            initial={reduce ? false : 'hidden'}
+            animate="shown"
+            className="px-3.5 pb-4 pt-2"
+          >
+            <motion.div
+              variants={RISE}
+              className="mb-2.5 font-mono text-[10px] uppercase tracking-[0.14em] text-white/40"
+            >
+              {factor.percentile}
+            </motion.div>
+            <motion.p
+              variants={RISE}
+              className="text-[13px] leading-relaxed text-white/65"
+            >
+              {factor.summary}
+            </motion.p>
 
-          <div className="mt-5 grid gap-5 sm:grid-cols-3">
-            {factor.facets.map((facet, i) => (
-              <div key={facet.name}>
-                <div className="mb-1.5 flex items-baseline gap-2">
-                  <span className="text-[11.5px] font-medium text-white/70">
-                    {facet.name}
-                  </span>
-                  <span
-                    className="ml-auto font-mono text-[11px]"
-                    style={{ color: factor.tint }}
-                  >
-                    <Counter to={facet.score} duration={1.1} />
-                  </span>
-                </div>
-                <Bell
-                  score={facet.score}
-                  tint={factor.tint}
-                  h={30}
-                  compact
-                  delay={0.08 + i * 0.07}
-                />
-                <div className="mt-1 font-mono text-[9px] uppercase tracking-[0.12em] text-white/35">
-                  {facet.label}
-                </div>
-              </div>
-            ))}
-          </div>
+            <div className="mt-5 grid gap-5 sm:grid-cols-3">
+              {factor.facets.map((facet) => (
+                <motion.div key={facet.name} variants={RISE}>
+                  <div className="mb-1.5 flex items-baseline gap-2">
+                    <span className="text-[11.5px] font-medium text-white/70">
+                      {facet.name}
+                    </span>
+                    <span
+                      className="ml-auto font-mono text-[11px]"
+                      style={{ color: factor.tint }}
+                    >
+                      <Counter to={facet.score} duration={1.1} />
+                    </span>
+                  </div>
+                  <Bell
+                    score={facet.score}
+                    tint={factor.tint}
+                    h={30}
+                    compact
+                    shown
+                    delay={0.18}
+                  />
+                  <div className="mt-1 font-mono text-[9px] uppercase tracking-[0.12em] text-white/35">
+                    {facet.label}
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
         </motion.div>
       )}
     </div>
