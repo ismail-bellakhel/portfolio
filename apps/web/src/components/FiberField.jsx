@@ -75,13 +75,16 @@ const RIGHT_BIAS = 1.55;
   below zero waits its turn before igniting, which is what makes the first
   frame a cascade of KPIs arriving rather than all of them at once.
 
-  Doubled from 1.15. Every stage below is a fraction of this, so at the old
-  value a signal held for 0.57s and then collapsed over 0.32s, which is under
-  the time it takes to read three or four words. The whole sequence is scaled
-  rather than just the hold, because stretching one stage against the others
-  is what makes a sequence feel padded instead of slower.
+  Up from 1.15, but only the reading stage is longer. The hold is doubled to
+  1.15s, since at 0.57s a four word signal was still resolving its last word
+  when it started to collapse. The two stages after it keep the durations they
+  always had, 0.32s to fall in and 0.25s for the light to take over: those are
+  a handover rather than something to be read, and stretching them just made
+  the signal look like it was labouring.
+
+  1.725 = 1.15 reading + 0.32 collapsing + 0.25 becoming light.
 */
-const BIRTH_TIME = 2.3;
+const BIRTH_TIME = 1.725;
 
 /*
   The three stages of ignition, as fractions of BIRTH_TIME. They run in strict
@@ -97,9 +100,12 @@ const BIRTH_TIME = 2.3;
 
   The label is laid out centred on the light's own position, so the point the
   words collapse into is exactly the point the light appears at.
+
+  These are fractions, so they move whenever BIRTH_TIME does. They are set
+  against the split above: 1.15 / 1.725 and 1.47 / 1.725.
 */
-const TEXT_HOLD = 0.5;
-const COLLAPSE_END = 0.78;
+const TEXT_HOLD = 0.667;
+const COLLAPSE_END = 0.853;
 
 /*
   How far a packet must fall, in pixels, to draw its trail out to full length.
